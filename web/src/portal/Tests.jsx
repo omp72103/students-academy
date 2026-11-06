@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Plus, Pencil, Trash2, Clock, ChevronLeft, ChevronRight, Flag, Send, ClipboardList, Copy, Eye, Trophy, MessageCircle, BarChart3, CheckCircle2, XCircle, AlertTriangle, ListPlus } from 'lucide-react'
 import { db, useTable, uid } from '../lib/db'
@@ -10,6 +11,7 @@ import { fill, TEMPLATES, dispatch } from '../lib/messaging'
 import { useSettings } from '../site/SiteLayout'
 
 const L = ['A', 'B', 'C', 'D', 'E', 'F']
+const SUBJ_GRAD = ['from-blue-600 via-indigo-600 to-violet-600', 'from-sky-500 via-blue-600 to-indigo-600', 'from-emerald-500 via-teal-600 to-cyan-600', 'from-violet-500 via-purple-600 to-indigo-600', 'from-amber-500 via-orange-600 to-rose-500']
 
 // ======================= TEST LIST =======================
 export function Tests() {
@@ -31,14 +33,22 @@ export function Tests() {
           const at = attempts.filter((a) => a.testId === t.id); const mine = student && at.find((a) => a.studentId === student.id)
           const totalMarks = t.questions.reduce((s, q) => s + Number(q.marks || 1), 0)
           return (
-            <div key={t.id} className="card p-5 flex flex-col">
-              <div className="flex items-start justify-between gap-2">
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 text-white grid place-items-center"><ClipboardList size={18} /></div>
-                {manage ? <Badge tone={t.status === 'published' ? 'green' : t.status === 'closed' ? 'slate' : 'amber'}>{t.status}</Badge> : mine ? <Badge tone="green">{mine.percent}%</Badge> : <Badge tone="blue">New</Badge>}
+            <motion.div key={t.id} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: list.indexOf(t) * 0.05 }} whileHover={{ y: -4 }} className="card flex flex-col overflow-hidden">
+              <div className={cls('relative overflow-hidden bg-gradient-to-br px-5 py-4 text-white', SUBJ_GRAD[[...(t.subject || 'x')].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7) % SUBJ_GRAD.length])}>
+                <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/15 blur-2xl" />
+                <div className="relative flex items-start justify-between gap-2">
+                  <div className="h-10 w-10 rounded-xl bg-white/20 border border-white/25 grid place-items-center"><ClipboardList size={18} /></div>
+                  {manage ? <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] font-bold capitalize">{t.status}</span> : mine ? <span className="rounded-full bg-white/25 px-2.5 py-0.5 text-[11px] font-bold">{mine.percent}%</span> : <span className="rounded-full px-2.5 py-0.5 text-[11px] font-bold text-indigo-700" style={{ background: "#fff" }}>New</span>}
+                </div>
+                <div className="relative mt-3 text-[11px] font-bold uppercase tracking-wider text-white/80">{t.subject}</div>
+                <div className="relative font-heading font-bold text-lg leading-snug">{t.title}</div>
               </div>
-              <div className="font-semibold mt-3">{t.title}</div>
-              <div className="text-xs text-slate-500 mt-1">{t.subject} · {(t.batchIds || []).map((b) => batches.find((x) => x.id === b)?.name).filter(Boolean).join(', ')}</div>
-              <div className="flex gap-4 text-xs text-slate-600 mt-3"><span>{t.questions.length} Qs</span><span>{totalMarks} marks</span><span className="flex items-center gap-1"><Clock size={12} />{t.durationMin} min</span></div>
+              <div className="p-5 flex flex-col flex-1">
+              <div className="text-xs font-medium text-slate-500">{(t.batchIds || []).map((b) => batches.find((x) => x.id === b)?.name).filter(Boolean).join(', ')}</div>
+              <div className="flex gap-2 mt-3">
+                {[[t.questions.length, 'Questions'], [totalMarks, 'Marks'], [t.durationMin + 'm', 'Duration']].map(([v, l]) => <div key={l} className="flex-1 rounded-xl bg-slate-50 py-2 text-center"><div className="font-heading font-extrabold text-slate-800">{v}</div><div className="text-[10px] font-bold uppercase text-slate-400">{l}</div></div>)}
+              </div>
+              {manage && <div className="mt-3"><div className="flex justify-between text-[11px] font-bold text-slate-500 mb-1"><span>Attempted</span><span>{at.length}</span></div><Progress value={Math.min(100, at.length * 10)} /></div>}
               <div className="mt-auto pt-4 flex gap-2">
                 {manage ? <>
                   <button className="btn-outline btn-sm flex-1" onClick={() => setEdit(t)}><Pencil size={14} />Edit</button>
@@ -47,7 +57,8 @@ export function Tests() {
                 </> : user.role === 'student' ? (mine ? <Link to={`/portal/tests/${t.id}/review`} className="btn-outline btn-sm flex-1"><Eye size={14} />View result</Link> : <Link to={`/portal/tests/${t.id}/take`} className="btn-primary btn-sm flex-1">Start test</Link>)
                   : mine ? <Badge tone="green">Score {mine.score}/{mine.total}</Badge> : <Badge tone="amber">Not attempted</Badge>}
               </div>
-            </div>
+              </div>
+            </motion.div>
           )
         })}
       </div>

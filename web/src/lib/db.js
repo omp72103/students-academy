@@ -10,7 +10,7 @@ import { buildSeed } from './seed'
 const SB_URL = import.meta.env.VITE_SUPABASE_URL
 const SB_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 export const MODE = SB_URL && SB_KEY ? 'supabase' : 'demo'
-export const supabase = MODE === 'supabase' ? createClient(SB_URL, SB_KEY) : null
+export const supabase = MODE === 'supabase' ? createClient(SB_URL, SB_KEY, { auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true } }) : null
 // Optional table prefix lets several apps share one Supabase project (e.g. sa_users, sa_fees…)
 const PREFIX = import.meta.env.VITE_TABLE_PREFIX || ''
 export const BUCKET = import.meta.env.VITE_STORAGE_BUCKET || 'files'

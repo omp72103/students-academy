@@ -10,7 +10,7 @@ import { lazy, Suspense } from 'react'
 const L = (f, name) => lazy(() => f().then((m) => ({ default: name ? m[name] : m.default })))
 const layout = () => import('./portal/Layout'), people = () => import('./portal/People'), acad = () => import('./portal/Academics')
 const learn = () => import('./portal/Learning'), tests = () => import('./portal/Tests'), office = () => import('./portal/Office')
-const PortalShell = L(layout, 'PortalShell'), Login = L(layout, 'Login'), Dashboard = L(() => import('./portal/Dashboard'))
+const PortalShell = L(layout, 'PortalShell'), Login = L(layout, 'Login'), ResetPassword = L(layout, 'ResetPassword'), Dashboard = L(() => import('./portal/Dashboard'))
 const Students = L(people, 'Students'), Parents = L(people, 'Parents'), Faculty = L(people, 'Faculty')
 const Batches = L(acad, 'Batches'), Timetable = L(acad, 'Timetable'), Attendance = L(acad, 'Attendance')
 const Materials = L(learn, 'Materials'), Assignments = L(learn, 'Assignments')
@@ -49,6 +49,7 @@ export default function App() {
               <Route path="contact" element={<Contact />} />
             </Route>
             <Route path="portal/login" element={<Login />} />
+            <Route path="portal/reset-password" element={<ResetPassword />} />
             <Route path="portal" element={<PortalShell />}>
               <Route index element={<Navigate to="dashboard" replace />} />
               <Route path="dashboard" element={<Dashboard />} />

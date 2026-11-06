@@ -1,0 +1,52 @@
+/* ===================== Portal dark mode (MITK ERP "navy glass") ===================== */
+.portal.dark { color-scheme: dark; color: #e6eefc; }
+.portal.dark.app-bg, .portal.dark .app-bg { background: linear-gradient(135deg, #0a1120, #0d1a30 55%, #0b1a33) !important; }
+.portal.dark .ambient > div { opacity: .45; }
+.portal.dark .dash-shell { background: linear-gradient(135deg, rgba(12,21,38,.72), rgba(12,21,38,.6) 50%, rgba(11,26,51,.6)) !important; --tw-ring-color: rgba(45,212,191,.1) !important; }
+/* surfaces */
+.portal.dark .card,
+.portal.dark .bg-white, .portal.dark .bg-white\/95, .portal.dark .bg-white\/90, .portal.dark .bg-white\/85, .portal.dark .bg-white\/80,
+.portal.dark .bg-white\/75, .portal.dark .bg-white\/70, .portal.dark .bg-white\/65 { background-color: rgba(12,21,38,.86) !important; }
+.portal.dark .bg-white\/35 { background-color: rgba(10,18,32,.5) !important; }
+.portal.dark .card, .portal.dark aside, .portal.dark header { border-color: rgba(96,165,250,.12) !important; box-shadow: 0 18px 44px rgba(0,0,0,.45), inset 0 1px 0 rgba(96,165,250,.1) !important; }
+.portal.dark .bg-slate-50, .portal.dark .bg-slate-50\/80, .portal.dark .bg-slate-50\/70, .portal.dark .bg-slate-100, .portal.dark .bg-slate-100\/80,
+.portal.dark .bg-slate-200\/70, .portal.dark .bg-blue-50\/60, .portal.dark .bg-blue-50\/70, .portal.dark .bg-blue-50, .portal.dark .bg-indigo-50 { background-color: rgba(59,130,246,.09) !important; }
+.portal.dark .hover\:bg-white:hover, .portal.dark .hover\:bg-white\/65:hover, .portal.dark .hover\:bg-slate-50:hover, .portal.dark .hover\:bg-slate-100\/80:hover,
+.portal.dark .hover\:bg-blue-50:hover, .portal.dark .hover\:bg-blue-50\/40:hover, .portal.dark .hover\:bg-blue-50\/70:hover, .portal.dark .hover\:bg-slate-200\/70:hover { background-color: rgba(59,130,246,.16) !important; }
+/* text */
+.portal.dark h1, .portal.dark h2, .portal.dark h3,
+.portal.dark .text-slate-900, .portal.dark .text-slate-800, .portal.dark .text-slate-700 { color: #e6eefc !important; }
+.portal.dark .text-slate-600 { color: #b9c8e2 !important; }
+.portal.dark .text-slate-500 { color: #93a6c4 !important; }
+.portal.dark .text-slate-400 { color: #7086a8 !important; }
+.portal.dark .text-blue-600, .portal.dark .text-blue-700, .portal.dark .text-indigo-600 { color: #67e8f9 !important; }
+.portal.dark .text-gradient { background-image: linear-gradient(90deg, #60a5fa, #38bdf8, #22d3ee) !important; }
+/* borders */
+.portal.dark .border-white, .portal.dark .border-white\/80, .portal.dark .border-white\/70, .portal.dark .border-white\/90,
+.portal.dark .border-slate-100, .portal.dark .border-slate-100\/80, .portal.dark .border-slate-200, .portal.dark .border-slate-200\/60,
+.portal.dark .border-slate-200\/70, .portal.dark .border-slate-200\/80, .portal.dark .border-slate-300, .portal.dark .divide-slate-100 > * { border-color: rgba(96,165,250,.13) !important; }
+.portal.dark .ring-white, .portal.dark .ring-white\/80 { --tw-ring-color: rgba(96,165,250,.15) !important; }
+/* form controls & tables */
+.portal.dark .input, .portal.dark select, .portal.dark textarea { background-color: rgba(255,255,255,.04) !important; border-color: rgba(96,165,250,.18) !important; color: #e6eefc !important; }
+.portal.dark .input:focus { --tw-ring-color: rgba(34,211,238,.18) !important; border-color: #22d3ee !important; }
+.portal.dark option { background: #0c1526; }
+.portal.dark .th { background: rgba(255,255,255,.03) !important; color: #7f94b8 !important; }
+.portal.dark .td { border-color: rgba(96,165,250,.09) !important; color: #c9d6ec !important; }
+.portal.dark .btn-outline { background: rgba(59,130,246,.1) !important; border-color: rgba(96,165,250,.2) !important; color: #dbe7fb !important; }
+.portal.dark .btn-ghost { color: #b9c8e2 !important; }
+/* tinted chips & badges */
+.portal.dark .bg-emerald-50 { background-color: rgba(16,185,129,.13) !important; } .portal.dark .text-emerald-700, .portal.dark .text-emerald-800 { color: #6ee7b7 !important; }
+.portal.dark .bg-rose-50 { background-color: rgba(244,63,94,.13) !important; } .portal.dark .text-rose-700, .portal.dark .text-rose-600 { color: #fda4af !important; }
+.portal.dark .bg-amber-50 { background-color: rgba(245,158,11,.13) !important; } .portal.dark .text-amber-700, .portal.dark .text-amber-800 { color: #fcd34d !important; }
+.portal.dark .bg-sky-50 { background-color: rgba(14,165,233,.13) !important; } .portal.dark .text-sky-700 { color: #7dd3fc !important; }
+.portal.dark .text-indigo-700 { color: #a5b4fc !important; }
+.portal.dark .ring-emerald-200, .portal.dark .ring-rose-200, .portal.dark .ring-amber-200, .portal.dark .ring-sky-200, .portal.dark .ring-indigo-200, .portal.dark .ring-slate-200 { --tw-ring-color: rgba(148,163,184,.18) !important; }
+.portal.dark .from-emerald-50 { --tw-gradient-from: rgba(16,185,129,.12) var(--tw-gradient-from-position) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+.portal.dark .to-teal-50 { --tw-gradient-to: rgba(20,184,166,.08) var(--tw-gradient-to-position) !important; }
+.portal.dark .bg-\[\#e7ffdb\] { background-color: rgba(37,211,102,.14) !important; color: #d1fae5; }
+
+/* plain borders (no colour utility) and dark tinted text */
+:where(.portal.dark) *, :where(.portal.dark) ::before, :where(.portal.dark) ::after { border-color: rgba(96,165,250,.14); }
+.portal.dark .text-indigo-900, .portal.dark .text-emerald-900, .portal.dark .text-amber-900, .portal.dark .text-rose-900, .portal.dark .text-sky-900 { color: #dbe7fb !important; }
+.portal.dark .border-indigo-100, .portal.dark .border-amber-100, .portal.dark .border-emerald-100, .portal.dark .border-sky-100, .portal.dark .border-rose-100, .portal.dark .border-emerald-200, .portal.dark .border-amber-200 { border-color: rgba(96,165,250,.16) !important; }
+.portal.dark kbd { background: rgba(255,255,255,.06) !important; }

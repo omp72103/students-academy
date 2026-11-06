@@ -13,7 +13,7 @@ import { useMyStudent, ChildSwitcher } from './Layout'
 
 const greet = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening' }
 const Shell = ({ children }) => (
-  <div className="min-w-0 mx-auto max-w-7xl space-y-8 rounded-3xl bg-gradient-to-br from-white/80 via-white/70 to-blue-50/60 p-4 sm:p-6 md:p-7 shadow-sm ring-1 ring-white/80 backdrop-blur-xl">{children}</div>
+  <div className="dash-shell min-w-0 mx-auto max-w-7xl space-y-8 rounded-3xl bg-gradient-to-br from-white/80 via-white/70 to-blue-50/60 p-4 sm:p-6 md:p-7 shadow-sm ring-1 ring-white/80 backdrop-blur-xl">{children}</div>
 )
 
 export default function Dashboard() {

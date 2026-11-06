@@ -31,6 +31,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import org.json.JSONArray
@@ -165,8 +166,23 @@ class MainActivity : AppCompatActivity() {
         })
 
         if (savedInstanceState != null) web.restoreState(savedInstanceState)
-        else web.loadUrl(intent?.data?.takeIf { it.host == siteHost }?.toString() ?: "${BuildConfig.SITE_URL}/portal")
+        else if (!handleAuthCallback(intent)) web.loadUrl(intent?.data?.takeIf { it.host == siteHost }?.toString() ?: "${BuildConfig.SITE_URL}/portal")
         if (!isOnline()) offline.visibility = View.VISIBLE
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        if (!handleAuthCallback(intent)) intent.data?.takeIf { it.host == siteHost }?.let { web.loadUrl(it.toString()) }
+    }
+
+    /** Google sign-in finished in Chrome: hand the session tokens back to the portal inside the WebView. */
+    private fun handleAuthCallback(intent: Intent?): Boolean {
+        val uri = intent?.data ?: return false
+        if (uri.scheme != "studentsacademy" || uri.host != "auth") return false
+        val fragment = uri.encodedFragment ?: uri.encodedQuery ?: ""
+        web.loadUrl("${BuildConfig.SITE_URL}/portal/login" + if (fragment.isNotEmpty()) "#$fragment" else "")
+        return true
     }
 
     override fun onResume() {
@@ -290,6 +306,16 @@ class MainActivity : AppCompatActivity() {
                     }
                     toast("SMS queue done: $ok of ${arr.length()} handed to the SIM")
                 }
+            }
+        }
+
+        @JavascriptInterface fun openAuth(url: String) {
+            if (!trusted()) return
+            val uri = Uri.parse(url)
+            if (uri.scheme != "https" || uri.host?.endsWith(".supabase.co") != true) return
+            main.post {
+                try { CustomTabsIntent.Builder().setShowTitle(true).build().launchUrl(this@MainActivity, uri) }
+                catch (e: Exception) { openExternal(uri) }
             }
         }
 

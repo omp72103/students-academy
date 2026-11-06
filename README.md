@@ -63,6 +63,12 @@ With no environment variables the app runs in **demo mode**: data is seeded into
 | Student | aarav@student.sa | student123 |
 | Parent | aarav.parent@sa.in | parent123 |
 
+## Sign-in options
+
+- **Email + password** for every role, with "Forgot?" reset by email.
+- **Continue with Google**: the button appears automatically once the Google provider is enabled in Supabase. Only emails already registered in the portal can get in; anyone else is signed out with a message. In the Android app, Google opens in a Chrome Custom Tab and returns through the `studentsacademy://auth` deep link, because Google blocks sign-in inside WebViews.
+- **Supabase setup:** Authentication → URL Configuration → Redirect URLs must include `https://students-academy.vercel.app/**` and `studentsacademy://auth`.
+
 ## Production setup (already done)
 
 - **Hosting:** Vercel project `students-academy` (root directory `web/`), connected to this repo.

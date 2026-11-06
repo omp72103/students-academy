@@ -95,9 +95,11 @@ export function Courses() {
       <PageHero title="Courses" subtitle="Structured programs for SSC, HSC and entrance examinations." />
       <Section>
         <div className="space-y-6">
-          {PROGRAMS.map((p) => (
-            <div key={p.slug} id={p.slug} className="card p-6 sm:p-8 scroll-mt-24 grid lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2">
+          {PROGRAMS.map((p, idx) => (
+            <motion.div key={p.slug} id={p.slug} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 scroll-mt-28 grid lg:grid-cols-3 gap-6 transition-shadow hover:shadow-[0_30px_60px_-25px_rgba(16,36,69,0.3)]">
+              <span className="pointer-events-none absolute -right-4 -top-8 font-serif text-[9rem] font-bold leading-none text-slate-50 group-hover:text-gold-50 transition-colors">0{idx + 1}</span>
+              <div className="relative lg:col-span-2">
                 <div className="flex items-center gap-3">
                   <div className="h-11 w-11 rounded-xl bg-navy-800 text-gold-400 grid place-items-center"><Ic name={p.icon} size={20} /></div>
                   <h2 className="font-serif text-xl sm:text-2xl font-bold text-navy-900">{p.title}</h2>
@@ -105,7 +107,7 @@ export function Courses() {
                 <p className="mt-4 text-slate-600 leading-relaxed">{p.summary}</p>
                 <div className="mt-5 flex flex-wrap gap-2">{p.subjects.map((x) => <span key={x} className="badge bg-navy-50 text-navy-700 ring-1 ring-navy-100 py-1 px-3 text-xs">{x}</span>)}</div>
               </div>
-              <div className="rounded-xl bg-slate-50 p-5 border border-slate-100">
+              <div className="relative rounded-2xl bg-slate-50 p-5 border border-slate-100">
                 <div className="text-sm font-semibold text-navy-900 mb-3">Highlights</div>
                 <ul className="space-y-2">{p.highlights.map((h) => <li key={h} className="flex gap-2 text-sm text-slate-700"><CheckCircle2 size={16} className="text-emerald-600 shrink-0 mt-0.5" />{h}</li>)}</ul>
                 <div className="flex gap-2 mt-5">
@@ -113,7 +115,7 @@ export function Courses() {
                   <Link to="/contact#enquiry" className="btn-navy btn-sm">Enquire</Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </Section>
@@ -183,8 +185,8 @@ export function StudyMaterial() {
 
 export function MaterialCard({ m, showStd }) {
   return (
-    <a href={m.url} target="_blank" rel="noreferrer" className="card p-4 flex gap-3 hover:border-navy-200 hover:shadow-md transition group">
-      <div className="h-11 w-11 shrink-0 rounded-lg bg-rose-50 text-rose-600 grid place-items-center"><FileText size={20} /></div>
+    <a href={m.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200/80 bg-white p-4 flex gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-500/40 hover:shadow-[0_14px_30px_-14px_rgba(16,36,69,0.3)] group">
+      <div className="h-11 w-11 shrink-0 rounded-xl bg-gradient-to-br from-rose-50 to-orange-50 text-rose-600 grid place-items-center ring-1 ring-rose-100 transition-transform group-hover:scale-110 group-hover:-rotate-6"><FileText size={20} /></div>
       <div className="min-w-0 flex-1">
         <div className="font-medium text-sm text-slate-900 leading-snug group-hover:text-navy-700">{m.title}</div>
         <div className="text-xs text-slate-500 mt-1 flex flex-wrap gap-x-2">

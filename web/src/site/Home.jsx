@@ -441,6 +441,46 @@ function NewsAndResults({ notices, toppers }) {
   )
 }
 
+// ---------------- FAQ ----------------
+const FAQS = [
+  ['Which classes and courses do you teach?', 'SSC 9th & 10th (all subjects), FYJC & SYJC Science and Commerce, Information Technology, Computer Science and Electronics, plus MHT-CET, JEE Main and NEET-UG preparation.'],
+  ['Where is the academy and what are the timings?', 'We are at Grant Road (West), Mumbai. Batches run in the morning and evening; the office is open Monday to Saturday. See the Contact page for the exact address and hours.'],
+  ['Is the study material really free?', 'Yes. Over a hundred notes, formula sheets, workbooks and board papers by Sai Sir are free to download on this website. Enrolled students also get batch-only notes, assignments and online tests in the portal.'],
+  ['How will I know how my child is doing?', 'Every parent gets a portal login to see attendance, test results, assignments and fees. The academy also sends attendance, result and fee updates on SMS and WhatsApp.'],
+  ['What is the 10th Sarav Pariksha?', 'A practice examination series for SSC students, an initiative of the Lodha Foundation managed by Students Academy. Results and answer keys are published on the Sarav Pariksha page.'],
+  ['How do I take admission and what are the fees?', 'Send an enquiry, WhatsApp us or visit the academy. A counsellor will explain batches, timings and the current fee structure for your course.'],
+]
+function FAQ() {
+  const [open, setOpen] = useState(0)
+  return (
+    <section className="py-24 bg-slate-50 border-y border-slate-100">
+      <div className="container-x grid lg:grid-cols-[0.8fr_1.2fr] gap-12">
+        <div>
+          <SectionTitle eyebrow="FAQ" title="Questions parents ask us" subtitle="Can't find your answer? Send us a message and our counsellor will call you back." />
+          <Reveal i={2}><Link to="/contact#enquiry" className="btn-navy px-6 py-3">Ask a question <ArrowRight size={16} /></Link></Reveal>
+        </div>
+        <div className="space-y-3">
+          {FAQS.map(([q, a], i) => (
+            <Reveal key={q} i={i % 3}>
+              <div className={cls('rounded-2xl border bg-white transition-all duration-300', open === i ? 'border-gold-500/40 shadow-[0_18px_40px_-18px_rgba(16,36,69,0.3)]' : 'border-slate-200/80')}>
+                <button onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
+                  <span className="font-semibold text-navy-900">{q}</span>
+                  <motion.span animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.25 }} className={cls('grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg font-light', open === i ? 'bg-navy-800 text-gold-400' : 'bg-slate-100 text-navy-800')}>+</motion.span>
+                </button>
+                <AnimatePresence initial={false}>
+                  {open === i && <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3, ease: EASE }} className="overflow-hidden">
+                    <p className="px-6 pb-5 text-slate-600 leading-relaxed">{a}</p>
+                  </motion.div>}
+                </AnimatePresence>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 // ---------------- CTA ----------------
 function CTA({ s }) {
   return (
@@ -488,7 +528,8 @@ export default function Home() {
       <PortalShowcase />
       <MaterialTeaser materials={materials} />
       <NewsAndResults notices={notices} toppers={toppers} />
-      <CTA s={s} />
+      <FAQ />
+      <div className="pt-24"><CTA s={s} /></div>
     </>
   )
 }

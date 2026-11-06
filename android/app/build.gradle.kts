@@ -13,8 +13,8 @@ android {
         applicationId = "in.studentsacademy.app"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "1.1.0"
+        versionCode = 3
+        versionName = "1.2.0"
         buildConfigField("String", "SITE_URL", "\"$siteUrl\"")
     }
     buildFeatures { buildConfig = true }
@@ -44,4 +44,5 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation("androidx.webkit:webkit:1.11.0")
+    implementation("androidx.browser:browser:1.8.0")
 }

@@ -27,35 +27,83 @@ export const can = (user, perm) => {
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null)
   const [ready, setReady] = useState(false)
+  const [authError, setAuthError] = useState('')
+
+  async function profileByEmail(email) {
+    const all = await db.list('users')
+    return all.find((u) => (u.email || '').toLowerCase() === (email || '').toLowerCase()) || null
+  }
+
+  // Resolve a Supabase session (password or Google) to a Students Academy profile.
+  async function adoptSession(session) {
+    if (!session) return null
+    const email = session.user.email
+    const p = await profileByEmail(email)
+    if (!p || p.status === 'inactive') {
+      await supabase.auth.signOut()
+      setUser(null)
+      setAuthError(!p
+        ? `${email} is not registered with Students Academy. Ask the office to add this email to your profile, then sign in again.`
+        : 'Your account is inactive. Contact the office.')
+      return null
+    }
+    setAuthError(''); setUser(p); return p
+  }
 
   useEffect(() => {
+    let sub
     (async () => {
       try {
         if (MODE === 'supabase') {
+          // Errors returned by the OAuth provider (?error_description=… or #error_description=…)
+          const qs = new URLSearchParams(window.location.search + '&' + window.location.hash.replace(/^#/, ''))
+          if (qs.get('error_description')) setAuthError(decodeURIComponent(qs.get('error_description').replace(/\+/g, ' ')))
           const { data } = await supabase.auth.getSession()
-          if (data.session) setUser(await profileByEmail(data.session.user.email))
+          await adoptSession(data.session)
+          sub = supabase.auth.onAuthStateChange((event, session) => {
+            if (event === 'SIGNED_IN') setTimeout(() => adoptSession(session), 0)
+            if (event === 'SIGNED_OUT') setUser(null)
+          }).data.subscription
         } else {
           const id = localStorage.getItem(KEY)
           if (id) setUser(await db.get('users', id))
         }
       } finally { setReady(true) }
     })()
-  }, [])
+    return () => sub?.unsubscribe()
+  }, []) // eslint-disable-line
 
-  async function profileByEmail(email) {
-    const all = await db.list('users')
-    return all.find((u) => (u.email || '').toLowerCase() === email.toLowerCase()) || null
+  /** Google sign-in. In the Android app it opens Chrome (Google blocks sign-in inside WebViews) and returns via a deep link. */
+  async function loginWithGoogle() {
+    setAuthError('')
+    if (MODE !== 'supabase') throw new Error('Google sign-in works on the live portal (Supabase mode).')
+    const inApp = typeof window !== 'undefined' && window.AndroidBridge && typeof window.AndroidBridge.openAuth === 'function'
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: inApp ? 'studentsacademy://auth' : `${window.location.origin}/portal/login`,
+        queryParams: { prompt: 'select_account' },
+        skipBrowserRedirect: inApp,
+      },
+    })
+    if (error) throw new Error(error.message)
+    if (inApp) window.AndroidBridge.openAuth(data.url)
+  }
+
+  async function resetPassword(email) {
+    if (MODE !== 'supabase') throw new Error('Password reset works on the live portal.')
+    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/portal/reset-password` })
+    if (error) throw new Error(error.message)
   }
 
   async function login(identifier, password) {
     const id = identifier.trim().toLowerCase()
     if (MODE === 'supabase') {
-      const { error } = await supabase.auth.signInWithPassword({ email: id, password })
-      if (error) throw new Error(error.message)
-      const p = await profileByEmail(id)
-      if (!p) throw new Error('No profile is linked to this account. Contact the office.')
-      if (p.status === 'inactive') throw new Error('Your account is inactive. Contact the office.')
-      setUser(p); return p
+      const { data, error } = await supabase.auth.signInWithPassword({ email: id, password })
+      if (error) throw new Error(error.message === 'Invalid login credentials' ? 'Invalid email or password.' : error.message)
+      const p = await adoptSession(data.session)
+      if (!p) throw new Error(authErrorFor(id))
+      return p
     }
     const all = await db.list('users')
     const u = all.find((x) => (x.email || '').toLowerCase() === id || (x.phone || '') === id || (x.rollNo || '').toLowerCase() === id)
@@ -71,9 +119,19 @@ export function AuthProvider({ children }) {
 
   async function refresh() { if (user) setUser(await db.get('users', user.id)) }
 
-  return <Ctx.Provider value={{ user, ready, login, logout, refresh }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ user, ready, login, logout, refresh, loginWithGoogle, resetPassword, authError, setAuthError }}>{children}</Ctx.Provider>
 }
 export const useAuth = () => useContext(Ctx)
+const authErrorFor = (email) => `${email} is not registered with Students Academy (or is inactive). Contact the office.`
+
+/** Is the Google provider switched on in Supabase? (public endpoint; hides the button until it is) */
+export async function googleEnabled() {
+  if (MODE !== 'supabase') return false
+  try {
+    const r = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: import.meta.env.VITE_SUPABASE_ANON_KEY } })
+    const j = await r.json(); return !!j?.external?.google
+  } catch { return false }
+}
 
 // Creates a login for a new user. In Supabase mode this registers an Auth account using a
 // throw-away client so the admin's own session is not replaced.

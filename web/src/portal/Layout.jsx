@@ -4,9 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, UserRound, GraduationCap, Layers, CalendarDays, CalendarCheck, Library, ClipboardList, BarChart3,
   NotebookPen, Wallet, Megaphone, MessageSquare, Globe, Settings, LogOut, X, PhoneCall, UserCog, Bell, ShieldCheck, Smartphone,
-  ChevronLeft, Search, Home, PanelLeft, User, Sparkles, Eye, EyeOff, ArrowRight,
+  ChevronLeft, Search, Home, PanelLeft, User, Sparkles, Eye, EyeOff, ArrowRight, Moon, Sun, Command,
 } from 'lucide-react'
-import { useAuth, ROLES } from '../lib/auth'
+import { useAuth, ROLES, googleEnabled } from '../lib/auth'
+import { supabase } from '../lib/db'
 import { MODE, useTable } from '../lib/db'
 import { Avatar } from '../components/ui'
 import SendQueue from '../components/SendQueue'
@@ -42,11 +43,20 @@ const NAV = {
 // Mobile bottom tab bar — the 4 most used pages per role
 const TABS = { admin: ['dashboard', 'students', 'fees', 'messaging'], faculty: ['dashboard', 'attendance', 'tests', 'materials'], student: ['dashboard', 'materials', 'tests', 'results'], parent: ['dashboard', 'attendance', 'results', 'fees'] }
 
+// Light / dark theme (MITK ERP "navy glass" dark mode), remembered per device
+const THEME_KEY = 'sa_theme'
+const themeSubs = new Set()
+export function useTheme() {
+  const theme = useSyncExternalStore((f) => { themeSubs.add(f); return () => themeSubs.delete(f) }, () => localStorage.getItem(THEME_KEY) || 'light')
+  const toggle = () => { localStorage.setItem(THEME_KEY, theme === 'dark' ? 'light' : 'dark'); themeSubs.forEach((f) => f()) }
+  return [theme, toggle]
+}
+
 // Same background + ambient blobs as APT-Tech AI Prep / MITK ERP
-const APP_BG = 'bg-gradient-to-br from-slate-50 via-blue-50/70 to-cyan-50/60'
+const APP_BG = 'app-bg bg-gradient-to-br from-slate-50 via-blue-50/70 to-cyan-50/60 transition-colors duration-300'
 export function AmbientBlobs() {
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
+    <div className="ambient fixed inset-0 -z-10 pointer-events-none overflow-hidden">
       <div className="absolute -top-40 right-0 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-blue-200/30 to-cyan-200/25 blur-3xl animate-aurora" />
       <div className="absolute bottom-0 -left-32 w-[440px] h-[440px] rounded-full bg-gradient-to-br from-violet-200/25 to-blue-200/20 blur-3xl animate-aurora [animation-delay:-5s]" />
       <div className="absolute top-1/2 -right-20 w-[380px] h-[380px] rounded-full bg-gradient-to-br from-amber-200/15 to-orange-200/10 blur-3xl animate-aurora [animation-delay:-9s]" />
@@ -91,12 +101,13 @@ function Sidebar({ groups, user, collapsed, setCollapsed, mobile, onClose, onLog
                 <NavLink key={to} to={`/portal/${to}`} onClick={mobile ? onClose : undefined} title={collapsed && !mobile ? label : undefined}
                   className={({ isActive }) => cls('group relative flex h-10 items-center gap-3 rounded-xl border px-3 text-[14px] font-bold transition-all',
                     collapsed && !mobile && 'justify-center px-0',
-                    isActive ? 'border-white/70 bg-gradient-to-r from-blue-600/95 to-cyan-400/90 text-white shadow-[0_8px_24px_rgba(6,182,212,0.38),inset_0_1px_0_rgba(255,255,255,0.5)]'
+                    isActive ? 'border-transparent text-white'
                       : 'border-transparent text-slate-700 hover:border-white/80 hover:bg-white/65 hover:text-slate-900 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)]')}>
                   {({ isActive }) => <>
-                    <Icon size={18} className="shrink-0" />
-                    {(!collapsed || mobile) && <span className="truncate">{label}</span>}
-                    {isActive && collapsed && !mobile && <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)] animate-pulse" />}
+                    {isActive && <motion.span layoutId={mobile ? 'nav-pill-m' : 'nav-pill'} className="absolute inset-0 rounded-xl border border-white/70 bg-gradient-to-r from-blue-600/95 to-cyan-400/90 shadow-[0_8px_24px_rgba(6,182,212,0.38),inset_0_1px_0_rgba(255,255,255,0.5)]" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+                    <Icon size={18} className="relative shrink-0" />
+                    {(!collapsed || mobile) && <span className="relative truncate">{label}</span>}
+                    {isActive && collapsed && !mobile && <span className="absolute z-10 -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(34,211,238,0.9)] animate-pulse" />}
                   </>}
                 </NavLink>
               ))}
@@ -132,6 +143,12 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
   const nav = useNavigate(); const loc = useLocation()
   const [notices] = useTable('notices')
   const [q, setQ] = useState(''); const [focus, setFocus] = useState(false)
+  const [theme, toggleTheme] = useTheme()
+  const searchRef = useRef()
+  useEffect(() => {
+    const h = (e) => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); searchRef.current?.focus() } }
+    window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h)
+  }, [])
   const items = groups.flatMap(([, it]) => it)
   const current = items.find(([to]) => loc.pathname.startsWith('/portal/' + to))
   const matches = q ? items.filter(([, l]) => l.toLowerCase().includes(q.toLowerCase())) : items
@@ -148,8 +165,10 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
         </h1>
         <div className="relative hidden md:block flex-1 max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input value={q} onChange={(e) => setQ(e.target.value)} onFocus={() => setFocus(true)} onBlur={() => setTimeout(() => setFocus(false), 150)}
-            placeholder="Search pages…" className="h-9 w-full rounded-full bg-slate-200/70 pl-9 pr-3 text-sm text-slate-700 outline-none placeholder:text-slate-500 focus:bg-white focus:ring-4 focus:ring-blue-100" />
+          <input ref={searchRef} value={q} onChange={(e) => setQ(e.target.value)} onFocus={() => setFocus(true)} onBlur={() => setTimeout(() => setFocus(false), 150)}
+            onKeyDown={(e) => { if (e.key === 'Enter' && matches[0]) { nav('/portal/' + matches[0][0]); setQ(''); e.currentTarget.blur() } }}
+            placeholder="Search pages…" className="h-9 w-full rounded-full bg-slate-200/70 pl-9 pr-14 text-sm text-slate-700 outline-none placeholder:text-slate-500 focus:bg-white focus:ring-4 focus:ring-blue-100" />
+          <kbd className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 hidden lg:flex items-center gap-0.5 rounded-md border border-slate-300/70 bg-white/70 px-1.5 text-[10px] font-bold text-slate-500"><Command size={10} />K</kbd>
           <AnimatePresence>
             {focus && <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="absolute left-0 right-0 mt-2 max-h-72 overflow-y-auto nice-scroll rounded-2xl border border-white bg-white/95 p-2 shadow-xl backdrop-blur-2xl">
               {matches.map(([to, label, Icon]) => <button key={to} onMouseDown={() => { nav('/portal/' + to); setQ('') }} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-blue-50"><Icon size={15} className="text-blue-600" />{label}</button>)}
@@ -160,6 +179,13 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
         <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
           {isAndroidApp() && <span className="hidden sm:inline-flex badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 gap-1"><Smartphone size={12} />App</span>}
           {MODE === 'demo' && <span className="hidden sm:inline-flex badge bg-amber-50 text-amber-700 ring-1 ring-amber-200">Demo</span>}
+          <button onClick={toggleTheme} className={iconBtn} aria-label="Toggle dark mode" title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span key={theme} initial={{ rotate: -90, opacity: 0, scale: 0.6 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: 90, opacity: 0, scale: 0.6 }} transition={{ duration: 0.2 }}>
+                {theme === 'dark' ? <Sun size={17} className="text-amber-400" /> : <Moon size={17} />}
+              </motion.span>
+            </AnimatePresence>
+          </button>
           <Popover button={(open, t) => <button onClick={t} className={cls(iconBtn, 'relative')} aria-label="Notifications"><Bell size={17} />{mine.length > 0 && <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white" />}</button>}>
             <p className="text-sm font-bold text-slate-700 mb-2 px-1">Notifications</p>
             {mine.length ? mine.map((n) => <button key={n.id} onClick={() => nav('/portal/notices')} className="w-full text-left rounded-xl px-2 py-2 hover:bg-blue-50"><p className="text-xs font-bold text-slate-700 line-clamp-1">{n.title}</p><p className="text-[11px] text-slate-500">{fmtDate(n.createdAt)}</p></button>)
@@ -195,6 +221,7 @@ export function PortalShell() {
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sa_sidebar') === '1')
   const nav = useNavigate(); const loc = useLocation()
+  const [theme] = useTheme()
   useEffect(() => { localStorage.setItem('sa_sidebar', collapsed ? '1' : '0') }, [collapsed])
   if (!ready) return <div className={cls('min-h-screen grid place-items-center', APP_BG)}><div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" /></div>
   if (!user) return <Navigate to="/portal/login" replace />
@@ -202,7 +229,7 @@ export function PortalShell() {
   const doLogout = async () => { await logout(); nav('/portal/login') }
 
   return (
-    <div className={cls('portal relative flex min-h-screen w-full text-slate-900', APP_BG)}>
+    <div className={cls('portal relative flex min-h-screen w-full text-slate-900', APP_BG, theme === 'dark' && 'dark')}>
       <AmbientBlobs />
       <div className="hidden lg:block sticky top-0 h-screen p-3 shrink-0">
         <Sidebar groups={groups} user={user} collapsed={collapsed} setCollapsed={setCollapsed} onLogout={doLogout} />
@@ -230,14 +257,24 @@ export function PortalShell() {
   )
 }
 
+const GoogleIcon = () => (
+  <svg viewBox="0 0 48 48" className="h-5 w-5" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+)
+
 export function Login() {
-  const { user, login } = useAuth()
+  const { user, login, loginWithGoogle, resetPassword, authError, setAuthError } = useAuth()
   const [id, setId] = useState(''); const [pw, setPw] = useState(''); const [show, setShow] = useState(false)
   const [err, setErr] = useState(''); const [busy, setBusy] = useState(false)
+  const [google, setGoogle] = useState(false); const [gBusy, setGBusy] = useState(false)
+  const [forgot, setForgot] = useState(false); const [sent, setSent] = useState(false)
   const nav = useNavigate()
+  useEffect(() => { googleEnabled().then(setGoogle) }, [])
+  useEffect(() => { if (authError) setErr(authError) }, [authError])
   if (user) return <Navigate to="/portal/dashboard" replace />
+  async function google_() { setErr(''); setGBusy(true); try { await loginWithGoogle() } catch (e) { setErr(e.message); setGBusy(false) } }
+  async function sendReset(e) { e.preventDefault(); setErr(''); setBusy(true); try { await resetPassword(id); setSent(true) } catch (e) { setErr(e.message) } finally { setBusy(false) } }
   async function submit(e) {
-    e.preventDefault(); setErr(''); setBusy(true)
+    e.preventDefault(); setErr(''); setAuthError(''); setBusy(true)
     try { await login(id, pw); nav('/portal/dashboard') } catch (e) { setErr(e.message) } finally { setBusy(false) }
   }
   const demo = [['Management', 'admin@studentsacademy.in', 'admin123'], ['Faculty', 'sai@studentsacademy.in', 'faculty123'], ['Student', 'aarav@student.sa', 'student123'], ['Parent', 'aarav.parent@sa.in', 'parent123']]
@@ -269,17 +306,33 @@ export function Login() {
           className="relative w-full max-w-md rounded-[30px] border border-white/80 bg-white/75 backdrop-blur-2xl shadow-glass p-7 sm:p-9">
           <div className="pointer-events-none absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(34,211,238,0.9)]" />
           <div className="lg:hidden flex items-center gap-3 mb-6"><BrandMark /><div className="font-heading font-extrabold text-gradient">Students Academy</div></div>
-          <h2 className="font-heading text-2xl font-extrabold text-slate-800">Welcome back 👋</h2>
-          <p className="text-sm font-medium text-slate-500 mt-1">Sign in with your email{MODE === 'demo' ? ', mobile number or roll no.' : ''} and password.</p>
-          <form onSubmit={submit} className="mt-6 space-y-4">
+          <h2 className="font-heading text-2xl font-extrabold text-slate-800">{forgot ? 'Reset password' : 'Welcome back 👋'}</h2>
+          <p className="text-sm font-medium text-slate-500 mt-1">{forgot ? 'We will email you a link to set a new password.' : `Sign in with Google or your email${MODE === 'demo' ? ', mobile number or roll no.' : ''} and password.`}</p>
+          {forgot ? (
+            sent ? <div className="mt-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-semibold text-emerald-800">Check {id} for the reset link.</div> : (
+            <form onSubmit={sendReset} className="mt-6 space-y-4">
+              <label className="block"><span className="label">Email</span><input type="email" className="input py-2.5" value={id} onChange={(e) => setId(e.target.value)} required /></label>
+              {err && <p className="text-sm font-semibold text-rose-600">{err}</p>}
+              <button disabled={busy} className="btn-primary w-full py-3">{busy ? 'Sending…' : 'Send reset link'}</button>
+            </form>)
+          ) : <>
+          {google && <>
+            <button onClick={google_} disabled={gBusy} className="mt-6 w-full flex items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 text-[15px] font-bold text-slate-700 shadow-sm transition hover:shadow-md hover:border-slate-300 active:scale-[0.99] disabled:opacity-60">
+              <GoogleIcon />{gBusy ? 'Opening Google…' : 'Continue with Google'}
+            </button>
+            <div className="my-5 flex items-center gap-3 text-[11px] font-bold uppercase tracking-wider text-slate-400"><span className="h-px flex-1 bg-slate-200" />or<span className="h-px flex-1 bg-slate-200" /></div>
+          </>}
+          <form onSubmit={submit} className={cls('space-y-4', !google && 'mt-6')}>
             <label className="block"><span className="label">Email {MODE === 'demo' && '/ Mobile / Roll No.'}</span><input className="input py-2.5" value={id} onChange={(e) => setId(e.target.value)} required autoComplete="username" /></label>
-            <label className="block"><span className="label">Password</span>
+            <label className="block"><span className="label flex justify-between">Password{MODE === 'supabase' && <button type="button" onClick={() => { setForgot(true); setErr('') }} className="font-bold text-blue-600 hover:underline">Forgot?</button>}</span>
               <div className="relative"><input type={show ? 'text' : 'password'} className="input py-2.5 pr-10" value={pw} onChange={(e) => setPw(e.target.value)} required autoComplete="current-password" />
                 <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Show password">{show ? <EyeOff size={16} /> : <Eye size={16} />}</button></div>
             </label>
-            <AnimatePresence>{err && <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }} className="text-sm font-semibold text-rose-600">{err}</motion.p>}</AnimatePresence>
+            <AnimatePresence>{err && <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }} className="rounded-xl bg-rose-50 border border-rose-100 px-3 py-2 text-sm font-semibold text-rose-700">{err}</motion.p>}</AnimatePresence>
             <button disabled={busy} className="btn-primary w-full py-3 text-[15px]">{busy ? 'Signing in…' : <>Sign in <ArrowRight size={17} /></>}</button>
           </form>
+          </>}
+          {forgot && <button onClick={() => { setForgot(false); setSent(false); setErr('') }} className="mt-4 text-sm font-bold text-blue-600 hover:underline">← Back to sign in</button>}
           {MODE === 'demo' && (
             <div className="mt-7">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Demo logins</div>
@@ -293,6 +346,33 @@ export function Login() {
           <Link to="/" className="block text-center text-sm font-semibold text-slate-500 mt-6 hover:text-blue-700">← Back to website</Link>
         </motion.div>
       </div>
+    </div>
+  )
+}
+
+export function ResetPassword() {
+  const [pw, setPw] = useState(''); const [pw2, setPw2] = useState(''); const [msg, setMsg] = useState(''); const [ok, setOk] = useState(false); const [busy, setBusy] = useState(false)
+  const nav = useNavigate()
+  async function save(e) {
+    e.preventDefault(); setMsg('')
+    if (pw.length < 8) return setMsg('Use at least 8 characters.')
+    if (pw !== pw2) return setMsg('Passwords do not match.')
+    setBusy(true)
+    const { error } = await supabase.auth.updateUser({ password: pw })
+    setBusy(false)
+    if (error) return setMsg(error.message === 'Auth session missing!' ? 'This reset link has expired. Request a new one from the sign-in page.' : error.message)
+    setOk(true); setTimeout(() => nav('/portal/dashboard'), 1200)
+  }
+  return (
+    <div className={cls('portal relative min-h-screen grid place-items-center p-5', APP_BG)}>
+      <AmbientBlobs />
+      <motion.form onSubmit={save} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative w-full max-w-md rounded-[30px] border border-white/80 bg-white/75 backdrop-blur-2xl shadow-glass p-8 space-y-4">
+        <div className="flex items-center gap-3"><BrandMark /><h2 className="font-heading text-xl font-extrabold text-slate-800">Set a new password</h2></div>
+        <label className="block"><span className="label">New password</span><input type="password" className="input py-2.5" value={pw} onChange={(e) => setPw(e.target.value)} required /></label>
+        <label className="block"><span className="label">Confirm password</span><input type="password" className="input py-2.5" value={pw2} onChange={(e) => setPw2(e.target.value)} required /></label>
+        {msg && <p className="text-sm font-semibold text-rose-600">{msg}</p>}
+        {ok ? <p className="text-sm font-bold text-emerald-700">Password updated. Opening your dashboard…</p> : <button disabled={busy} className="btn-primary w-full py-3">{busy ? 'Saving…' : 'Update password'}</button>}
+      </motion.form>
     </div>
   )
 }

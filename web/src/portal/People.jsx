@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Plus, Upload, Download, Pencil, MessageCircle, Phone, Trash2, Eye, KeyRound } from 'lucide-react'
+import { Plus, Upload, Download, Pencil, MessageCircle, Phone, Trash2, Eye, KeyRound, GraduationCap, Wallet, CalendarX, UserPlus } from 'lucide-react'
 import { db, useTable, uid, MODE } from '../lib/db'
 import { useAuth, createLogin } from '../lib/auth'
 import { PageHeader, Card, Table, Modal, Field, SearchBox, Badge, Avatar, useToast, Tabs, Stat } from '../components/ui'
@@ -59,6 +59,20 @@ export function Students() {
         <button className="btn-outline" onClick={() => downloadCsv('students.csv', list.map((r) => ({ rollNo: r.rollNo, name: r.name, batch: batches.find((b) => b.id === r.batchId)?.name, phone: r.phone, email: r.email, parentName: r.parentName, parentPhone: r.parentPhone, school: r.school, admissionDate: r.admissionDate, feeTotal: r.feeTotal, ...feeSummary(r, fees) })))}><Download size={16} />Export</button>
         <button className="btn-primary" onClick={() => setEdit({})}><Plus size={16} />New Admission</button>
       </>} />
+      {(() => {
+        const all = users.filter((u) => u.role === 'student' && myBatchIds.includes(u.batchId) && u.status !== 'inactive')
+        const dues = all.filter((u) => feeSummary(u, fees).balance > 0).length
+        const lowAtt = all.filter((u) => { const a = attendanceSummary(u.id, att); return a.total && a.pct < 75 }).length
+        const month = today().slice(0, 7); const fresh = all.filter((u) => (u.admissionDate || '').startsWith(month)).length
+        return (
+          <div className="mb-5 grid grid-cols-2 xl:grid-cols-4 gap-4">
+            <Stat index={0} tone="indigo" icon={GraduationCap} label="Active students" value={all.length} progress={100} hint={`${batches.filter((b) => myBatchIds.includes(b.id)).length} batches`} />
+            {isAdmin && <Stat index={1} tone="rose" icon={Wallet} label="Fee pending" value={dues} progress={all.length ? ((all.length - dues) / all.length) * 100 : 100} hint={`${all.length - dues} fully paid`} to="/portal/fees" />}
+            <Stat index={2} tone="amber" icon={CalendarX} label="Attendance < 75%" value={lowAtt} progress={all.length ? ((all.length - lowAtt) / all.length) * 100 : 100} hint="Needs follow-up" to="/portal/messaging?audience=low-att" />
+            <Stat index={3} tone="emerald" icon={UserPlus} label="New this month" value={fresh} progress={all.length ? (fresh / all.length) * 100 : 0} hint={new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' })} />
+          </div>
+        )
+      })()}
       <Card bodyClass="p-0">
         <div className="flex flex-wrap gap-3 p-4 border-b border-slate-100">
           <SearchBox value={q} onChange={setQ} placeholder="Search name, roll no, phone" />
@@ -100,7 +114,7 @@ async function saveStudent(f, users, batches) {
 }
 
 function StudentForm({ initial, batches, users, onClose, toast, settings }) {
-  const [f, setF] = useState({ batchId: batches[0]?.id, ...initial })
+  const [f, setF] = useState({ batchId: batches[0]?.id, feeTotal: initial.id ? undefined : batches[0]?.fee, ...initial })
   const [busy, setBusy] = useState(false); const [created, setCreated] = useState(null)
   const set = (k) => (e) => setF({ ...f, [k]: e.target.value })
   async function submit(e) {

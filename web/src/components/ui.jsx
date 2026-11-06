@@ -97,7 +97,7 @@ export function Stat({ icon: Icon, label, value, hint, tone = 'indigo', progress
       {progress != null && (
         <div className="relative mt-3">
           <div className="h-1.5 w-full rounded-full bg-white/20 overflow-hidden">
-            <motion.div className="h-full rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.6)]" initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, progress))}%` }} transition={{ duration: 0.9, delay: index * 0.07 + 0.25, ease: EASE }} />
+            <motion.div className="h-full rounded-full shadow-[0_0_8px_rgba(255,255,255,0.6)]" style={{ background: "#fff" }} initial={{ width: 0 }} animate={{ width: `${Math.max(0, Math.min(100, progress))}%` }} transition={{ duration: 0.9, delay: index * 0.07 + 0.25, ease: EASE }} />
           </div>
         </div>
       )}
