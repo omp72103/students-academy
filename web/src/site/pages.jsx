@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
 import { Link, useSearchParams } from 'react-router-dom'
 import { School, Atom, Target, BarChart3, Monitor, Cpu } from 'lucide-react'
 import { ArrowRight, BookOpen, FileText, Download, CheckCircle2, Award, Users, Library, ClipboardCheck, Smartphone, MapPin, Phone, Mail, Clock, Send, Quote, Search, ExternalLink, Bell, Pin } from 'lucide-react'
@@ -27,12 +28,17 @@ function Section({ eyebrow, title, subtitle, children, className, center }) {
 
 function PageHero({ title, subtitle, crumb }) {
   return (
-    <div className="bg-navy-800 text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '22px 22px' }} />
-      <div className="container-x py-14 relative">
-        <div className="text-xs text-navy-200 mb-2"><Link to="/" className="hover:text-white">Home</Link> / {crumb || title}</div>
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-white">{title}</h1>
-        {subtitle && <p className="mt-3 text-navy-100 max-w-2xl">{subtitle}</p>}
+    <div className="relative overflow-hidden bg-navy-900 text-white">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-blue-600/25 blur-[100px] animate-aurora" />
+        <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-gold-500/20 blur-[100px] animate-aurora [animation-delay:-7s]" />
+        <div className="absolute inset-0 bg-grid mask-fade-b" />
+      </div>
+      <div className="container-x py-16 sm:py-20 relative">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-navy-200 mb-3 tracking-wide"><Link to="/" className="hover:text-gold-400">Home</Link> <span className="mx-1.5 text-gold-500">/</span> {crumb || title}</motion.div>
+        <h1 className="font-serif text-4xl sm:text-5xl font-bold text-white overflow-hidden"><motion.span className="inline-block" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>{title}</motion.span></h1>
+        {subtitle && <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4 text-navy-100 max-w-2xl text-lg">{subtitle}</motion.p>}
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="mt-8 h-[2px] w-24 origin-left bg-gradient-to-r from-gold-500 to-transparent" />
       </div>
     </div>
   )
@@ -40,165 +46,6 @@ function PageHero({ title, subtitle, crumb }) {
 
 const ICONS = { School, Atom, Target, BarChart3, Monitor, Cpu }
 const Ic = ({ name, ...p }) => { const C = ICONS[name] || BookOpen; return <C {...p} /> }
-
-// ================= HOME =================
-export function Home() {
-  const s = useSettings()
-  const [materials] = useTable('materials')
-  const [notices] = useTable('notices')
-  const [toppers] = useTable('toppers')
-  const pub = notices.filter((n) => n.publishOnWebsite).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)).slice(0, 4)
-  const pubMaterials = materials.filter((m) => m.visibility === 'public')
-  return (
-    <>
-      <section className="relative bg-navy-900 text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
-        <div className="absolute -right-32 -top-32 h-[28rem] w-[28rem] rounded-full bg-gold-500/10 blur-3xl" />
-        <div className="container-x relative py-20 sm:py-28 grid lg:grid-cols-2 gap-12 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-gold-500/40 bg-gold-500/10 px-3 py-1 text-xs font-medium text-gold-100 mb-6">
-              <Award size={14} className="text-gold-400" /> Trusted coaching at Grant Road since {s.established}
-            </div>
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-[3.4rem] font-bold leading-[1.1] text-white">
-              Clear concepts. <span className="text-gold-400">Confident</span> results.
-            </h1>
-            <p className="mt-6 text-lg text-navy-100 leading-relaxed max-w-xl">
-              {s.name} prepares students for SSC, HSC, MHT-CET, JEE and NEET with small batches, handcrafted notes by Sai Sir, regular testing and a parent-connected learning portal.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/courses" className="btn-gold px-6 py-3 text-base">Explore Courses <ArrowRight size={18} /></Link>
-              <Link to="/study-material" className="btn px-6 py-3 text-base border border-white/30 text-white hover:bg-white/10">Free Study Material</Link>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            {[
-              [s.established, 'Teaching since', Award], [pubMaterials.length + '+', 'Free notes & papers', Library],
-              ['9th – 12th', 'SSC & HSC boards', BookOpen], ['CET · JEE · NEET', 'Entrance preparation', ClipboardCheck],
-            ].map(([v, l, I]) => (
-              <div key={l} className="rounded-2xl bg-white/5 border border-white/10 p-6 backdrop-blur">
-                <I className="text-gold-400 mb-3" size={22} />
-                <div className="text-2xl font-bold text-white">{v}</div>
-                <div className="text-sm text-navy-200 mt-1">{l}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Section eyebrow="Programs" title="Courses we offer" subtitle="Board-focused teaching with an entrance-ready foundation, for every stream from 9th to 12th.">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {PROGRAMS.map((p) => (
-            <Link key={p.slug} to={`/courses#${p.slug}`} className="group card p-6 hover:border-navy-200 hover:shadow-md transition">
-              <div className="h-12 w-12 rounded-xl bg-navy-50 text-navy-700 grid place-items-center mb-4 group-hover:bg-navy-800 group-hover:text-gold-400 transition"><Ic name={p.icon} size={22} /></div>
-              <h3 className="font-semibold text-navy-900 text-lg">{p.title}</h3>
-              <p className="text-sm text-slate-600 mt-2 leading-relaxed">{p.summary}</p>
-              <div className="mt-4 text-sm font-medium text-navy-700 flex items-center gap-1">Learn more <ArrowRight size={15} className="group-hover:translate-x-1 transition" /></div>
-            </Link>
-          ))}
-        </div>
-      </Section>
-
-      <section className="bg-slate-50 border-y border-slate-200">
-        <div className="container-x py-16 grid lg:grid-cols-5 gap-10 items-center">
-          <div className="lg:col-span-2">
-            <div className="aspect-[4/5] max-w-sm rounded-2xl bg-gradient-to-br from-navy-800 to-navy-900 p-8 flex flex-col justify-end text-white relative overflow-hidden">
-              <Quote className="absolute top-6 left-6 text-gold-500/30" size={64} />
-              <p className="font-serif text-xl leading-relaxed relative">"{MENTOR.quote}"</p>
-              <div className="mt-6 pt-4 border-t border-white/15">
-                <div className="font-semibold">{MENTOR.name}</div>
-                <div className="text-sm text-navy-200">{MENTOR.title}</div>
-              </div>
-            </div>
-          </div>
-          <div className="lg:col-span-3">
-            <div className="text-xs font-semibold tracking-[0.2em] uppercase text-gold-600 mb-2">Our Mentor</div>
-            <h2 className="font-serif text-3xl font-bold text-navy-900">Learn with {MENTOR.name}</h2>
-            <p className="mt-2 text-sm font-medium text-slate-500">{MENTOR.qualification}</p>
-            <p className="mt-4 text-slate-600 leading-relaxed">{MENTOR.bio}</p>
-            <ul className="mt-6 grid sm:grid-cols-2 gap-3">
-              {['Handcrafted chapterwise notes', 'Board PYQs from 2019 onwards', 'DIY electronics & programming', 'Concept-first teaching'].map((t) => (
-                <li key={t} className="flex items-center gap-2 text-sm text-slate-700"><CheckCircle2 size={18} className="text-emerald-600 shrink-0" />{t}</li>
-              ))}
-            </ul>
-            <Link to="/about" className="btn-outline mt-8">Read more about us</Link>
-          </div>
-        </div>
-      </section>
-
-      <Section eyebrow="Why Students Academy" title="A complete learning system" center>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {[
-            [Users, 'Small batches', 'Personal attention, doubt solving and regular progress reviews.'],
-            [ClipboardCheck, 'Online tests', 'Chapter tests and CET-style mocks with instant scores and analysis.'],
-            [Library, 'Digital library', 'Notes, formula sheets, PYQs and workbooks available 24×7 on the portal.'],
-            [Smartphone, 'Parent connect', 'Attendance, results and fee updates on SMS & WhatsApp through our app.'],
-          ].map(([I, t, d]) => (
-            <div key={t} className="text-center p-6">
-              <div className="mx-auto h-14 w-14 rounded-full bg-gold-50 text-gold-600 grid place-items-center mb-4 ring-1 ring-gold-100"><I size={24} /></div>
-              <h3 className="font-semibold text-navy-900">{t}</h3>
-              <p className="text-sm text-slate-600 mt-2">{d}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <section className="bg-navy-50/60 border-y border-navy-100">
-        <div className="container-x py-16 grid lg:grid-cols-2 gap-10">
-          <div>
-            <div className="flex items-end justify-between mb-5">
-              <h2 className="font-serif text-2xl font-bold text-navy-900">Latest Notices</h2>
-              <Link to="/notices" className="text-sm font-medium text-navy-700">View all →</Link>
-            </div>
-            <div className="space-y-3">
-              {pub.map((n) => (
-                <div key={n.id} className="card p-4 flex gap-4">
-                  <div className="text-center shrink-0 w-14 rounded-lg bg-navy-800 text-white py-2">
-                    <div className="text-lg font-bold leading-none">{new Date(n.createdAt).getDate()}</div>
-                    <div className="text-[10px] uppercase mt-1 text-gold-400">{new Date(n.createdAt).toLocaleString('en', { month: 'short' })}</div>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-navy-900 text-sm flex items-center gap-1.5">{n.pinned && <Pin size={13} className="text-gold-600" />}{n.title}</div>
-                    <p className="text-sm text-slate-600 mt-1 line-clamp-2">{n.body}</p>
-                  </div>
-                </div>
-              ))}
-              {!pub.length && <p className="text-sm text-slate-500">No notices right now.</p>}
-            </div>
-          </div>
-          <div>
-            <div className="flex items-end justify-between mb-5">
-              <h2 className="font-serif text-2xl font-bold text-navy-900">Our Achievers</h2>
-              <Link to="/results" className="text-sm font-medium text-navy-700">All results →</Link>
-            </div>
-            <div className="grid sm:grid-cols-3 gap-3">
-              {[...toppers].sort((a, b) => (a.order || 0) - (b.order || 0)).slice(0, 3).map((t) => (
-                <div key={t.id} className="card p-5 text-center">
-                  <Award className="mx-auto text-gold-500" size={26} />
-                  <div className="mt-3 text-2xl font-bold text-navy-900">{t.score}</div>
-                  <div className="font-medium text-sm mt-1">{t.name}</div>
-                  <div className="text-xs text-slate-500">{t.exam} · {t.year}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-x py-16">
-        <div className="rounded-2xl bg-navy-800 text-white p-8 sm:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div>
-            <h2 className="font-serif text-2xl sm:text-3xl font-bold text-white">Admissions open for 2026–27</h2>
-            <p className="text-navy-100 mt-2">Visit us at {s.location} or send an enquiry — our team will call you back.</p>
-          </div>
-          <div className="flex gap-3 shrink-0">
-            <Link to="/contact#enquiry" className="btn-gold px-6 py-3">Enquire Now</Link>
-            <a href={`tel:${s.phone}`} className="btn px-6 py-3 border border-white/30 text-white hover:bg-white/10"><Phone size={16} />Call</a>
-          </div>
-        </div>
-      </section>
-    </>
-  )
-}
 
 // ================= ABOUT =================
 export function About() {

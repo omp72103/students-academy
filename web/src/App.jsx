@@ -1,16 +1,22 @@
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
+import { MotionConfig } from 'framer-motion'
 import { AuthProvider, useAuth, can } from './lib/auth'
 import { ToastProvider, Empty } from './components/ui'
 import SiteLayout from './site/SiteLayout'
-import { Home, About, Courses, StudyMaterial, SaravPariksha, Results as SiteResults, Notices as SiteNotices, Contact, NotFound } from './site/pages'
-import { PortalShell, Login } from './portal/Layout'
-import Dashboard from './portal/Dashboard'
-import { Students, Parents, Faculty } from './portal/People'
-import { Batches, Timetable, Attendance } from './portal/Academics'
-import { Materials, Assignments } from './portal/Learning'
-import { Tests, TakeTest, ReviewTest, Results } from './portal/Tests'
-import { Fees, Enquiries, Notices, Messaging, WebsiteContent, SettingsPage } from './portal/Office'
+import Home from './site/Home'
+import { About, Courses, StudyMaterial, SaravPariksha, Results as SiteResults, Notices as SiteNotices, Contact, NotFound } from './site/pages'
+import { lazy, Suspense } from 'react'
+const L = (f, name) => lazy(() => f().then((m) => ({ default: name ? m[name] : m.default })))
+const layout = () => import('./portal/Layout'), people = () => import('./portal/People'), acad = () => import('./portal/Academics')
+const learn = () => import('./portal/Learning'), tests = () => import('./portal/Tests'), office = () => import('./portal/Office')
+const PortalShell = L(layout, 'PortalShell'), Login = L(layout, 'Login'), Dashboard = L(() => import('./portal/Dashboard'))
+const Students = L(people, 'Students'), Parents = L(people, 'Parents'), Faculty = L(people, 'Faculty')
+const Batches = L(acad, 'Batches'), Timetable = L(acad, 'Timetable'), Attendance = L(acad, 'Attendance')
+const Materials = L(learn, 'Materials'), Assignments = L(learn, 'Assignments')
+const Tests = L(tests, 'Tests'), TakeTest = L(tests, 'TakeTest'), ReviewTest = L(tests, 'ReviewTest'), Results = L(tests, 'Results')
+const Fees = L(office, 'Fees'), Enquiries = L(office, 'Enquiries'), Notices = L(office, 'Notices'), Messaging = L(office, 'Messaging'), WebsiteContent = L(office, 'WebsiteContent'), SettingsPage = L(office, 'SettingsPage')
+const Loader = () => <div className="min-h-[50vh] grid place-items-center"><div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" /></div>
 
 function ScrollTop() {
   const { pathname, hash } = useLocation()
@@ -25,10 +31,12 @@ function Guard({ perm, children }) {
 
 export default function App() {
   return (
+    <MotionConfig reducedMotion="user">
     <BrowserRouter>
       <ToastProvider>
         <AuthProvider>
           <ScrollTop />
+          <Suspense fallback={<Loader />}>
           <Routes>
             <Route element={<SiteLayout />}>
               <Route index element={<Home />} />
@@ -65,8 +73,10 @@ export default function App() {
             </Route>
             <Route path="*" element={<SiteLayout />}><Route path="*" element={<NotFound />} /></Route>
           </Routes>
+          </Suspense>
         </AuthProvider>
       </ToastProvider>
     </BrowserRouter>
+    </MotionConfig>
   )
 }
