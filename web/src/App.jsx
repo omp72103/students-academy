@@ -1,0 +1,72 @@
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
+import { AuthProvider, useAuth, can } from './lib/auth'
+import { ToastProvider, Empty } from './components/ui'
+import SiteLayout from './site/SiteLayout'
+import { Home, About, Courses, StudyMaterial, SaravPariksha, Results as SiteResults, Notices as SiteNotices, Contact, NotFound } from './site/pages'
+import { PortalShell, Login } from './portal/Layout'
+import Dashboard from './portal/Dashboard'
+import { Students, Parents, Faculty } from './portal/People'
+import { Batches, Timetable, Attendance } from './portal/Academics'
+import { Materials, Assignments } from './portal/Learning'
+import { Tests, TakeTest, ReviewTest, Results } from './portal/Tests'
+import { Fees, Enquiries, Notices, Messaging, WebsiteContent, SettingsPage } from './portal/Office'
+
+function ScrollTop() {
+  const { pathname, hash } = useLocation()
+  useEffect(() => { if (hash) document.getElementById(hash.slice(1))?.scrollIntoView(); else window.scrollTo(0, 0) }, [pathname, hash])
+  return null
+}
+
+function Guard({ perm, children }) {
+  const { user } = useAuth()
+  return can(user, perm) ? children : <Empty title="You don't have access to this page" hint="Ask the academy office if you need access." />
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ToastProvider>
+        <AuthProvider>
+          <ScrollTop />
+          <Routes>
+            <Route element={<SiteLayout />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="courses" element={<Courses />} />
+              <Route path="study-material" element={<StudyMaterial />} />
+              <Route path="sarav-pariksha" element={<SaravPariksha />} />
+              <Route path="results" element={<SiteResults />} />
+              <Route path="notices" element={<SiteNotices />} />
+              <Route path="contact" element={<Contact />} />
+            </Route>
+            <Route path="portal/login" element={<Login />} />
+            <Route path="portal" element={<PortalShell />}>
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="students" element={<Guard perm="students"><Students /></Guard>} />
+              <Route path="parents" element={<Guard perm="parents"><Parents /></Guard>} />
+              <Route path="faculty" element={<Guard perm="faculty"><Faculty /></Guard>} />
+              <Route path="batches" element={<Guard perm="batches"><Batches /></Guard>} />
+              <Route path="timetable" element={<Guard perm="timetable"><Timetable /></Guard>} />
+              <Route path="attendance" element={<Guard perm="attendance"><Attendance /></Guard>} />
+              <Route path="materials" element={<Guard perm="materials"><Materials /></Guard>} />
+              <Route path="assignments" element={<Guard perm="assignments"><Assignments /></Guard>} />
+              <Route path="tests" element={<Guard perm="tests"><Tests /></Guard>} />
+              <Route path="tests/:id/take" element={<Guard perm="tests.take"><TakeTest /></Guard>} />
+              <Route path="tests/:id/review" element={<ReviewTest />} />
+              <Route path="results" element={<Guard perm="results"><Results /></Guard>} />
+              <Route path="fees" element={<Guard perm="fees"><Fees /></Guard>} />
+              <Route path="enquiries" element={<Guard perm="enquiries"><Enquiries /></Guard>} />
+              <Route path="notices" element={<Guard perm="notices"><Notices /></Guard>} />
+              <Route path="messaging" element={<Guard perm="messaging"><Messaging /></Guard>} />
+              <Route path="website" element={<Guard perm="website"><WebsiteContent /></Guard>} />
+              <Route path="settings" element={<Guard perm="settings"><SettingsPage /></Guard>} />
+            </Route>
+            <Route path="*" element={<SiteLayout />}><Route path="*" element={<NotFound />} /></Route>
+          </Routes>
+        </AuthProvider>
+      </ToastProvider>
+    </BrowserRouter>
+  )
+}

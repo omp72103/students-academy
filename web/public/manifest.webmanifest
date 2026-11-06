@@ -1,0 +1,9 @@
+{
+  "name": "Students Academy, Grant Road",
+  "short_name": "Students Academy",
+  "start_url": "/portal",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#102445",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}
