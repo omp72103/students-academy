@@ -16,6 +16,8 @@ const Batches = L(acad, 'Batches'), Timetable = L(acad, 'Timetable'), Attendance
 const Materials = L(learn, 'Materials'), Assignments = L(learn, 'Assignments')
 const Tests = L(tests, 'Tests'), TakeTest = L(tests, 'TakeTest'), ReviewTest = L(tests, 'ReviewTest'), Results = L(tests, 'Results')
 const Fees = L(office, 'Fees'), Enquiries = L(office, 'Enquiries'), Notices = L(office, 'Notices'), Messaging = L(office, 'Messaging'), WebsiteContent = L(office, 'WebsiteContent'), SettingsPage = L(office, 'SettingsPage')
+const marks = () => import('./portal/Marks')
+const Marks = L(marks, 'Marks'), ExamDetail = L(marks, 'ExamDetail'), Biometric = L(() => import('./portal/Biometric'), 'Biometric')
 const Loader = () => <div className="min-h-[50vh] grid place-items-center"><div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" /></div>
 
 function ScrollTop() {
@@ -65,6 +67,9 @@ export default function App() {
               <Route path="tests/:id/take" element={<Guard perm="tests.take"><TakeTest /></Guard>} />
               <Route path="tests/:id/review" element={<ReviewTest />} />
               <Route path="results" element={<Guard perm="results"><Results /></Guard>} />
+              <Route path="marks" element={<Guard perm="marks"><Marks /></Guard>} />
+              <Route path="marks/:id" element={<Guard perm="marks.view"><ExamDetail /></Guard>} />
+              <Route path="biometric" element={<Guard perm="biometric"><Biometric /></Guard>} />
               <Route path="fees" element={<Guard perm="fees"><Fees /></Guard>} />
               <Route path="enquiries" element={<Guard perm="enquiries"><Enquiries /></Guard>} />
               <Route path="notices" element={<Guard perm="notices"><Notices /></Guard>} />

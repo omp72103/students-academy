@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Plus, FileText, Download, Pencil, Trash2, Globe, Lock, Upload, ExternalLink, CheckCircle2, Search, CirclePlay } from 'lucide-react'
 import { db, useTable, MODE, supabase, BUCKET } from '../lib/db'
-import { useAuth } from '../lib/auth'
+import { useAuth, canManage } from '../lib/auth'
 import { PageHeader, Card, Table, Modal, Field, Badge, useToast, Empty, Tabs } from '../components/ui'
 import { fmtDate, today, cls } from '../lib/utils'
 import { STANDARDS, MATERIAL_TYPES } from '../data/materials'
@@ -22,7 +22,7 @@ export async function uploadFile(file, folder = 'materials') {
 // ======================= STUDY MATERIAL =======================
 export function Materials() {
   const { user } = useAuth(); const { student } = useMyStudent()
-  const manage = ['admin', 'faculty'].includes(user.role)
+  const manage = canManage(user, 'materials')
   const [materials] = useTable('materials'); const [batches] = useTable('batches')
   const [params, setParams] = useSearchParams(); const toast = useToast()
   const [std, setStd] = useState(student?.standard || ''); const [q, setQ] = useState(''); const [type, setType] = useState('')
@@ -109,10 +109,10 @@ export function Materials() {
 // ======================= ASSIGNMENTS =======================
 export function Assignments() {
   const { user } = useAuth(); const { student } = useMyStudent(); const toast = useToast()
-  const manage = ['admin', 'faculty'].includes(user.role)
+  const manage = canManage(user, 'assignments')
   const [asg] = useTable('assignments'); const [subs] = useTable('submissions'); const [batches] = useTable('batches'); const [users] = useTable('users')
   const [edit, setEdit] = useState(null); const [open, setOpen] = useState(null); const [mySub, setMySub] = useState(null)
-  const myBatches = user.role === 'admin' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
+  const myBatches = user.role !== 'faculty' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
   const list = manage ? asg.filter((a) => myBatches.some((b) => b.id === a.batchId)) : asg.filter((a) => a.batchId === student?.batchId)
 
   async function save() {

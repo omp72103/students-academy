@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Plus, Upload, Download, Pencil, MessageCircle, Phone, Trash2, Eye, KeyRound, GraduationCap, Wallet, CalendarX, UserPlus } from 'lucide-react'
+import { Plus, Upload, Download, Pencil, MessageCircle, Phone, Trash2, Eye, KeyRound, GraduationCap, Wallet, CalendarX, UserPlus, Fingerprint, MonitorSmartphone } from 'lucide-react'
 import { db, useTable, uid, MODE } from '../lib/db'
-import { useAuth, createLogin } from '../lib/auth'
+import { useAuth, createLogin, canManage, ROLES, PRIVILEGES } from '../lib/auth'
 import { PageHeader, Card, Table, Modal, Field, SearchBox, Badge, Avatar, useToast, Tabs, Stat } from '../components/ui'
-import { inr, fmtDate, feeSummary, attendanceSummary, downloadCsv, parseCsv, today } from '../lib/utils'
+import { inr, fmtDate, feeSummary, attendanceSummary, downloadCsv, parseCsv, today, cls } from '../lib/utils'
 import { openWhatsApp, sendSms, fill, TEMPLATES } from '../lib/messaging'
 import { useSettings } from '../site/SiteLayout'
 
@@ -12,8 +12,8 @@ const genPw = () => Math.random().toString(36).slice(2, 8) + Math.floor(Math.ran
 
 // ======================= STUDENTS =======================
 export function Students() {
-  const { user } = useAuth()
-  const isAdmin = user.role === 'admin'
+  const { user, realUser, startViewAs } = useAuth()
+  const isAdmin = canManage(user, 'students'); const seeFees = canManage(user, 'fees')
   const [users] = useTable('users'); const [batches] = useTable('batches'); const [fees] = useTable('fees'); const [att] = useTable('attendance')
   const [params, setParams] = useSearchParams()
   const [q, setQ] = useState(''); const [batch, setBatch] = useState(''); const [status, setStatus] = useState('active')
@@ -21,7 +21,7 @@ export function Students() {
   const fileRef = useRef(); const toast = useToast(); const s = useSettings()
   useEffect(() => { if (params.get('new') && isAdmin) { setEdit({}); setParams({}) } }, [params, isAdmin, setParams])
 
-  const myBatchIds = isAdmin ? batches.map((b) => b.id) : batches.filter((b) => (b.facultyIds || []).includes(user.id)).map((b) => b.id)
+  const myBatchIds = user.role !== 'faculty' ? batches.map((b) => b.id) : batches.filter((b) => (b.facultyIds || []).includes(user.id)).map((b) => b.id)
   const list = users.filter((u) => u.role === 'student' && myBatchIds.includes(u.batchId))
     .filter((u) => (!batch || u.batchId === batch) && (status === 'all' || (u.status || 'active') === status))
     .filter((u) => !q || (u.name + u.rollNo + u.phone + u.parentPhone).toLowerCase().includes(q.toLowerCase()))
@@ -42,10 +42,11 @@ export function Students() {
     { label: 'Batch', render: (r) => <span className="text-xs">{batches.find((b) => b.id === r.batchId)?.name || '—'}</span> },
     { label: 'Parent', render: (r) => <div className="text-xs"><div>{r.parentName}</div><div className="text-slate-500">{r.parentPhone}</div></div> },
     { label: 'Attendance', render: (r) => { const a = attendanceSummary(r.id, att); return <Badge tone={a.pct >= 75 ? 'green' : 'red'}>{a.pct}%</Badge> } },
-    ...(isAdmin ? [{ label: 'Fee balance', render: (r) => { const f = feeSummary(r, fees); return <span className={f.balance ? 'text-rose-600 font-semibold' : 'text-emerald-600'}>{f.balance ? inr(f.balance) : 'Paid'}</span> } }] : []),
+    ...(seeFees ? [{ label: 'Fee balance', render: (r) => { const f = feeSummary(r, fees); return <span className={f.balance ? 'text-rose-600 font-semibold' : 'text-emerald-600'}>{f.balance ? inr(f.balance) : 'Paid'}</span> } }] : []),
     { label: '', className: 'text-right', render: (r) => (
       <div className="flex justify-end gap-1">
-        <button className="btn-ghost p-1.5" title="View" onClick={() => setView(r)}><Eye size={16} /></button>
+        <button className="btn-ghost p-1.5" title="View profile" onClick={() => setView(r)}><Eye size={16} /></button>
+        {realUser?.role === 'admin' && <button className="btn-ghost p-1.5 text-blue-600" title="View portal as this student" onClick={() => startViewAs(r)}><MonitorSmartphone size={16} /></button>}
         <button className="btn-ghost p-1.5 text-emerald-600" title="WhatsApp parent" onClick={() => openWhatsApp(r.parentPhone, `Dear Parent, `)}><MessageCircle size={16} /></button>
         {isAdmin && <button className="btn-ghost p-1.5" title="Edit" onClick={() => setEdit(r)}><Pencil size={16} /></button>}
       </div>) },
@@ -67,7 +68,7 @@ export function Students() {
         return (
           <div className="mb-5 grid grid-cols-2 xl:grid-cols-4 gap-4">
             <Stat index={0} tone="indigo" icon={GraduationCap} label="Active students" value={all.length} progress={100} hint={`${batches.filter((b) => myBatchIds.includes(b.id)).length} batches`} />
-            {isAdmin && <Stat index={1} tone="rose" icon={Wallet} label="Fee pending" value={dues} progress={all.length ? ((all.length - dues) / all.length) * 100 : 100} hint={`${all.length - dues} fully paid`} to="/portal/fees" />}
+            {seeFees && <Stat index={1} tone="rose" icon={Wallet} label="Fee pending" value={dues} progress={all.length ? ((all.length - dues) / all.length) * 100 : 100} hint={`${all.length - dues} fully paid`} to="/portal/fees" />}
             <Stat index={2} tone="amber" icon={CalendarX} label="Attendance < 75%" value={lowAtt} progress={all.length ? ((all.length - lowAtt) / all.length) * 100 : 100} hint="Needs follow-up" to="/portal/messaging?audience=low-att" />
             <Stat index={3} tone="emerald" icon={UserPlus} label="New this month" value={fresh} progress={all.length ? (fresh / all.length) * 100 : 0} hint={new Date().toLocaleString('en-IN', { month: 'long', year: 'numeric' })} />
           </div>
@@ -156,6 +157,7 @@ function StudentForm({ initial, batches, users, onClose, toast, settings }) {
         <Field label="Email (login)"><input type="email" className="input" value={f.email || ''} onChange={set('email')} placeholder="auto-generated if blank" /></Field>
         <Field label="Date of birth"><input type="date" className="input" value={f.dob || ''} onChange={set('dob')} /></Field>
         <Field label="School / College"><input className="input" value={f.school || ''} onChange={set('school')} /></Field>
+        <Field label="Biometric device user ID"><input className="input" value={f.biometricId || ''} onChange={(e) => setF({ ...f, biometricId: e.target.value.trim() })} placeholder="ID enrolled on the fingerprint/face device" /></Field>
         <div className="sm:col-span-2 text-xs font-semibold uppercase text-slate-500 pt-2">Parent / Guardian</div>
         <Field label="Parent name"><input className="input" value={f.parentName || ''} onChange={set('parentName')} /></Field>
         <Field label="Parent mobile * (SMS/WhatsApp)"><input required className="input" value={f.parentPhone || ''} onChange={set('parentPhone')} /></Field>
@@ -196,6 +198,7 @@ function StudentProfile({ student: s, onClose, batches, fees, att }) {
 
 // ======================= PARENTS =======================
 export function Parents() {
+  const { realUser, startViewAs } = useAuth()
   const [users] = useTable('users'); const [q, setQ] = useState(''); const [edit, setEdit] = useState(null); const toast = useToast()
   const students = users.filter((u) => u.role === 'student')
   const list = users.filter((u) => u.role === 'parent' && (!q || (u.name + u.phone).toLowerCase().includes(q.toLowerCase())))
@@ -208,7 +211,7 @@ export function Parents() {
           { label: 'Parent', render: (r) => <div className="flex items-center gap-3"><Avatar name={r.name} size="h-8 w-8" /><div><div className="font-medium">{r.name}</div><div className="text-xs text-slate-500">{r.email}</div></div></div> },
           { label: 'Mobile', key: 'phone' },
           { label: 'Children', render: (r) => (r.childIds || []).map((id) => students.find((s) => s.id === id)?.name).filter(Boolean).join(', ') || '—' },
-          { label: '', className: 'text-right', render: (r) => <div className="flex justify-end gap-1"><button className="btn-ghost p-1.5 text-emerald-600" onClick={() => openWhatsApp(r.phone, 'Dear Parent, ')}><MessageCircle size={16} /></button><button className="btn-ghost p-1.5" onClick={() => setEdit(r)}><Pencil size={16} /></button></div> },
+          { label: '', className: 'text-right', render: (r) => <div className="flex justify-end gap-1">{realUser?.role === 'admin' && <button className="btn-ghost p-1.5 text-blue-600" title="View portal as this parent" onClick={() => startViewAs(r)}><MonitorSmartphone size={16} /></button>}<button className="btn-ghost p-1.5 text-emerald-600" onClick={() => openWhatsApp(r.phone, 'Dear Parent, ')}><MessageCircle size={16} /></button><button className="btn-ghost p-1.5" onClick={() => setEdit(r)}><Pencil size={16} /></button></div> },
         ]} />
       </Card>
       {edit && <Modal open onClose={() => setEdit(null)} title={edit.id ? 'Edit parent' : 'Add parent'} footer={<button className="btn-primary" onClick={async () => {
@@ -229,43 +232,75 @@ export function Parents() {
 }
 
 // ======================= FACULTY & STAFF =======================
+const DEFAULT_PRIVS = {
+  faculty: ['attendance', 'marks', 'tests', 'materials', 'assignments', 'notices', 'messaging'],
+  staff: ['students', 'fees', 'enquiries', 'attendance', 'staffAttendance', 'messaging', 'notices'],
+}
 export function Faculty() {
+  const { realUser, startViewAs } = useAuth()
   const [users] = useTable('users'); const [batches] = useTable('batches'); const [edit, setEdit] = useState(null); const [tab, setTab] = useState('faculty'); const toast = useToast()
   const list = users.filter((u) => u.role === tab)
   async function save() {
     const u = { ...edit, role: edit.role || tab, subjects: typeof edit.subjects === 'string' ? edit.subjects.split(',').map((x) => x.trim()).filter(Boolean) : edit.subjects || [], password: edit.password || genPw() }
     if (!u.email) return toast('Email is required', 'error')
+    if (u.role === 'admin') delete u.privileges
     if (edit.id) await db.update('users', edit.id, u); else { await db.insert('users', u); await createLogin(u.email, u.password).catch((e) => toast(e.message, 'error')) }
     toast('Saved'); setEdit(null)
   }
+  const togglePriv = (k) => { const cur = new Set(edit.privileges || []); cur.has(k) ? cur.delete(k) : cur.add(k); setEdit({ ...edit, privileges: [...cur] }) }
   return (
     <>
-      <PageHeader title="Faculty & Staff" subtitle="Faculty manage their batches, attendance, tests and content. Management has full access." actions={<button className="btn-primary" onClick={() => setEdit({ role: tab })}><Plus size={16} />Add {tab === 'admin' ? 'staff' : 'faculty'}</button>} />
-      <div className="mb-4"><Tabs value={tab} onChange={setTab} tabs={[{ value: 'faculty', label: 'Faculty' }, { value: 'admin', label: 'Management & Office' }]} /></div>
+      <PageHeader title="Faculty & Staff" subtitle="Roles and privileges: Management has full access; Faculty and Office Staff get role defaults plus any extra privileges you grant." actions={<button className="btn-primary" onClick={() => setEdit({ role: tab, privileges: [] })}><Plus size={16} />Add {tab === 'faculty' ? 'faculty' : tab === 'staff' ? 'staff member' : 'manager'}</button>} />
+      <div className="mb-4"><Tabs value={tab} onChange={setTab} tabs={[{ value: 'faculty', label: `Faculty (${users.filter((u) => u.role === 'faculty').length})` }, { value: 'staff', label: `Office Staff (${users.filter((u) => u.role === 'staff').length})` }, { value: 'admin', label: `Management (${users.filter((u) => u.role === 'admin').length})` }]} /></div>
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
-        {list.map((u) => (
-          <div key={u.id} className="card p-5">
-            <div className="flex items-start gap-3"><Avatar name={u.name} size="h-11 w-11" /><div className="flex-1 min-w-0"><div className="font-semibold">{u.name}</div><div className="text-xs text-slate-500">{u.designation}</div></div>
-              <button className="btn-ghost p-1.5" onClick={() => setEdit({ ...u, subjects: (u.subjects || []).join(', ') })}><Pencil size={15} /></button></div>
-            <div className="mt-4 space-y-1.5 text-sm text-slate-600"><div>{u.email}</div><div>{u.phone}</div></div>
-            {tab === 'faculty' && <>
-              <div className="flex flex-wrap gap-1 mt-3">{(u.subjects || []).map((s) => <Badge key={s} tone="indigo">{s}</Badge>)}</div>
-              <div className="text-xs text-slate-500 mt-3">Batches: {batches.filter((b) => (b.facultyIds || []).includes(u.id)).map((b) => b.name).join(', ') || '—'}</div>
-            </>}
-          </div>
-        ))}
+        {list.map((u) => {
+          const privs = [...new Set([...(DEFAULT_PRIVS[u.role] || []), ...(u.privileges || [])])]
+          return (
+            <div key={u.id} className="card p-5 flex flex-col">
+              <div className="flex items-start gap-3"><Avatar name={u.name} size="h-11 w-11" /><div className="flex-1 min-w-0"><div className="font-bold">{u.name}</div><div className="text-xs text-slate-500">{u.designation}</div></div>
+                <button className="btn-ghost p-1.5" onClick={() => setEdit({ ...u, subjects: (u.subjects || []).join(', '), privileges: u.privileges || [] })}><Pencil size={15} /></button></div>
+              <div className="mt-4 space-y-1 text-sm text-slate-600"><div className="truncate">{u.email}</div><div>{u.phone}</div>{u.biometricId && <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-700"><Fingerprint size={13} />Biometric ID {u.biometricId}</div>}</div>
+              {u.role === 'faculty' && <div className="flex flex-wrap gap-1 mt-3">{(u.subjects || []).map((x) => <Badge key={x} tone="indigo">{x}</Badge>)}</div>}
+              {u.role !== 'admin'
+                ? <div className="mt-3 flex flex-wrap gap-1">{privs.map((k) => <span key={k} className={cls('badge', (u.privileges || []).includes(k) && !(DEFAULT_PRIVS[u.role] || []).includes(k) ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' : 'bg-slate-100 text-slate-600')}>{PRIVILEGES.find((p) => p[0] === k)?.[1] || k}</span>)}</div>
+                : <div className="mt-3"><Badge tone="indigo">Full access</Badge></div>}
+              {u.role === 'faculty' && <div className="text-xs text-slate-500 mt-3">Batches: {batches.filter((b) => (b.facultyIds || []).includes(u.id)).map((b) => b.name).join(', ') || '—'}</div>}
+              {u.id !== realUser?.id && u.role !== 'admin' && <button onClick={() => startViewAs(u)} className="btn-outline btn-sm mt-4 self-start"><Eye size={14} />View as {u.name.split(' ')[0]}</button>}
+            </div>
+          )
+        })}
       </div>
-      {edit && <Modal open onClose={() => setEdit(null)} title={edit.id ? 'Edit' : 'Add'} footer={<><button className="btn-outline" onClick={() => setEdit(null)}>Cancel</button><button className="btn-primary" onClick={save}>Save</button></>}>
+      {edit && <Modal open wide onClose={() => setEdit(null)} title={edit.id ? 'Edit ' + (ROLES[edit.role]?.label || '') : 'Add ' + (ROLES[edit.role]?.label || '')} footer={<>
+        {edit.id && edit.id !== realUser?.id && <button className="btn-outline text-rose-600 mr-auto" onClick={async () => { if (window.confirm('Deactivate this account? They will no longer be able to sign in.')) { await db.update('users', edit.id, { status: 'inactive' }); setEdit(null); toast('Deactivated') } }}><Trash2 size={15} />Deactivate</button>}
+        <button className="btn-outline" onClick={() => setEdit(null)}>Cancel</button><button className="btn-primary" onClick={save}>Save</button></>}>
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Name"><input className="input" value={edit.name || ''} onChange={(e) => setEdit({ ...edit, name: e.target.value })} /></Field>
           <Field label="Designation"><input className="input" value={edit.designation || ''} onChange={(e) => setEdit({ ...edit, designation: e.target.value })} /></Field>
-          <Field label="Email (login) *"><input className="input" value={edit.email || ''} onChange={(e) => setEdit({ ...edit, email: e.target.value })} /></Field>
+          <Field label="Email (login / Google) *"><input className="input" value={edit.email || ''} onChange={(e) => setEdit({ ...edit, email: e.target.value })} /></Field>
           <Field label="Mobile"><input className="input" value={edit.phone || ''} onChange={(e) => setEdit({ ...edit, phone: e.target.value })} /></Field>
-          <Field label="Role"><select className="input" value={edit.role} onChange={(e) => setEdit({ ...edit, role: e.target.value })}><option value="faculty">Faculty</option><option value="admin">Management / Office</option></select></Field>
+          <Field label="Role"><select className="input" value={edit.role} disabled={edit.id === realUser?.id} onChange={(e) => setEdit({ ...edit, role: e.target.value })}><option value="faculty">Faculty</option><option value="staff">Office Staff</option><option value="admin">Management (full access)</option></select></Field>
+          <Field label="Biometric device user ID"><input className="input" value={edit.biometricId || ''} onChange={(e) => setEdit({ ...edit, biometricId: e.target.value.trim() })} placeholder="e.g. 1001" /></Field>
           <Field label={edit.id ? 'New password (optional)' : 'Password'}><div className="flex gap-2"><input className="input" value={edit.password || ''} onChange={(e) => setEdit({ ...edit, password: e.target.value })} /><button type="button" className="btn-outline px-2" onClick={() => setEdit({ ...edit, password: genPw() })}><KeyRound size={15} /></button></div></Field>
-          {edit.role === 'faculty' && <Field label="Subjects (comma separated)" className="sm:col-span-2"><input className="input" value={edit.subjects || ''} onChange={(e) => setEdit({ ...edit, subjects: e.target.value })} /></Field>}
+          {edit.role === 'faculty' && <Field label="Subjects (comma separated)"><input className="input" value={edit.subjects || ''} onChange={(e) => setEdit({ ...edit, subjects: e.target.value })} /></Field>}
+          {edit.role !== 'admin' && (
+            <div className="sm:col-span-2">
+              <div className="label">Privileges</div>
+              <p className="text-xs text-slate-500 mb-2">Ticked and greyed = included with the {ROLES[edit.role]?.label} role. Tick extra ones to grant more access.</p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {PRIVILEGES.map(([k, l, d]) => {
+                  const def = (DEFAULT_PRIVS[edit.role] || []).includes(k); const on = def || (edit.privileges || []).includes(k)
+                  return (
+                    <label key={k} className={cls('flex items-start gap-2.5 rounded-xl border p-2.5 cursor-pointer transition', on ? 'border-blue-200 bg-blue-50/60' : 'border-slate-200 hover:bg-slate-50', def && 'opacity-70 cursor-default')}>
+                      <input type="checkbox" className="mt-0.5" checked={on} disabled={def} onChange={() => togglePriv(k)} />
+                      <span><span className="block text-sm font-bold text-slate-800">{l}{k === 'biometric' && <Fingerprint size={13} className="inline ml-1 text-blue-600" />}</span><span className="block text-[11px] text-slate-500">{d}</span></span>
+                    </label>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
-        {MODE === 'supabase' && edit.id && <p className="text-xs text-slate-500 mt-3">Password changes for existing accounts are done from Supabase Auth (or the user's "forgot password").</p>}
+        {MODE === 'supabase' && edit.id && <p className="text-xs text-slate-500 mt-3">Password changes for existing accounts are done with "Forgot password" on the sign-in page.</p>}
       </Modal>}
     </>
   )

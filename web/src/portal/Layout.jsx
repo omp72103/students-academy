@@ -4,44 +4,45 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, UserRound, GraduationCap, Layers, CalendarDays, CalendarCheck, Library, ClipboardList, BarChart3,
   NotebookPen, Wallet, Megaphone, MessageSquare, Globe, Settings, LogOut, X, PhoneCall, UserCog, Bell, ShieldCheck, Smartphone,
-  ChevronLeft, Search, Home, PanelLeft, User, Sparkles, Eye, EyeOff, ArrowRight, Moon, Sun, Command,
+  ChevronLeft, Search, Home, PanelLeft, User, Sparkles, Eye, EyeOff, ArrowRight, Moon, Sun, Command, Award, Fingerprint, MonitorSmartphone, Repeat, XCircle,
 } from 'lucide-react'
-import { useAuth, ROLES, googleEnabled } from '../lib/auth'
+import { useAuth, ROLES, googleEnabled, can } from '../lib/auth'
 import { supabase } from '../lib/db'
 import { MODE, useTable } from '../lib/db'
-import { Avatar } from '../components/ui'
+import { Avatar, Modal, Tabs } from '../components/ui'
 import SendQueue from '../components/SendQueue'
 import { cls, fmtDate } from '../lib/utils'
 import { isAndroidApp } from '../lib/messaging'
 
 export const APK_URL = 'https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk'
 
+// Staff-side navigation is built from privileges, so granting "biometric" or "fees" to a faculty or
+// staff member makes that page appear in their sidebar automatically.
+const STAFF_NAV = [
+  ['Overview', [['dashboard', 'Dashboard', LayoutDashboard], ['enquiries', 'Enquiries & Leads', PhoneCall]]],
+  ['People', [['students', 'Students', GraduationCap], ['parents', 'Parents', UserRound], ['faculty', 'Faculty & Staff', UserCog]]],
+  ['Academics', [['batches', 'Batches', Layers], ['timetable', 'Timetable', CalendarDays], ['attendance', 'Attendance', CalendarCheck], ['marks', 'Marks & Exams', Award], ['biometric', 'Biometric Devices', Fingerprint]]],
+  ['Learning (LMS)', [['materials', 'Study Material', Library], ['tests', 'Online Tests', ClipboardList], ['results', 'Results & Analytics', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
+  ['Office', [['fees', 'Fees', Wallet], ['notices', 'Notices', Megaphone], ['messaging', 'SMS & WhatsApp', MessageSquare]]],
+  ['System', [['website', 'Website Content', Globe], ['settings', 'Settings', Settings]]],
+]
 const NAV = {
-  admin: [
-    ['Overview', [['dashboard', 'Dashboard', LayoutDashboard], ['enquiries', 'Enquiries & Leads', PhoneCall]]],
-    ['People', [['students', 'Students', GraduationCap], ['parents', 'Parents', UserRound], ['faculty', 'Faculty & Staff', UserCog]]],
-    ['Academics', [['batches', 'Batches', Layers], ['timetable', 'Timetable', CalendarDays], ['attendance', 'Attendance', CalendarCheck]]],
-    ['Learning (LMS)', [['materials', 'Study Material', Library], ['tests', 'Online Tests', ClipboardList], ['results', 'Results & Analytics', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
-    ['Office', [['fees', 'Fees', Wallet], ['notices', 'Notices', Megaphone], ['messaging', 'SMS & WhatsApp', MessageSquare]]],
-    ['System', [['website', 'Website Content', Globe], ['settings', 'Settings', Settings]]],
-  ],
-  faculty: [
-    ['Overview', [['dashboard', 'Dashboard', LayoutDashboard]]],
-    ['Teaching', [['batches', 'My Batches', Layers], ['students', 'Students', GraduationCap], ['timetable', 'Timetable', CalendarDays], ['attendance', 'Attendance', CalendarCheck]]],
-    ['Learning (LMS)', [['materials', 'Study Material', Library], ['tests', 'Online Tests', ClipboardList], ['results', 'Results & Analytics', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
-    ['Communication', [['notices', 'Notices', Megaphone], ['messaging', 'SMS & WhatsApp', MessageSquare], ['enquiries', 'Enquiries', PhoneCall]]],
-  ],
   student: [
-    ['My Learning', [['dashboard', 'Dashboard', LayoutDashboard], ['materials', 'Study Material', Library], ['tests', 'Online Tests', ClipboardList], ['results', 'My Results', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
+    ['My Learning', [['dashboard', 'Dashboard', LayoutDashboard], ['materials', 'Study Material', Library], ['tests', 'Online Tests', ClipboardList], ['results', 'Test Results', BarChart3], ['marks', 'Exam Marks', Award], ['assignments', 'Assignments', NotebookPen]]],
     ['My Academy', [['attendance', 'My Attendance', CalendarCheck], ['timetable', 'Timetable', CalendarDays], ['fees', 'Fees', Wallet], ['notices', 'Notices', Bell]]],
   ],
   parent: [
-    ['My Child', [['dashboard', 'Overview', LayoutDashboard], ['attendance', 'Attendance', CalendarCheck], ['results', 'Test Results', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
+    ['My Child', [['dashboard', 'Overview', LayoutDashboard], ['attendance', 'Attendance', CalendarCheck], ['marks', 'Exam Marks', Award], ['results', 'Test Results', BarChart3], ['assignments', 'Assignments', NotebookPen]]],
     ['Academy', [['timetable', 'Timetable', CalendarDays], ['fees', 'Fees', Wallet], ['notices', 'Notices', Bell]]],
   ],
 }
+export function navFor(user) {
+  if (!user) return []
+  if (NAV[user.role]) return NAV[user.role]
+  return STAFF_NAV.map(([g, items]) => [g, items.filter(([k]) => k === 'dashboard' || can(user, k)).map(([k, l, I]) => [k, user.role === 'faculty' && k === 'batches' ? 'My Batches' : l, I])]).filter(([, items]) => items.length)
+}
 // Mobile bottom tab bar — the 4 most used pages per role
-const TABS = { admin: ['dashboard', 'students', 'fees', 'messaging'], faculty: ['dashboard', 'attendance', 'tests', 'materials'], student: ['dashboard', 'materials', 'tests', 'results'], parent: ['dashboard', 'attendance', 'results', 'fees'] }
+const TABS = { admin: ['dashboard', 'students', 'fees', 'messaging'], staff: ['dashboard', 'students', 'fees', 'attendance'], faculty: ['dashboard', 'attendance', 'marks', 'tests'], student: ['dashboard', 'materials', 'tests', 'marks'], parent: ['dashboard', 'attendance', 'marks', 'fees'] }
 
 // Light / dark theme (MITK ERP "navy glass" dark mode), remembered per device
 const THEME_KEY = 'sa_theme'
@@ -139,7 +140,7 @@ function Popover({ button, children, width = 'w-72' }) {
   )
 }
 
-function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
+function Topbar({ groups, user, onMenu, onLogout, collapsed, onViewAs }) {
   const nav = useNavigate(); const loc = useLocation()
   const [notices] = useTable('notices')
   const [q, setQ] = useState(''); const [focus, setFocus] = useState(false)
@@ -179,6 +180,7 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
         <div className="flex items-center gap-0.5 sm:gap-1.5 shrink-0">
           {isAndroidApp() && <span className="hidden sm:inline-flex badge bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200 gap-1"><Smartphone size={12} />App</span>}
           {MODE === 'demo' && <span className="hidden sm:inline-flex badge bg-amber-50 text-amber-700 ring-1 ring-amber-200">Demo</span>}
+          {onViewAs && <button onClick={onViewAs} className={cls(iconBtn, 'hidden sm:grid')} title="View portal as…" aria-label="View portal as"><MonitorSmartphone size={17} /></button>}
           <button onClick={toggleTheme} className={iconBtn} aria-label="Toggle dark mode" title={theme === 'dark' ? 'Light mode' : 'Dark mode'}>
             <AnimatePresence mode="wait" initial={false}>
               <motion.span key={theme} initial={{ rotate: -90, opacity: 0, scale: 0.6 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: 90, opacity: 0, scale: 0.6 }} transition={{ duration: 0.2 }}>
@@ -193,6 +195,7 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
           </Popover>
           <Popover width="w-60" button={(open, t) => <button onClick={t} className="ml-1 rounded-full ring-2 ring-white shadow active:scale-95" aria-label="Profile"><Avatar name={user.name} size="h-9 w-9" /></button>}>
             <div className="flex items-center gap-2.5 mb-3 px-1"><Avatar name={user.name} /><div className="min-w-0"><p className="text-sm font-bold text-slate-700 truncate">{user.name}</p><p className="text-xs text-slate-500">{ROLES[user.role]?.label}</p></div></div>
+            {onViewAs && <button onClick={onViewAs} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-50"><MonitorSmartphone size={15} />View portal as…</button>}
             <Link to="/" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><Globe size={15} />Official website</Link>
             {!isAndroidApp() && <a href={APK_URL} className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"><Smartphone size={15} />Get the Android app</a>}
             <button onClick={onLogout} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold text-rose-600 hover:bg-rose-50"><LogOut size={15} />Logout</button>
@@ -203,8 +206,8 @@ function Topbar({ groups, user, onMenu, onLogout, collapsed }) {
   )
 }
 
-function MobileTabBar({ role }) {
-  const all = Object.fromEntries((NAV[role] || []).flatMap(([, it]) => it).map((i) => [i[0], i]))
+function MobileTabBar({ role, groups }) {
+  const all = Object.fromEntries(groups.flatMap(([, it]) => it).map((i) => [i[0], i]))
   return (
     <nav className="lg:hidden fixed bottom-3 inset-x-3 z-30 rounded-[22px] border border-white/80 bg-white/80 backdrop-blur-2xl shadow-topbar px-2 py-1.5 flex justify-around">
       {(TABS[role] || []).map((k) => all[k]).filter(Boolean).map(([to, label, Icon]) => (
@@ -216,8 +219,38 @@ function MobileTabBar({ role }) {
   )
 }
 
+function ViewAsSwitcher({ open, onClose }) {
+  const { startViewAs, realUser } = useAuth()
+  const [users] = useTable('users'); const [batches] = useTable('batches')
+  const [tab, setTab] = useState('student'); const [q, setQ] = useState('')
+  const nav = useNavigate()
+  const list = users.filter((u) => u.role === tab && u.id !== realUser?.id && u.status !== 'inactive' && (!q || (u.name + (u.rollNo || '') + (u.email || '')).toLowerCase().includes(q.toLowerCase())))
+  const counts = (r) => users.filter((u) => u.role === r && u.status !== 'inactive').length
+  return (
+    <Modal open={open} onClose={onClose} wide title="View the portal as…">
+      <p className="text-sm text-slate-500 mb-4">Open any student, parent, faculty or staff dashboard exactly as they see it, for demos and support. You stay signed in as Management; use <b>Exit preview</b> to come back.</p>
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <Tabs value={tab} onChange={setTab} tabs={[{ value: 'student', label: `Students (${counts('student')})` }, { value: 'parent', label: `Parents (${counts('parent')})` }, { value: 'faculty', label: `Faculty (${counts('faculty')})` }, { value: 'staff', label: `Office Staff (${counts('staff')})` }]} />
+        <div className="relative flex-1 min-w-[180px]"><Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" /><input className="input pl-9" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, roll no., email" /></div>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-2 max-h-[50vh] overflow-y-auto nice-scroll pr-1">
+        {list.map((u) => (
+          <button key={u.id} onClick={() => { startViewAs(u); onClose(); nav('/portal/dashboard') }} className="group flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3 text-left transition hover:border-blue-300 hover:shadow-md">
+            <Avatar name={u.name} />
+            <div className="min-w-0 flex-1"><div className="text-sm font-bold text-slate-800 truncate">{u.name}</div><div className="text-xs text-slate-500 truncate">{u.rollNo ? `${u.rollNo} · ${batches.find((b) => b.id === u.batchId)?.name || ''}` : u.designation || u.email}</div></div>
+            <MonitorSmartphone size={16} className="text-slate-400 group-hover:text-blue-600" />
+          </button>
+        ))}
+        {!list.length && <p className="text-sm text-slate-500 p-2">No users found.</p>}
+      </div>
+    </Modal>
+  )
+}
+
 export function PortalShell() {
-  const { user, ready, logout } = useAuth()
+  const { user, ready, logout, viewAs, stopViewAs, realUser } = useAuth()
+  const [switcher, setSwitcher] = useState(false)
+  useEffect(() => { const h = () => setSwitcher(true); window.addEventListener('sa-view-as', h); return () => window.removeEventListener('sa-view-as', h) }, [])
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sa_sidebar') === '1')
   const nav = useNavigate(); const loc = useLocation()
@@ -225,7 +258,7 @@ export function PortalShell() {
   useEffect(() => { localStorage.setItem('sa_sidebar', collapsed ? '1' : '0') }, [collapsed])
   if (!ready) return <div className={cls('min-h-screen grid place-items-center', APP_BG)}><div className="h-10 w-10 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" /></div>
   if (!user) return <Navigate to="/portal/login" replace />
-  const groups = NAV[user.role] || []
+  const groups = navFor(user)
   const doLogout = async () => { await logout(); nav('/portal/login') }
 
   return (
@@ -243,15 +276,28 @@ export function PortalShell() {
         </motion.div>}
       </AnimatePresence>
       <div className="flex min-w-0 flex-1 flex-col">
-        <Topbar groups={groups} user={user} onMenu={() => setOpen(true)} onLogout={doLogout} collapsed={collapsed} />
+        <AnimatePresence>
+          {viewAs && (
+            <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="mx-2 mt-2 sm:mx-3 lg:mx-6 overflow-hidden">
+              <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 px-4 py-2.5 text-white shadow-lg">
+                <MonitorSmartphone size={18} className="shrink-0" />
+                <span className="text-sm font-semibold flex-1 min-w-[200px]">Previewing as <b>{viewAs.name}</b> ({ROLES[viewAs.role]?.label}). This is exactly what they see; anything you change is saved for real.</span>
+                <button onClick={() => setSwitcher(true)} className="rounded-lg bg-white/20 px-3 py-1.5 text-xs font-bold hover:bg-white/30 flex items-center gap-1.5"><Repeat size={13} />Switch</button>
+                <button onClick={() => { stopViewAs(); nav('/portal/dashboard') }} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-orange-600 hover:bg-orange-50 flex items-center gap-1.5"><XCircle size={13} />Exit preview</button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <Topbar groups={groups} user={user} onMenu={() => setOpen(true)} onLogout={doLogout} collapsed={collapsed} onViewAs={realUser?.role === 'admin' ? () => setSwitcher(true) : null} />
         <AnimatePresence mode="wait">
           <motion.main key={loc.pathname} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }}
             className="relative flex-1 min-w-0 overflow-x-hidden p-3 pb-28 sm:p-4 lg:p-6 lg:pb-8 max-w-[1440px] w-full">
             <Outlet />
           </motion.main>
         </AnimatePresence>
-        <MobileTabBar role={user.role} />
+        <MobileTabBar role={user.role} groups={groups} />
         <SendQueue />
+        {realUser?.role === 'admin' && <ViewAsSwitcher open={switcher} onClose={() => setSwitcher(false)} />}
       </div>
     </div>
   )
@@ -277,7 +323,7 @@ export function Login() {
     e.preventDefault(); setErr(''); setAuthError(''); setBusy(true)
     try { await login(id, pw); nav('/portal/dashboard') } catch (e) { setErr(e.message) } finally { setBusy(false) }
   }
-  const demo = [['Management', 'admin@studentsacademy.in', 'admin123'], ['Faculty', 'sai@studentsacademy.in', 'faculty123'], ['Student', 'aarav@student.sa', 'student123'], ['Parent', 'aarav.parent@sa.in', 'parent123']]
+  const demo = [['Management', 'admin@studentsacademy.in', 'admin123'], ['Office Staff', 'office@studentsacademy.in', 'office123'], ['Faculty', 'sai@studentsacademy.in', 'faculty123'], ['Student', 'aarav@student.sa', 'student123'], ['Parent', 'aarav.parent@sa.in', 'parent123']]
   const roles = [['Management', 'Admissions, fees, staff & reports', 'from-blue-600 to-cyan-400'], ['Faculty', 'Attendance, tests & content', 'from-emerald-500 to-teal-400'], ['Students', 'Notes, online tests & results', 'from-violet-500 to-indigo-500'], ['Parents', 'Progress, fees & notices', 'from-amber-500 to-orange-400']]
   return (
     <div className={cls('portal relative min-h-screen grid lg:grid-cols-[1.05fr_1fr]', APP_BG)}>
@@ -336,7 +382,7 @@ export function Login() {
           {MODE === 'demo' && (
             <div className="mt-7">
               <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Demo logins</div>
-              <div className="grid grid-cols-2 gap-2">{demo.map(([r, e, p]) => <button key={r} onClick={() => { setId(e); setPw(p) }} className="btn-outline btn-sm justify-start"><User size={13} />{r}</button>)}</div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{demo.map(([r, e, p]) => <button key={r} onClick={() => { setId(e); setPw(p) }} className="btn-outline btn-sm justify-start"><User size={13} />{r}</button>)}</div>
             </div>
           )}
           {!isAndroidApp() && <a href={APK_URL} className="mt-7 flex items-center gap-3 rounded-2xl border border-white bg-gradient-to-r from-emerald-50 to-teal-50 p-3 transition hover:shadow-md">

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Plus, Pencil, Trash2, Clock, ChevronLeft, ChevronRight, Flag, Send, ClipboardList, Copy, Eye, Trophy, MessageCircle, BarChart3, CheckCircle2, XCircle, AlertTriangle, ListPlus } from 'lucide-react'
 import { db, useTable, uid } from '../lib/db'
-import { useAuth } from '../lib/auth'
+import { useAuth, canManage } from '../lib/auth'
 import { PageHeader, Card, Table, Modal, Field, Badge, useToast, Empty, Stat, Progress, Avatar, Tabs } from '../components/ui'
 import { fmtDate, fmtDateTime, cls, downloadCsv } from '../lib/utils'
 import { useMyStudent, ChildSwitcher } from './Layout'
@@ -16,13 +16,13 @@ const SUBJ_GRAD = ['from-blue-600 via-indigo-600 to-violet-600', 'from-sky-500 v
 // ======================= TEST LIST =======================
 export function Tests() {
   const { user } = useAuth(); const { student } = useMyStudent()
-  const manage = ['admin', 'faculty'].includes(user.role)
+  const manage = canManage(user, 'tests')
   const [tests] = useTable('tests'); const [attempts] = useTable('attempts'); const [batches] = useTable('batches')
   const [params, setParams] = useSearchParams(); const [edit, setEdit] = useState(null); const toast = useToast()
   useEffect(() => { if (params.get('new') && manage) { setEdit(blank()); setParams({}) } }, [params, manage, setParams]) // eslint-disable-line
-  const myBatches = user.role === 'admin' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
+  const myBatches = user.role !== 'faculty' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
   const blank = () => ({ title: '', subject: '', batchIds: myBatches[0] ? [myBatches[0].id] : [], durationMin: 30, negative: 0, shuffle: true, status: 'draft', questions: [], showAnswers: true })
-  const list = manage ? tests.filter((t) => user.role === 'admin' || t.createdBy === user.id || (t.batchIds || []).some((b) => myBatches.some((m) => m.id === b)))
+  const list = manage ? tests.filter((t) => user.role !== 'faculty' || t.createdBy === user.id || (t.batchIds || []).some((b) => myBatches.some((m) => m.id === b)))
     : tests.filter((t) => t.status === 'published' && (t.batchIds || []).includes(student?.batchId))
 
   return (
@@ -148,7 +148,7 @@ function TestBuilder({ initial, batches, onClose }) {
 function seededShuffle(arr, seed) { const a = [...arr]; let s = [...seed].reduce((x, c) => x + c.charCodeAt(0), 0); for (let i = a.length - 1; i > 0; i--) { s = (s * 9301 + 49297) % 233280; const j = Math.floor((s / 233280) * (i + 1)); [a[i], a[j]] = [a[j], a[i]] } return a }
 
 export function TakeTest() {
-  const { id } = useParams(); const { user } = useAuth(); const nav = useNavigate(); const toast = useToast()
+  const { id } = useParams(); const { user, viewAs } = useAuth(); const nav = useNavigate(); const toast = useToast()
   const [tests] = useTable('tests'); const [attempts, loadingA] = useTable('attempts')
   const t = tests.find((x) => x.id === id)
   const key = `sa_test_${id}_${user.id}`
@@ -170,6 +170,7 @@ export function TakeTest() {
   useEffect(() => { if (t && left === 0 && !done) submit(true) }, [left]) // eslint-disable-line
 
   async function submit(auto) {
+    if (viewAs) { toast('Preview mode: answers are not submitted for the student', 'error'); setConfirm(false); return }
     if (submitting.current || done) return; submitting.current = true
     let score = 0, total = 0, correct = 0, wrong = 0
     t.questions.forEach((q) => { const m = Number(q.marks || 1); total += m; const a = answers[q.id]; if (a == null) return; if (a === q.answer) { score += m; correct++ } else { score -= Number(t.negative || 0); wrong++ } })
@@ -311,7 +312,7 @@ function TestAnalytics() {
   const { user } = useAuth(); const s = useSettings(); const toast = useToast()
   const [tests] = useTable('tests'); const [attempts] = useTable('attempts'); const [users] = useTable('users'); const [batches] = useTable('batches')
   const [params, setParams] = useSearchParams()
-  const myBatches = user.role === 'admin' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
+  const myBatches = user.role !== 'faculty' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
   const mine = tests.filter((t) => t.status !== 'draft' && (t.batchIds || []).some((b) => myBatches.some((m) => m.id === b)))
   const tid = params.get('test') || mine[0]?.id
   const t = tests.find((x) => x.id === tid)

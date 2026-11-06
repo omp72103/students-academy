@@ -14,7 +14,7 @@
 .portal.dark .hover\:bg-white:hover, .portal.dark .hover\:bg-white\/65:hover, .portal.dark .hover\:bg-slate-50:hover, .portal.dark .hover\:bg-slate-100\/80:hover,
 .portal.dark .hover\:bg-blue-50:hover, .portal.dark .hover\:bg-blue-50\/40:hover, .portal.dark .hover\:bg-blue-50\/70:hover, .portal.dark .hover\:bg-slate-200\/70:hover { background-color: rgba(59,130,246,.16) !important; }
 /* text */
-.portal.dark h1, .portal.dark h2, .portal.dark h3,
+:where(.portal.dark) :where(h1, h2, h3) { color: #e6eefc; }
 .portal.dark .text-slate-900, .portal.dark .text-slate-800, .portal.dark .text-slate-700 { color: #e6eefc !important; }
 .portal.dark .text-slate-600 { color: #b9c8e2 !important; }
 .portal.dark .text-slate-500 { color: #93a6c4 !important; }

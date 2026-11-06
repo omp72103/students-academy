@@ -1,3 +1,6 @@
 {
-  "rewrites": [{ "source": "/((?!assets/|favicon|manifest).*)", "destination": "/index.html" }]
+  "rewrites": [
+    { "source": "/iclock/:path*", "destination": "/api/iclock?path=:path*" },
+    { "source": "/((?!api/|assets/|favicon|manifest|iclock).*)", "destination": "/index.html" }
+  ]
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Plus, Printer, MessageCircle, Send, Pencil, Trash2, Phone, Wallet, AlertTriangle, IndianRupee, Megaphone, Globe, Pin, Smartphone, RotateCcw, UserPlus, Save, Award } from 'lucide-react'
 import { db, useTable, MODE } from '../lib/db'
-import { useAuth } from '../lib/auth'
+import { useAuth, canManage } from '../lib/auth'
 import { PageHeader, Card, Table, Modal, Field, Badge, useToast, Empty, Stat, SearchBox, Avatar, Tabs } from '../components/ui'
 import { inr, fmtDate, fmtDateTime, today, feeSummary, cls, downloadCsv, attendanceSummary } from '../lib/utils'
 import { useMyStudent, ChildSwitcher } from './Layout'
@@ -13,7 +13,7 @@ import { DEFAULT_SETTINGS } from '../data/site'
 // ======================= FEES =======================
 export function Fees() {
   const { user } = useAuth()
-  if (user.role !== 'admin') return <MyFees />
+  if (!canManage(user, 'fees')) return <MyFees />
   return <FeeDesk />
 }
 
@@ -134,7 +134,7 @@ export function Enquiries() {
   async function save() { edit.id ? await db.update('enquiries', edit.id, edit) : await db.insert('enquiries', { ...edit, status: edit.status || 'new' }); toast('Saved'); setEdit(null) }
   return (
     <>
-      <PageHeader title="Enquiries & Leads" subtitle="Website enquiries land here automatically" actions={<><button className="btn-outline" onClick={() => downloadCsv('enquiries.csv', enq.map(({ id, ...r }) => r))}>Export</button>{user.role === 'admin' && <button className="btn-primary" onClick={() => setEdit({ source: 'Walk-in', standard: '10th' })}><Plus size={16} />Add enquiry</button>}</>} />
+      <PageHeader title="Enquiries & Leads" subtitle="Website enquiries land here automatically" actions={<><button className="btn-outline" onClick={() => downloadCsv('enquiries.csv', enq.map(({ id, ...r }) => r))}>Export</button>{canManage(user, 'enquiries') && <button className="btn-primary" onClick={() => setEdit({ source: 'Walk-in', standard: '10th' })}><Plus size={16} />Add enquiry</button>}</>} />
       <div className="flex flex-wrap gap-2 mb-4">
         {[['', 'All'], ...Object.keys(ENQ).map((k) => [k, k])].map(([k, l]) => <button key={k} onClick={() => setStatus(k)} className={cls('btn-sm btn border capitalize', status === k ? 'bg-slate-900 text-white border-slate-900' : 'bg-white border-slate-300')}>{l} <span className="opacity-60">{k ? enq.filter((e) => e.status === k).length : enq.length}</span></button>)}
         <div className="ml-auto"><SearchBox value={q} onChange={setQ} /></div>
@@ -151,7 +151,7 @@ export function Enquiries() {
             <button className="btn-ghost p-1.5" onClick={() => setEdit(e)}><Pencil size={15} /></button></div> },
         ]} />
       </Card>
-      {edit && <Modal open onClose={() => setEdit(null)} title={edit.id ? 'Update enquiry' : 'New enquiry'} footer={<>{edit.id && user.role === 'admin' && <button className="btn-outline text-rose-600 mr-auto" onClick={async () => { await db.remove('enquiries', edit.id); setEdit(null) }}><Trash2 size={15} /></button>}<button className="btn-primary" onClick={save}>Save</button></>}>
+      {edit && <Modal open onClose={() => setEdit(null)} title={edit.id ? 'Update enquiry' : 'New enquiry'} footer={<>{edit.id && canManage(user, 'enquiries') && <button className="btn-outline text-rose-600 mr-auto" onClick={async () => { await db.remove('enquiries', edit.id); setEdit(null) }}><Trash2 size={15} /></button>}<button className="btn-primary" onClick={save}>Save</button></>}>
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Name"><input className="input" value={edit.name || ''} onChange={(e) => setEdit({ ...edit, name: e.target.value })} /></Field>
           <Field label="Phone"><input className="input" value={edit.phone || ''} onChange={(e) => setEdit({ ...edit, phone: e.target.value })} /></Field>
@@ -169,9 +169,9 @@ export function Enquiries() {
 // ======================= NOTICES =======================
 export function Notices() {
   const { user } = useAuth(); const { student } = useMyStudent()
-  const manage = ['admin', 'faculty'].includes(user.role)
+  const manage = canManage(user, 'notices')
   const [notices] = useTable('notices'); const [batches] = useTable('batches'); const [edit, setEdit] = useState(null); const toast = useToast()
-  const aud = user.role === 'parent' ? 'parents' : user.role === 'student' ? 'students' : user.role === 'faculty' ? 'faculty' : null
+  const aud = user.role === 'parent' ? 'parents' : user.role === 'student' ? 'students' : ['faculty', 'staff'].includes(user.role) ? 'faculty' : null
   const list = manage ? notices : notices.filter((n) => n.audience === 'all' || n.audience === aud || (n.audience === 'batch' && n.batchId === student?.batchId))
   async function save() {
     if (!edit.title) return toast('Title required', 'error')
@@ -223,7 +223,7 @@ export function Messaging() {
   const [batchId, setBatchId] = useState(''); const [to, setTo] = useState('parents')
   const [tplKey, setTplKey] = useState(params.get('audience') === 'fee' ? 'fee' : 'notice'); const [message, setMessage] = useState('')
   const [text, setText] = useState(''); const [selected, setSelected] = useState(null)
-  const myBatches = user.role === 'admin' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
+  const myBatches = user.role !== 'faculty' ? batches : batches.filter((b) => (b.facultyIds || []).includes(user.id))
   const bid = batchId || myBatches[0]?.id
   useEffect(() => { setText(TEMPLATES.find((t) => t.key === tplKey)?.text || '') }, [tplKey])
 
@@ -236,7 +236,7 @@ export function Messaging() {
     else if (audience === 'fee') base = students.filter((x) => feeSummary(x, fees).balance > 0)
     else if (audience === 'absent') base = students.filter((x) => lastByBatch[x.batchId]?.records?.[x.id] === 'A')
     else if (audience === 'low-att') base = students.filter((x) => attendanceSummary(x.id, att).pct < 75)
-    else if (audience === 'faculty') return users.filter((u) => u.role === 'faculty').map((u) => ({ key: u.id, name: u.name, phone: u.phone, vars: { name: u.name } }))
+    else if (audience === 'faculty') return users.filter((u) => ['faculty', 'staff'].includes(u.role)).map((u) => ({ key: u.id, name: u.name, phone: u.phone, vars: { name: u.name } }))
     return base.map((st) => {
       const f = feeSummary(st, fees); const b = batches.find((x) => x.id === st.batchId)
       const vars = { student: st.name, name: to === 'parents' ? st.parentName || 'Parent' : st.name, balance: f.balance.toLocaleString('en-IN'), batch: b?.name, date: fmtDate(lastByBatch[st.batchId]?.date || today()), roll: st.rollNo, email: st.email }
@@ -262,7 +262,7 @@ export function Messaging() {
         <Card title="1. Recipients" className="lg:col-span-2">
           <div className="space-y-4">
             <Field label="Audience"><select className="input" value={audience} onChange={(e) => { setAudience(e.target.value); setSelected(null) }}>
-              <option value="batch">A batch</option><option value="all">All my students</option><option value="fee">Fee defaulters</option><option value="absent">Absent on last class day</option><option value="low-att">Attendance below 75%</option>{user.role === 'admin' && <option value="faculty">Faculty</option>}
+              <option value="batch">A batch</option><option value="all">All my students</option><option value="fee">Fee defaulters</option><option value="absent">Absent on last class day</option><option value="low-att">Attendance below 75%</option>{user.role !== 'faculty' && <option value="faculty">Faculty & staff</option>}
             </select></Field>
             {audience === 'batch' && <Field label="Batch"><select className="input" value={bid} onChange={(e) => { setBatchId(e.target.value); setSelected(null) }}>{myBatches.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}</select></Field>}
             {audience !== 'faculty' && <Tabs value={to} onChange={setTo} tabs={[{ value: 'parents', label: 'Parents' }, { value: 'students', label: 'Students' }]} />}
@@ -367,6 +367,7 @@ export function SettingsPage() {
           </div></Card>
           <Card title="Messaging"><div className="space-y-3">
             <Field label="SMS / WhatsApp signature"><input className="input" value={f.smsSignature} onChange={set('smsSignature')} /></Field>
+            <Field label="Biometric late grace (minutes after batch start)"><input type="number" min="0" className="input w-32" value={f.bioGraceMinutes ?? 10} onChange={(e) => setF({ ...f, bioGraceMinutes: Number(e.target.value) })} /></Field>
             <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={!!f.autoAbsentSms} onChange={set('autoAbsentSms')} /><span>Automatically SMS parents of absent students when attendance is saved <span className="text-slate-500">(works in the Android app; free from the academy SIM)</span></span></label>
           </div></Card>
           <Card title="System">

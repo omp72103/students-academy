@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   GraduationCap, Wallet, CalendarCheck, PhoneCall, ClipboardList, Library, NotebookPen, Bell, TrendingUp, Clock, Users, Layers,
-  AlertCircle, LayoutDashboard, ArrowUpRight, Megaphone, MessageSquare, UserPlus, Upload, BarChart3, Pin, Trophy, BookOpen, FileText,
+  AlertCircle, LayoutDashboard, ArrowUpRight, Fingerprint, MonitorSmartphone, Megaphone, MessageSquare, UserPlus, Upload, BarChart3, Pin, Trophy, BookOpen, FileText,
 } from 'lucide-react'
 import { useTable } from '../lib/db'
-import { useAuth } from '../lib/auth'
+import { useAuth, can } from '../lib/auth'
 import { PageHeader, Stat, Card, Badge, Progress, Empty, Avatar, SectionLabel, CountUp } from '../components/ui'
 import { inr, fmtDate, feeSummary, attendanceSummary, today, cls } from '../lib/utils'
 import { useMyStudent, ChildSwitcher } from './Layout'
@@ -18,7 +18,7 @@ const Shell = ({ children }) => (
 
 export default function Dashboard() {
   const { user } = useAuth()
-  if (user.role === 'admin') return <AdminDash />
+  if (['admin', 'staff'].includes(user.role)) return <AdminDash />
   if (user.role === 'faculty') return <FacultyDash />
   return <StudentDash />
 }
@@ -48,7 +48,7 @@ function QuickActions({ items }) {
       <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((a, i) => (
           <motion.div key={a.title} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }} whileHover={{ y: -4 }}>
-            <Link to={a.url} className="group flex items-center gap-4 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-clay backdrop-blur-xl transition-shadow hover:shadow-[0_14px_36px_rgba(37,99,235,0.14)]">
+            <Link to={a.url} onClick={(e) => { if (a.url === '#view-as') { e.preventDefault(); window.dispatchEvent(new Event('sa-view-as')) } }} className="group flex items-center gap-4 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-clay backdrop-blur-xl transition-shadow hover:shadow-[0_14px_36px_rgba(37,99,235,0.14)]">
               <span className={cls('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md', a.grad)}><a.icon className="h-6 w-6" /></span>
               <span className="min-w-0 flex-1"><span className="block font-bold text-slate-800">{a.title}</span><span className="block truncate text-xs font-medium text-slate-500">{a.desc}</span></span>
               <ArrowUpRight className="h-4 w-4 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
@@ -94,18 +94,21 @@ function AdminDash() {
   })
   const thisMonth = feeTrend[5]?.value || 0
   const actions = [
-    { title: 'New admission', desc: 'Admit a student & create parent login', url: '/portal/students?new=1', icon: UserPlus, grad: 'from-blue-600 to-cyan-400' },
-    { title: 'Collect fee', desc: 'Record payment & print receipt', url: '/portal/fees', icon: Wallet, grad: 'from-emerald-600 to-teal-400' },
-    { title: 'Follow up enquiries', desc: `${openEnq.length} open leads`, url: '/portal/enquiries', icon: PhoneCall, grad: 'from-violet-600 to-purple-400' },
-    { title: 'Mark attendance', desc: 'Daily attendance + absent alerts', url: '/portal/attendance', icon: CalendarCheck, grad: 'from-sky-600 to-blue-400' },
-    { title: 'Send SMS / WhatsApp', desc: 'Free from the academy SIM', url: '/portal/messaging', icon: MessageSquare, grad: 'from-rose-600 to-orange-400' },
-    { title: 'Post a notice', desc: 'Portal + website notice board', url: '/portal/notices', icon: Megaphone, grad: 'from-amber-600 to-orange-400' },
-  ]
+    { title: 'New admission', desc: 'Admit a student & create parent login', url: '/portal/students?new=1', icon: UserPlus, grad: 'from-blue-600 to-cyan-400', cap: 'students' },
+    { title: 'Collect fee', desc: 'Record payment & print receipt', url: '/portal/fees', icon: Wallet, grad: 'from-emerald-600 to-teal-400', cap: 'fees' },
+    { title: 'Follow up enquiries', desc: `${openEnq.length} open leads`, url: '/portal/enquiries', icon: PhoneCall, grad: 'from-violet-600 to-purple-400', cap: 'enquiries' },
+    { title: 'Mark attendance', desc: 'Daily, register & staff attendance', url: '/portal/attendance', icon: CalendarCheck, grad: 'from-sky-600 to-blue-400', cap: 'attendance' },
+    { title: 'Marks & exams', desc: 'Enter marks, ranks & report cards', url: '/portal/marks', icon: Trophy, grad: 'from-indigo-600 to-violet-400', cap: 'marks' },
+    { title: 'Biometric devices', desc: 'Live punches & device status', url: '/portal/biometric', icon: Fingerprint, grad: 'from-slate-700 to-cyan-500', cap: 'biometric' },
+    { title: 'Send SMS / WhatsApp', desc: 'Free from the academy SIM', url: '/portal/messaging', icon: MessageSquare, grad: 'from-rose-600 to-orange-400', cap: 'messaging' },
+    { title: 'Post a notice', desc: 'Portal + website notice board', url: '/portal/notices', icon: Megaphone, grad: 'from-amber-600 to-orange-400', cap: 'notices' },
+    { title: 'Preview dashboards', desc: 'View as any student, parent or staff', url: '#view-as', icon: MonitorSmartphone, grad: 'from-fuchsia-600 to-pink-400', cap: 'admin-only' },
+  ].filter((a) => a.cap === 'admin-only' ? user.role === 'admin' : can(user, a.cap))
   return (
     <Shell>
-      <PageHeader icon={LayoutDashboard} eyebrow={`${greet()}, ${user.name.split(' ')[0]}`} title="Academy Control Center"
+      <PageHeader icon={LayoutDashboard} eyebrow={`${greet()}, ${user.name.split(' ')[0]}`} title={user.role === 'staff' ? 'Office Control Center' : 'Academy Control Center'}
         subtitle={`Students Academy, Grant Road · ${new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}`}
-        actions={<><Link to="/portal/students?new=1" className="btn-primary"><UserPlus size={16} />New Admission</Link><Link to="/portal/fees" className="btn-outline">Collect Fee</Link></>} />
+        actions={<>{can(user, 'students') && <Link to="/portal/students?new=1" className="btn-primary"><UserPlus size={16} />New Admission</Link>}{can(user, 'fees') && <Link to="/portal/fees" className="btn-outline">Collect Fee</Link>}</>} />
       <div>
         <SectionLabel>Academy overview</SectionLabel>
         <div className="mt-3 -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto nice-scroll px-1 pb-2 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 xl:grid-cols-4 [&>*]:w-[240px] [&>*]:shrink-0 [&>*]:snap-center sm:[&>*]:w-auto">

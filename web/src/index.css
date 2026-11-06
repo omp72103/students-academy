@@ -9,7 +9,7 @@
   h1, h2, h3 { @apply text-slate-900; }
   /* Portal uses the AI Prep / MITK ERP type system */
   .portal { @apply font-body; }
-  .portal h1, .portal h2, .portal h3 { @apply font-heading tracking-tight text-slate-800; }
+  :where(.portal) :where(h1, h2, h3) { @apply font-heading tracking-tight text-slate-800; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; } }
 }
 

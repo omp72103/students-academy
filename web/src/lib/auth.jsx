@@ -5,28 +5,21 @@ import { db, MODE, supabase } from './db'
 const Ctx = createContext(null)
 const KEY = 'sa_session_v1'
 
-// Role → permissions, modelled on the Educollo ERP role matrix.
-export const ROLES = {
-  admin: { label: 'Management', color: 'bg-indigo-100 text-indigo-700' },
-  faculty: { label: 'Faculty', color: 'bg-emerald-100 text-emerald-700' },
-  student: { label: 'Student', color: 'bg-sky-100 text-sky-700' },
-  parent: { label: 'Parent', color: 'bg-amber-100 text-amber-700' },
-}
-export const can = (user, perm) => {
-  if (!user) return false
-  const m = {
-    admin: ['*'],
-    faculty: ['dashboard', 'students.view', 'batches.view', 'attendance', 'materials', 'tests', 'results', 'assignments', 'notices', 'timetable.view', 'messaging', 'enquiries.view'],
-    student: ['dashboard', 'materials.view', 'tests.take', 'results.own', 'assignments.own', 'notices.view', 'timetable.view', 'attendance.own', 'fees.own'],
-    parent: ['dashboard', 'results.own', 'attendance.own', 'fees.own', 'notices.view', 'timetable.view', 'assignments.own'],
-  }[user.role] || []
-  const base = perm.split('.')[0]
-  return m.includes('*') || m.includes(perm) || m.includes(base) || m.some((x) => x.startsWith(base + '.'))
-}
+export { ROLES, can, canManage, PRIVILEGES } from './perms'
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null)
+  const [realUser, setUser] = useState(null)
+  const [viewAs, setViewAsState] = useState(null)
   const [ready, setReady] = useState(false)
+  // Management "View as": preview the portal exactly as another user sees it
+  const user = realUser?.role === 'admin' && viewAs ? viewAs : realUser
+  useEffect(() => {
+    if (realUser?.role !== 'admin') { setViewAsState(null); return }
+    const id = sessionStorage.getItem('sa_view_as')
+    if (id && !viewAs) db.get('users', id).then((u) => u && setViewAsState(u))
+  }, [realUser]) // eslint-disable-line
+  function startViewAs(u) { if (realUser?.role !== 'admin' || !u) return; sessionStorage.setItem('sa_view_as', u.id); setViewAsState(u) }
+  function stopViewAs() { sessionStorage.removeItem('sa_view_as'); setViewAsState(null) }
   const [authError, setAuthError] = useState('')
 
   async function profileByEmail(email) {
@@ -114,12 +107,12 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     if (MODE === 'supabase') await supabase.auth.signOut()
-    localStorage.removeItem(KEY); setUser(null)
+    localStorage.removeItem(KEY); sessionStorage.removeItem('sa_view_as'); setViewAsState(null); setUser(null)
   }
 
-  async function refresh() { if (user) setUser(await db.get('users', user.id)) }
+  async function refresh() { if (realUser) setUser(await db.get('users', realUser.id)) }
 
-  return <Ctx.Provider value={{ user, ready, login, logout, refresh, loginWithGoogle, resetPassword, authError, setAuthError }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ user, realUser, viewAs: realUser?.role === 'admin' ? viewAs : null, startViewAs, stopViewAs, ready, login, logout, refresh, loginWithGoogle, resetPassword, authError, setAuthError }}>{children}</Ctx.Provider>
 }
 export const useAuth = () => useContext(Ctx)
 const authErrorFor = (email) => `${email} is not registered with Students Academy (or is inactive). Contact the office.`

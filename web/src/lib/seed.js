@@ -9,18 +9,18 @@ const ymd = (d) => d.toISOString().slice(0, 10)
 
 export function buildSeed() {
   const batches = [
-    { id: 'b10A', name: '10th SSC — Batch A (Morning)', standard: '10th', stream: 'SSC', timing: '7:30 AM – 10:30 AM', room: 'Room 1', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
-    { id: 'b10B', name: '10th SSC — Batch B (Evening)', standard: '10th', stream: 'SSC', timing: '5:00 PM – 8:00 PM', room: 'Room 2', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
-    { id: 'b12S', name: '12th Science — PCM + CET', standard: '12th Science', stream: 'Science', timing: '3:00 PM – 6:00 PM', room: 'Room 3', facultyIds: ['u-sai'], fee: 48000 },
-    { id: 'b12C', name: '12th Commerce + IT', standard: '12th Commerce', stream: 'Commerce', timing: '11:00 AM – 2:00 PM', room: 'Room 2', facultyIds: ['u-priya'], fee: 28000 },
+    { id: 'b10A', name: '10th SSC — Batch A (Morning)', standard: '10th', stream: 'SSC', timing: '7:30 AM – 10:30 AM', startTime: '07:30', room: 'Room 1', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
+    { id: 'b10B', name: '10th SSC — Batch B (Evening)', standard: '10th', stream: 'SSC', timing: '5:00 PM – 8:00 PM', startTime: '17:00', room: 'Room 2', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
+    { id: 'b12S', name: '12th Science — PCM + CET', standard: '12th Science', stream: 'Science', timing: '3:00 PM – 6:00 PM', startTime: '15:00', room: 'Room 3', facultyIds: ['u-sai'], fee: 48000 },
+    { id: 'b12C', name: '12th Commerce + IT', standard: '12th Commerce', stream: 'Commerce', timing: '11:00 AM – 2:00 PM', startTime: '11:00', room: 'Room 2', facultyIds: ['u-priya'], fee: 28000 },
   ]
 
   const users = [
     { id: 'u-admin', role: 'admin', name: 'Academy Administrator', email: 'admin@studentsacademy.in', phone: '9000000001', password: 'admin123', designation: 'Director' },
-    { id: 'u-office', role: 'admin', name: 'Front Office', email: 'office@studentsacademy.in', phone: '9000000002', password: 'office123', designation: 'Office Executive' },
-    { id: 'u-sai', role: 'faculty', name: 'Sai Sir', email: 'sai@studentsacademy.in', phone: '9000000010', password: 'faculty123', designation: 'Head Master — School Section', subjects: ['Physics', 'Science 1', 'Science 2', 'Electronics', 'Computer Science'] },
-    { id: 'u-hemant', role: 'faculty', name: 'Hemant Sir', email: 'hemant@studentsacademy.in', phone: '9000000011', password: 'faculty123', designation: 'Faculty — Languages', subjects: ['Hindi', 'Marathi', 'English'] },
-    { id: 'u-priya', role: 'faculty', name: 'Priya Ma\'am', email: 'priya@studentsacademy.in', phone: '9000000012', password: 'faculty123', designation: 'Faculty — Commerce', subjects: ['Accountancy', 'Economics', 'Information Technology'] },
+    { id: 'u-office', role: 'staff', name: 'Front Office', email: 'office@studentsacademy.in', phone: '9000000002', password: 'office123', designation: 'Office Executive', biometricId: '9002', privileges: ['biometric'] },
+    { id: 'u-sai', role: 'faculty', name: 'Sai Sir', email: 'sai@studentsacademy.in', phone: '9000000010', password: 'faculty123', biometricId: '9010', designation: 'Head Master — School Section', subjects: ['Physics', 'Science 1', 'Science 2', 'Electronics', 'Computer Science'] },
+    { id: 'u-hemant', role: 'faculty', name: 'Hemant Sir', email: 'hemant@studentsacademy.in', phone: '9000000011', password: 'faculty123', biometricId: '9011', designation: 'Faculty — Languages', subjects: ['Hindi', 'Marathi', 'English'] },
+    { id: 'u-priya', role: 'faculty', name: 'Priya Ma\'am', email: 'priya@studentsacademy.in', phone: '9000000012', password: 'faculty123', biometricId: '9012', designation: 'Faculty — Commerce', subjects: ['Accountancy', 'Economics', 'Information Technology'] },
   ]
 
   const names = [
@@ -37,7 +37,7 @@ export function buildSeed() {
       email: name.split(' ')[0].toLowerCase() + '@student.sa', phone: '98' + String(20000000 + i * 1117).slice(0, 8),
       password: 'student123', parentName: 'Parent of ' + name.split(' ')[0], parentPhone: '97' + String(30000000 + i * 1313).slice(0, 8),
       dob: '2010-0' + ((i % 9) + 1) + '-1' + (i % 9), school: i % 2 ? 'J.D. Bharda High School' : 'St. Columba School',
-      admissionDate: ymd(daysAgo(150 - i * 3)), status: 'active', feeTotal: b.fee, discount: i % 4 === 0 ? 2000 : 0,
+      admissionDate: ymd(daysAgo(150 - i * 3)), status: 'active', biometricId: String(1001 + i), feeTotal: b.fee, discount: i % 4 === 0 ? 2000 : 0,
     }
   })
   const parents = students.map((s, i) => ({
@@ -138,7 +138,46 @@ export function buildSeed() {
     { id: 'tp3', name: 'Sample Topper', exam: 'MHT-CET', year: '2026', score: '99.1 %ile', note: '', order: 3 },
   ]
 
+  // ---- marks (offline exams) ----
+  const SUBJ = { b10A: ['English', 'Maths 1', 'Maths 2', 'Science 1', 'Science 2'], b10B: ['English', 'Maths 1', 'Maths 2', 'Science 1', 'Science 2'], b12S: ['Physics', 'Chemistry', 'Mathematics'], b12C: ['Book Keeping & Accountancy', 'Economics', 'Secretarial Practice'] }
+  const mk = (id, name, type, batchId, ago, max, status) => {
+    const subjects = SUBJ[batchId].map((n) => ({ name: n, max, pass: Math.ceil(max * 0.35) }))
+    const marks = {}
+    students.filter((s) => s.batchId === batchId).forEach((s, k) => {
+      marks[s.id] = Object.fromEntries(subjects.map((sub, j) => [sub.name, (k === 2 && j === 1 && id === 'ex1') ? 'AB' : String(Math.max(3, Math.min(max, Math.round(max * (0.45 + ((k * 7 + j * 13 + id.length * 3) % 50) / 100)))))]))
+    })
+    return { id, name, type, batchId, date: ymd(daysAgo(ago)), subjects, marks, status, createdBy: 'u-sai', createdAt: iso(daysAgo(ago)) }
+  }
+  const exams = [
+    mk('ex1', 'Unit Test 1', 'Unit Test', 'b10A', 30, 25, 'published'), mk('ex2', 'Unit Test 2', 'Unit Test', 'b10A', 9, 25, 'published'),
+    mk('ex3', 'Unit Test 1', 'Unit Test', 'b10B', 28, 25, 'published'), mk('ex4', 'Mid-term Examination', 'Mid-term', 'b12S', 12, 70, 'published'),
+    mk('ex5', 'Monthly Test — October', 'Weekly Test', 'b12C', 15, 40, 'draft'),
+  ]
+
+  // ---- biometric ----
+  const devices = [
+    { id: 'dev1', name: 'Main entrance', serialNo: 'CJDE231560123', model: 'ZKTeco', location: 'Ground floor reception', purpose: 'both', active: true, token: 'demo-token-main-entrance', lastSeen: iso(new Date(Date.now() - 4 * 60000)), punchCount: 0 },
+    { id: 'dev2', name: 'Staff room', serialNo: 'ESSL9X0042', model: 'eSSL', location: '1st floor staff room', purpose: 'staff', active: true, token: 'demo-token-staff-room', lastSeen: iso(daysAgo(2)), punchCount: 0 },
+  ]
+  const punches = [], staffAttendance = []
+  const stamp = (d, h, m) => { const x = new Date(d); x.setHours(h, m, 0, 0); return x }
+  const local = (x) => `${ymd(x)}T${String(x.getHours()).padStart(2, '0')}:${String(x.getMinutes()).padStart(2, '0')}:00`
+  for (let d = 1; d <= 6; d++) {
+    const day = daysAgo(d); if (day.getDay() === 0) continue
+    const recs = {}
+    users.filter((u) => u.biometricId).forEach((u, k) => {
+      const inT = stamp(day, u.role === 'faculty' ? 8 : 9, (k * 7 + d * 3) % 25), outT = stamp(day, 18, (k * 11 + d) % 40)
+      ;[inT, outT].forEach((t, j) => punches.push({ id: `${j ? 'ESSL9X0042' : 'CJDE231560123'}-${u.biometricId}-${local(t).replace(/\D/g, '')}`, deviceSn: j ? 'ESSL9X0042' : 'CJDE231560123', deviceName: j ? 'Staff room' : 'Main entrance', pin: u.biometricId, time: local(t), date: ymd(day), userId: u.id, userName: u.name, role: u.role }))
+      recs[u.id] = { status: 'P', in: local(inT).slice(11, 16), out: local(outT).slice(11, 16), source: 'biometric' }
+    })
+    staffAttendance.push({ id: `sat-${ymd(day)}`, date: ymd(day), records: recs, markedBy: 'biometric', createdAt: iso(day) })
+    students.slice(0, 6).forEach((s, k) => { const t = stamp(day, Number(batches.find((b) => b.id === s.batchId).startTime.slice(0, 2)), (k * 4 + d) % 20); punches.push({ id: `CJDE231560123-${s.biometricId}-${local(t).replace(/\D/g, '')}`, deviceSn: 'CJDE231560123', deviceName: 'Main entrance', pin: s.biometricId, time: local(t), date: ymd(day), userId: s.id, userName: s.name, role: 'student' }) })
+  }
+  punches.push({ id: 'CJDE231560123-4040-x', deviceSn: 'CJDE231560123', deviceName: 'Main entrance', pin: '4040', time: local(stamp(daysAgo(1), 9, 41)), date: ymd(daysAgo(1)), userId: null, userName: null, role: null })
+  devices[0].punchCount = punches.filter((p) => p.deviceSn === 'CJDE231560123').length; devices[1].punchCount = punches.length - devices[0].punchCount
+
   return {
+    exams, devices, punches, staff_attendance: staffAttendance,
     settings: [DEFAULT_SETTINGS], users: [...users, ...students, ...parents], batches, materials: SEED_MATERIALS,
     attendance, tests, attempts, assignments, submissions, fees, notices, enquiries, timetable, messages: [], toppers,
   }
