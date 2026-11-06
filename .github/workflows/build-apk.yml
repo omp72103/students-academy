@@ -6,6 +6,8 @@ on:
   workflow_dispatch:
     inputs:
       site_url: { description: 'Website URL the app opens', required: false, default: 'https://students-academy.vercel.app' }
+permissions:
+  contents: write   # to publish the APK as a GitHub Release
 jobs:
   build:
     runs-on: ubuntu-24.04   # image ships with the Android SDK preinstalled
@@ -23,9 +25,31 @@ jobs:
           yes | "$SDKM" --licenses > /dev/null || true
           "$SDKM" "platforms;android-34" "build-tools;34.0.0" > /dev/null
           echo "sdk.dir=$ANDROID_HOME" > local.properties
-      - name: Build debug APK
-        run: gradle assembleDebug --no-daemon -PSITE_URL=${{ github.event.inputs.site_url || 'https://students-academy.vercel.app' }}
-      - name: Rename APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk StudentsAcademy.apk
+      - name: Restore signing key (optional repo secrets)
+        env: { KEYSTORE_BASE64: '${{ secrets.KEYSTORE_BASE64 }}' }
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then echo "$KEYSTORE_BASE64" | base64 -d > release.jks; echo "KEYSTORE_FILE=$PWD/release.jks" >> $GITHUB_ENV; fi
+      - name: Build APK
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          URL='${{ github.event.inputs.site_url || 'https://students-academy.vercel.app' }}'
+          if [ -n "$KEYSTORE_FILE" ]; then
+            gradle assembleRelease --no-daemon -PSITE_URL=$URL && cp app/build/outputs/apk/release/app-release.apk StudentsAcademy.apk
+          else
+            gradle assembleDebug --no-daemon -PSITE_URL=$URL && cp app/build/outputs/apk/debug/app-debug.apk StudentsAcademy.apk
+          fi
       - uses: actions/upload-artifact@v4
         with: { name: StudentsAcademy-apk, path: android/StudentsAcademy.apk }
+      - name: Publish download link (GitHub Release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: app-v${{ github.run_number }}
+          name: Students Academy App v1.1 (build ${{ github.run_number }})
+          make_latest: true
+          files: android/StudentsAcademy.apk
+          body: |
+            Install on the office phone(s): download StudentsAcademy.apk, allow "Install unknown apps", open it.
+            Permanent link: https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk

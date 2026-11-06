@@ -1,5 +1,24 @@
 # Students Academy, Grant Road: Official Website + LMS/ERP + Android App
 
+**Live:** https://students-academy.vercel.app · **Portal:** https://students-academy.vercel.app/portal
+**Android app (latest):** https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk
+
+Every push to `main` redeploys the website on Vercel and rebuilds the APK through GitHub Actions.
+
+## Free SMS & WhatsApp: how it works
+
+| Channel | In the Android app | In a browser |
+|---|---|---|
+| **SMS** | Sent automatically in the background from the phone's own SIM, using the SIM's SMS pack. No gateway and no per-SMS fee. Dual-SIM phones can pick the SIM. Each message's status (queued → sent → delivered / failed) is saved in Portal → SMS & WhatsApp → Message log. | A guided queue opens the phone's SMS app for each message. |
+| **WhatsApp** | Free click-to-chat. The app opens each parent's chat with the message ready; you tap **Send**, and when you come back the next chat opens automatically (Open next / Skip / Stop). | The same guided queue, using wa.me links. |
+
+The Android app sends SMS automatically for absentees (optional auto-SMS when attendance is saved; turn it on in Settings), fee reminders, test results, notices and holiday messages.
+
+Things to know:
+- Use a SIM with an **unlimited or large SMS pack**. Many Indian prepaid packs allow about 100 SMS a day; after that the operator charges per SMS.
+- Android shows a one-time "This app is sending a large number of SMS" prompt after about 30 messages in 30 minutes. Tick **Always allow**.
+- WhatsApp has no free API for unattended bulk sending, and automating the Send button breaks WhatsApp's terms and gets numbers banned. That's why each WhatsApp chat needs one tap on Send. It stays free and the academy's number stays safe.
+
 One codebase that serves three things:
 
 | Part | Where | What it does |
@@ -44,11 +63,18 @@ With no environment variables the app runs in **demo mode**: data is seeded into
 | Student | aarav@student.sa | student123 |
 | Parent | aarav.parent@sa.in | parent123 |
 
-## Go live (shared database)
+## Production setup (already done)
+
+- **Hosting:** Vercel project `students-academy` (root directory `web/`), connected to this repo.
+- **Database:** Supabase project `mitk-campus-erp`, in its own `sa_`-prefixed tables with role-based RLS (`sa_role()`), and storage bucket `sa-files`. The free plan allows only 2 active projects; to move to a dedicated project later, run `supabase/schema.sql` there and change the env vars.
+- **Vercel env:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_TABLE_PREFIX=sa_`, `VITE_STORAGE_BUCKET=sa-files`
+- **APK signing:** add repo secrets `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD` (Settings → Secrets and variables → Actions) so each build is signed with the same release key and updates install over the old app. Without them the build is debug-signed.
+
+## Go live on a fresh Supabase project
 
 Demo mode keeps data in each browser separately. For real use, connect Supabase:
 
-1. Create a Supabase project. In the **SQL Editor**, run `supabase/schema.sql`, then `supabase/seed.sql` (institute settings + all saiphy.com material).
+1. Create a Supabase project. In the **SQL Editor**, run `supabase/schema.sql` and load the material from `web/src/data/materials.js`. Set `VITE_TABLE_PREFIX=sa_`.
 2. Go to Authentication → Providers → Email and turn **off** "Confirm email".
 3. Create the first admin user (instructions are at the bottom of `schema.sql`).
 4. Deploy `web/` to Vercel with the env vars `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`. `vercel.json` already handles SPA routing.

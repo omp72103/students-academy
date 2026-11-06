@@ -257,7 +257,7 @@ export function Messaging() {
     <>
       <PageHeader title="SMS & WhatsApp" subtitle={isAndroidApp() ? 'Connected to the Android app — SMS go out free from the academy SIM.' : 'Tip: install the Students Academy Android app to send bulk SMS free from the academy SIM.'} />
       {isAndroidApp() && <SimPicker />}
-      {!isAndroidApp() && <div className="card p-4 mb-4 flex gap-3 items-center bg-indigo-50 border-indigo-100"><Smartphone className="text-indigo-600 shrink-0" /><p className="text-sm text-indigo-900">In a browser, SMS opens your phone's messaging app one message at a time and WhatsApp opens each chat. In the Android app, bulk SMS is sent automatically in the background.</p></div>}
+      {!isAndroidApp() && <div className="card p-4 mb-4 flex gap-3 items-center bg-indigo-50 border-indigo-100"><Smartphone className="text-indigo-600 shrink-0" /><p className="text-sm text-indigo-900 flex-1">In a browser, each SMS / WhatsApp opens one at a time. In the <b>Students Academy Android app</b>, SMS go out automatically from the academy SIM (free) and WhatsApp chats open one after another.</p><a href="https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk" className="btn-primary shrink-0">Download app</a></div>}
       <div className="grid lg:grid-cols-5 gap-4">
         <Card title="1. Recipients" className="lg:col-span-2">
           <div className="space-y-4">

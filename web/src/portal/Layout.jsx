@@ -11,6 +11,8 @@ import SendQueue from '../components/SendQueue'
 import { cls } from '../lib/utils'
 import { isAndroidApp } from '../lib/messaging'
 
+export const APK_URL = 'https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk'
+
 const NAV = {
   admin: [
     ['Overview', [['dashboard', 'Dashboard', LayoutDashboard], ['enquiries', 'Enquiries & Leads', PhoneCall]]],
@@ -148,7 +150,11 @@ export function Login() {
               </div>
             </div>
           )}
-          <Link to="/" className="block text-center text-sm text-slate-500 mt-8 hover:text-slate-800">← Back to website</Link>
+          {!isAndroidApp() && <a href={APK_URL} className="mt-8 flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 hover:border-indigo-300">
+            <div className="h-10 w-10 rounded-lg bg-emerald-50 text-emerald-600 grid place-items-center"><Smartphone size={20} /></div>
+            <div className="text-sm"><div className="font-semibold">Download the Android app</div><div className="text-xs text-slate-500">Free SMS & WhatsApp alerts from the academy phone</div></div>
+          </a>}
+          <Link to="/" className="block text-center text-sm text-slate-500 mt-6 hover:text-slate-800">← Back to website</Link>
         </div>
       </div>
     </div>
