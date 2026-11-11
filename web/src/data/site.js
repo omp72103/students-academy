@@ -29,7 +29,7 @@ export const PROGRAMS = [
     standards: ['9th', '10th'],
     summary: 'Complete Maharashtra State Board coaching for Science 1 & 2, Maths 1 & 2, Social Science and languages.',
     subjects: ['Science 1 (Physics & Chemistry)', 'Science 2 (Biology & Environment)', 'Maths 1 (Algebra)', 'Maths 2 (Geometry)', 'History & Political Science', 'Geography', 'English', 'Marathi / Hindi'],
-    highlights: ['Chapterwise handcrafted notes', 'Board PYQs from 2019–2026', 'Board-pattern practice exams', 'Weekly chapter tests'],
+    highlights: ['Chapterwise notes', 'Board PYQs from 2019–2026', 'Board-pattern practice exams', 'Weekly chapter tests'],
   },
   {
     slug: 'science', title: 'FYJC & SYJC Science (11th–12th)', icon: 'Atom',
