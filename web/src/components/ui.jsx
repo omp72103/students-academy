@@ -20,7 +20,7 @@ export function PageHeader({ title, subtitle, actions, icon, eyebrow }) {
       className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex items-center gap-4 min-w-0">
         {Icon && (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 shadow-lg shadow-blue-500/20">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20">
             <Icon className="h-7 w-7 text-white" strokeWidth={2.3} />
           </div>
         )}
@@ -66,12 +66,12 @@ export function CountUp({ value, duration = 0.9, delay = 0 }) {
 }
 
 const ACCENTS = {
-  indigo: 'from-sky-500/90 via-blue-600/85 to-indigo-600/80',
-  sky: 'from-cyan-500/90 via-sky-600/85 to-blue-600/80',
-  emerald: 'from-emerald-500/90 via-teal-600/85 to-cyan-600/80',
-  amber: 'from-amber-500/90 via-orange-600/85 to-rose-500/75',
-  rose: 'from-rose-500/90 via-red-600/85 to-orange-500/75',
-  violet: 'from-violet-500/90 via-purple-600/85 to-indigo-600/80',
+  indigo: 'from-red-500 via-red-600 to-red-700',
+  sky: 'from-zinc-600 via-zinc-700 to-zinc-800',
+  emerald: 'from-emerald-500 via-emerald-600 to-teal-700',
+  amber: 'from-amber-500 via-amber-600 to-orange-600',
+  rose: 'from-rose-500 via-rose-600 to-pink-700',
+  violet: 'from-orange-500 via-orange-600 to-red-600',
   slate: 'from-slate-600/90 via-slate-700/85 to-slate-800/80',
 }
 
@@ -116,21 +116,16 @@ export function Stat({ icon: Icon, label, value, hint, tone = 'indigo', progress
 export function Card({ title, actions, children, className, bodyClass = 'p-5', gradient = true, icon: Icon }) {
   return (
     <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: EASE }} className={cls('card overflow-hidden', className)}>
-      {(title || actions) && (gradient ? (
-        <div className="relative flex items-center justify-between gap-2 overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600 px-5 py-3.5">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-          <p className="relative flex items-center gap-2 text-base font-bold text-white font-heading">
-            {Icon && <span className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/25 bg-white/20"><Icon className="h-4 w-4 text-white" /></span>}
+      {(title || actions) && (
+        <div className={cls('flex items-center justify-between gap-2 px-5 border-b border-slate-100', gradient ? 'py-3.5' : 'py-3')}>
+          <p className="flex items-center gap-2.5 text-[15px] font-bold text-slate-800 font-heading">
+            {gradient && <span className="h-5 w-1 rounded-full bg-red-600" />}
+            {Icon && <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100"><Icon className="h-4 w-4" /></span>}
             {title}
           </p>
-          <div className="relative flex gap-2 [&_a]:text-white [&_a]:bg-white/20 [&_a]:rounded-lg [&_a]:px-2.5 [&_a]:py-1 [&_a:hover]:bg-white/30">{actions}</div>
+          <div className="flex gap-2 [&_a]:text-red-600 [&_a]:font-semibold [&_a]:text-sm">{actions}</div>
         </div>
-      ) : (
-        <div className="flex items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-100/80">
-          <h3 className="font-bold text-slate-800 text-sm flex items-center gap-2">{Icon && <Icon size={16} className="text-blue-600" />}{title}</h3>
-          <div className="flex gap-2">{actions}</div>
-        </div>
-      ))}
+      )}
       <div className={bodyClass}>{children}</div>
     </motion.div>
   )
@@ -156,10 +151,10 @@ export function Modal({ open, onClose, title, children, footer, wide }) {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
           <motion.div className={cls('bg-white/95 backdrop-blur-2xl w-full rounded-t-[26px] sm:rounded-[26px] border border-white shadow-[0_30px_80px_rgba(15,23,42,0.35)] max-h-[92vh] flex flex-col overflow-hidden', wide ? 'sm:max-w-3xl' : 'sm:max-w-lg')}
             onMouseDown={(e) => e.stopPropagation()} initial={{ y: 40, opacity: 0, scale: 0.97 }} animate={{ y: 0, opacity: 1, scale: 1 }} exit={{ y: 30, opacity: 0, scale: 0.98 }} transition={{ duration: 0.3, ease: EASE }}>
-            <div className="relative flex items-center justify-between px-5 py-4 bg-gradient-to-br from-blue-600 via-indigo-600 to-violet-600">
-              <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
-              <h3 className="relative font-heading font-bold text-white">{title}</h3>
-              <button className="relative rounded-lg p-1.5 text-white/80 hover:bg-white/15 hover:text-white" onClick={onClose} aria-label="Close"><X size={18} /></button>
+            <div className="relative flex items-center justify-between px-5 py-4 border-b border-slate-100">
+              <div className="absolute inset-x-0 top-0 h-1 bg-red-600" />
+              <h3 className="relative font-heading font-bold text-slate-800">{title}</h3>
+              <button className="relative rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" onClick={onClose} aria-label="Close"><X size={18} /></button>
             </div>
             <div className="p-5 overflow-y-auto nice-scroll">{children}</div>
             {footer && <div className="px-5 py-3 border-t border-slate-100 bg-slate-50/80 flex flex-wrap justify-end gap-2">{footer}</div>}

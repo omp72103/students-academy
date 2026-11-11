@@ -28,17 +28,16 @@ function Section({ eyebrow, title, subtitle, children, className, center }) {
 
 function PageHero({ title, subtitle, crumb }) {
   return (
-    <div className="relative overflow-hidden bg-navy-900 text-white">
+    <div className="relative overflow-hidden bg-gradient-to-b from-red-50/70 to-white border-b border-red-100/70">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-20 h-80 w-80 rounded-full bg-blue-600/25 blur-[100px] animate-aurora" />
-        <div className="absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-gold-500/20 blur-[100px] animate-aurora [animation-delay:-7s]" />
-        <div className="absolute inset-0 bg-grid mask-fade-b" />
+        <div className="absolute -top-24 -right-20 h-80 w-80 rounded-full bg-red-200/40 blur-[100px] animate-aurora" />
+        <div className="absolute inset-0 bg-grid-dark mask-fade-b" />
       </div>
-      <div className="container-x py-16 sm:py-20 relative">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-navy-200 mb-3 tracking-wide"><Link to="/" className="hover:text-gold-400">Home</Link> <span className="mx-1.5 text-gold-500">/</span> {crumb || title}</motion.div>
-        <h1 className="font-serif text-4xl sm:text-5xl font-bold text-white overflow-hidden"><motion.span className="inline-block" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>{title}</motion.span></h1>
-        {subtitle && <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4 text-navy-100 max-w-2xl text-lg">{subtitle}</motion.p>}
-        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="mt-8 h-[2px] w-24 origin-left bg-gradient-to-r from-gold-500 to-transparent" />
+      <div className="container-x py-14 sm:py-16 relative">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-xs text-slate-500 mb-3 tracking-wide"><Link to="/" className="hover:text-red-600">Home</Link> <span className="mx-1.5 text-red-400">/</span> {crumb || title}</motion.div>
+        <h1 className="font-serif text-4xl sm:text-5xl font-bold text-navy-900 overflow-hidden"><motion.span className="inline-block" initial={{ y: '100%' }} animate={{ y: 0 }} transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}>{title}</motion.span></h1>
+        {subtitle && <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="mt-4 text-slate-600 max-w-2xl text-lg">{subtitle}</motion.p>}
+        <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.3, duration: 0.8 }} className="mt-7 h-1 w-20 origin-left rounded-full bg-red-600" />
       </div>
     </div>
   )
@@ -113,7 +112,7 @@ export function Courses() {
               <span className="pointer-events-none absolute -right-4 -top-8 font-serif text-[9rem] font-bold leading-none text-slate-50 group-hover:text-gold-50 transition-colors">0{idx + 1}</span>
               <div className="relative lg:col-span-2">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-xl bg-navy-800 text-gold-400 grid place-items-center"><Ic name={p.icon} size={20} /></div>
+                  <div className="h-11 w-11 rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center"><Ic name={p.icon} size={20} /></div>
                   <h2 className="font-serif text-xl sm:text-2xl font-bold text-navy-900">{p.title}</h2>
                 </div>
                 <p className="mt-4 text-slate-600 leading-relaxed">{p.summary}</p>
@@ -157,7 +156,7 @@ export function StudyMaterial() {
             <div className="flex lg:flex-col gap-1 overflow-x-auto">
               {stds.map((s) => (
                 <button key={s} onClick={() => { setParams({ std: s }); setQ('') }}
-                  className={cls('text-left px-3 py-2 rounded-lg text-sm whitespace-nowrap flex justify-between gap-3', std === s && !q ? 'bg-navy-800 text-white' : 'text-slate-700 hover:bg-slate-100')}>
+                  className={cls('text-left px-3 py-2 rounded-lg text-sm whitespace-nowrap flex justify-between gap-3', std === s && !q ? 'bg-red-600 text-white' : 'text-slate-700 hover:bg-slate-100')}>
                   {s}<span className="opacity-60">{pub.filter((m) => m.standard === s).length}</span>
                 </button>
               ))}
@@ -226,7 +225,7 @@ export function Results() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {items.map((t) => (
                 <div key={t.id} className="card p-6 text-center">
-                  <div className="mx-auto h-16 w-16 rounded-full bg-navy-800 text-gold-400 grid place-items-center text-xl font-bold">{t.name.split(' ').map((x) => x[0]).join('').slice(0, 2)}</div>
+                  <div className="mx-auto h-16 w-16 rounded-full bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center text-xl font-bold">{t.name.split(' ').map((x) => x[0]).join('').slice(0, 2)}</div>
                   <div className="mt-3 font-semibold">{t.name}</div>
                   <div className="text-2xl font-bold text-navy-800 mt-1">{t.score}</div>
                   {t.note && <div className="text-xs text-slate-500 mt-1">{t.note}</div>}
@@ -283,7 +282,7 @@ export function Contact() {
           <div className="lg:col-span-2 space-y-4">
             {[[MapPin, 'Address', s.address], [Phone, 'Phone', s.phone], [Mail, 'Email', s.email], [Clock, 'Office hours', s.timings]].filter(([, , v]) => v).map(([I, l, v]) => (
               <div key={l} className="card p-5 flex gap-4">
-                <div className="h-11 w-11 rounded-lg bg-navy-800 text-gold-400 grid place-items-center shrink-0"><I size={19} /></div>
+                <div className="h-11 w-11 rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center shrink-0"><I size={19} /></div>
                 <div><div className="text-xs font-semibold uppercase text-slate-500">{l}</div><div className="text-sm text-slate-800 mt-1">{v}</div></div>
               </div>
             ))}

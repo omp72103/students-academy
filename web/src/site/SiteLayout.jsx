@@ -20,12 +20,12 @@ const NAV = [
 export function Logo({ light }) {
   return (
     <Link to="/" className="group flex items-center gap-2.5">
-      <div className="relative h-10 w-10 rounded-xl bg-navy-800 grid place-items-center ring-2 ring-gold-500/60 transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-105">
-        <GraduationCap className="text-gold-400" size={22} />
+      <div className="relative h-10 w-10 rounded-xl bg-red-600 grid place-items-center shadow-md shadow-red-600/25 transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-105">
+        <GraduationCap className="text-white" size={22} />
       </div>
       <div className="leading-tight">
         <div className={cls('font-serif text-lg font-bold transition-colors', light ? 'text-white' : 'text-navy-900')}>Students Academy</div>
-        <div className={cls('text-[10px] tracking-[0.2em] uppercase transition-colors', light ? 'text-gold-100/80' : 'text-slate-500')}>Grant Road · Mumbai</div>
+        <div className={cls('text-[10px] tracking-[0.2em] uppercase transition-colors', light ? 'text-white/70' : 'text-slate-500')}>Grant Road · Mumbai</div>
       </div>
     </Link>
   )
@@ -41,7 +41,7 @@ export default function SiteLayout() {
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 24 })
   useEffect(() => { const h = () => setScrolled(window.scrollY > 24); h(); window.addEventListener('scroll', h, { passive: true }); return () => window.removeEventListener('scroll', h) }, [])
   useEffect(() => setOpen(false), [loc.pathname])
-  const light = isHome && !scrolled && !open
+  const light = false // all pages now open on a white hero
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -64,14 +64,14 @@ export default function SiteLayout() {
           <nav className="hidden lg:flex items-center gap-0.5">
             {NAV.map(([to, label]) => (
               <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => cls('relative px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-                light ? (isActive ? 'text-white' : 'text-white/75 hover:text-white') : (isActive ? 'text-navy-900' : 'text-slate-600 hover:text-navy-800'))}>
+                light ? (isActive ? 'text-white' : 'text-white/75 hover:text-white') : (isActive ? 'text-red-600' : 'text-slate-600 hover:text-red-600'))}>
                 {({ isActive }) => <>
                   {label}
                   {isActive && <motion.span layoutId="nav-underline" className="absolute left-3 right-3 -bottom-0.5 h-[2px] rounded-full bg-gold-500" transition={{ type: 'spring', stiffness: 380, damping: 30 }} />}
                 </>}
               </NavLink>
             ))}
-            <Link to="/contact#enquiry" className={cls('ml-3', light ? 'btn-gold' : 'btn-navy')}>Enquire Now <ArrowRight size={15} /></Link>
+            <Link to="/contact#enquiry" className="ml-3 btn-gold">Enquire Now <ArrowRight size={15} /></Link>
           </nav>
           <button className={cls('lg:hidden p-2 rounded-lg', light ? 'text-white' : 'text-navy-900')} onClick={() => setOpen(!open)} aria-label="Menu">{open ? <X /> : <Menu />}</button>
         </div>
@@ -81,7 +81,7 @@ export default function SiteLayout() {
               <div className="container-x py-3 flex flex-col">
                 {NAV.map(([to, label], i) => (
                   <motion.div key={to} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
-                    <NavLink to={to} end={to === '/'} className={({ isActive }) => cls('block px-3 py-3 rounded-lg text-[15px] font-medium', isActive ? 'bg-navy-50 text-navy-800' : 'text-slate-700')}>{label}</NavLink>
+                    <NavLink to={to} end={to === '/'} className={({ isActive }) => cls('block px-3 py-3 rounded-lg text-[15px] font-medium', isActive ? 'bg-red-50 text-red-700' : 'text-slate-700')}>{label}</NavLink>
                   </motion.div>
                 ))}
                 <div className="grid grid-cols-2 gap-2 my-3">

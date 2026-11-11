@@ -77,36 +77,36 @@ function HeroVisual() {
       initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3, ease: EASE }}>
       <motion.div style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d' }} className="relative h-full w-full">
         {/* orbit ring */}
-        <div className="absolute inset-8 rounded-full border border-gold-500/20 animate-spin-slow" style={{ transform: 'translateZ(-60px)' }}>
-          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-gold-400 shadow-[0_0_16px_rgba(251,127,127,0.9)]" />
+        <div className="absolute inset-8 rounded-full border border-red-200 animate-spin-slow" style={{ transform: 'translateZ(-60px)' }}>
+          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_16px_rgba(239,68,68,0.7)]" />
         </div>
-        <div className="absolute inset-24 rounded-full border border-white/10" style={{ transform: 'translateZ(-40px)' }} />
+        <div className="absolute inset-24 rounded-full border border-slate-200" style={{ transform: 'translateZ(-40px)' }} />
 
         {/* main notes card */}
-        <div className="absolute left-[12%] top-[14%] w-[62%] rounded-3xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-xl shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ transform: 'translateZ(60px)' }}>
+        <div className="absolute z-10 left-[4%] top-[16%] w-[62%] rounded-3xl border border-slate-200 bg-white/95 p-5 backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(24,24,27,0.25)]" style={{ transform: 'translateZ(60px)' }}>
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-white"><BookOpen size={19} /></div>
-            <div><div className="text-sm font-semibold text-white">Study Material</div><div className="text-[11px] text-navy-200">Notes · worksheets · question papers</div></div>
+            <div><div className="text-sm font-semibold text-navy-900">Study Material</div><div className="text-[11px] text-slate-500">Notes · worksheets · question papers</div></div>
           </div>
           <div className="mt-4 space-y-2.5">
             {[['10th Science 1 · Gravitation', 'Notes'], ['12th Physics · Formula Sheet', 'Formulas'], ['SSC Board Papers 2019–26', 'PYQ'], ['MHT-CET Fast Revision', 'Revision']].map(([t, b], i) => (
-              <motion.div key={t} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9 + i * 0.12 }} className="flex items-center gap-3 rounded-xl bg-white/[0.06] border border-white/10 px-3 py-2.5">
-                <FileText size={15} className="text-gold-400 shrink-0" /><span className="text-[13px] text-white/90 flex-1 truncate">{t}</span><span className="text-[10px] font-semibold text-gold-400">{b}</span>
+              <motion.div key={t} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9 + i * 0.12 }} className="flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5">
+                <FileText size={15} className="text-red-500 shrink-0" /><span className="text-[13px] text-slate-700 flex-1 truncate">{t}</span><span className="text-[10px] font-semibold text-red-600">{b}</span>
               </motion.div>
             ))}
           </div>
         </div>
 
         {/* score card */}
-        <div className="absolute right-[2%] top-[6%] w-48 rounded-2xl border border-white/15 bg-navy-800/80 p-4 backdrop-blur-xl shadow-2xl animate-float-slow" style={{ transform: 'translateZ(120px)' }}>
-          <div className="flex items-center justify-between text-[11px] text-navy-200"><span>Chapter test</span><TrendingUp size={14} className="text-emerald-400" /></div>
-          <div className="mt-1 font-serif text-3xl font-bold text-white">92<span className="text-lg text-navy-200">%</span></div>
-          <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden"><motion.div className="h-full bg-gradient-to-r from-gold-500 to-red-200" initial={{ width: 0 }} animate={{ width: '92%' }} transition={{ delay: 1.2, duration: 1.2, ease: EASE }} /></div>
-          <div className="mt-2 text-[10px] text-navy-200">Rank #2 of 38 · Gravitation</div>
+        <div className="absolute z-20 right-[0%] top-[4%] w-48 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_50px_-18px_rgba(24,24,27,0.3)] animate-float-slow" style={{ transform: 'translateZ(120px)' }}>
+          <div className="flex items-center justify-between text-[11px] text-slate-500"><span>Chapter test</span><TrendingUp size={14} className="text-emerald-400" /></div>
+          <div className="mt-1 font-serif text-3xl font-bold text-navy-900">92<span className="text-lg text-slate-400">%</span></div>
+          <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden"><motion.div className="h-full bg-gradient-to-r from-gold-500 to-red-200" initial={{ width: 0 }} animate={{ width: '92%' }} transition={{ delay: 1.2, duration: 1.2, ease: EASE }} /></div>
+          <div className="mt-2 text-[10px] text-slate-500">Rank #2 of 38 · Gravitation</div>
         </div>
 
         {/* attendance alert */}
-        <div className="absolute right-[6%] bottom-[16%] w-60 rounded-2xl border border-white/15 bg-white/95 p-3.5 shadow-2xl animate-float-slow [animation-delay:-3s]" style={{ transform: 'translateZ(90px)' }}>
+        <div className="absolute right-[6%] bottom-[16%] w-60 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-[0_24px_50px_-18px_rgba(24,24,27,0.3)] animate-float-slow [animation-delay:-3s]" style={{ transform: 'translateZ(90px)' }}>
           <div className="flex items-center gap-2.5">
             <div className="h-9 w-9 rounded-full bg-[#25D366] grid place-items-center text-white"><MessageCircle size={17} /></div>
             <div className="min-w-0"><div className="text-xs font-bold text-navy-900">Parent update sent</div><div className="text-[11px] text-slate-500 truncate">Attendance · test score · fees</div></div>
@@ -114,8 +114,8 @@ function HeroVisual() {
         </div>
 
         {/* attendance chip */}
-        <div className="absolute left-[2%] bottom-[10%] rounded-2xl border border-white/15 bg-white/[0.08] px-4 py-3 backdrop-blur-xl shadow-xl animate-float-slow [animation-delay:-1.5s]" style={{ transform: 'translateZ(100px)' }}>
-          <div className="flex items-center gap-3"><CalendarCheck className="text-emerald-400" size={20} /><div><div className="text-[11px] text-navy-200">Attendance this month</div><div className="text-lg font-bold text-white">96%</div></div></div>
+        <div className="absolute left-[2%] bottom-[10%] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_20px_40px_-18px_rgba(24,24,27,0.3)] animate-float-slow [animation-delay:-1.5s]" style={{ transform: 'translateZ(100px)' }}>
+          <div className="flex items-center gap-3"><CalendarCheck className="text-emerald-400" size={20} /><div><div className="text-[11px] text-slate-500">Attendance this month</div><div className="text-lg font-bold text-navy-900">96%</div></div></div>
         </div>
       </motion.div>
     </motion.div>
@@ -129,32 +129,32 @@ function Hero({ s }) {
   const y = useTransform(scrollYProgress, [0, 1], [0, 120])
   const fade = useTransform(scrollYProgress, [0, 0.8], [1, 0])
   return (
-    <section ref={ref} className="relative overflow-hidden bg-navy-900 text-white -mt-[72px] pt-[72px]">
+    <section ref={ref} className="relative overflow-hidden bg-white text-navy-900 -mt-[72px] pt-[72px]">
       {/* aurora */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 -left-32 h-[34rem] w-[34rem] rounded-full bg-blue-600/25 blur-[120px] animate-aurora" />
-        <div className="absolute top-20 right-[-10rem] h-[30rem] w-[30rem] rounded-full bg-gold-500/20 blur-[120px] animate-aurora [animation-delay:-6s]" />
-        <div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-indigo-500/20 blur-[120px] animate-aurora [animation-delay:-11s]" />
-        <div className="absolute inset-0 bg-grid mask-fade-b" />
+        <div className="absolute -top-40 -left-32 h-[34rem] w-[34rem] rounded-full bg-red-100/70 blur-[120px] animate-aurora" />
+        <div className="absolute top-20 right-[-10rem] h-[30rem] w-[30rem] rounded-full bg-red-200/50 blur-[120px] animate-aurora [animation-delay:-6s]" />
+        <div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-rose-100/60 blur-[120px] animate-aurora [animation-delay:-11s]" />
+        <div className="absolute inset-0 bg-grid-dark mask-fade-b" />
       </div>
       <motion.div style={{ y, opacity: fade }} className="container-x relative grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center py-20 sm:py-28 lg:py-32">
         <div>
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 rounded-full border border-gold-500/30 bg-gold-500/10 px-3.5 py-1.5 text-xs font-medium text-gold-100 backdrop-blur">
-            <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-gold-400 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-gold-400" /></span>
+            className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1.5 text-xs font-semibold text-red-700">
+            <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-600" /></span>
             Admissions open 2026–27 · Grant Road, Mumbai
           </motion.div>
-          <h1 className="mt-7 font-serif text-[2.6rem] sm:text-6xl lg:text-[4.1rem] font-bold leading-[1.05] text-white">
+          <h1 className="mt-7 font-serif text-[2.6rem] sm:text-6xl lg:text-[4.1rem] font-bold leading-[1.05] text-navy-900">
             {words.map((w, i) => (
               <span key={w} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
                 <motion.span className={cls('inline-block', i === 2 && 'gold-gradient')} initial={{ y: '110%' }} animate={{ y: 0 }} transition={{ duration: 0.8, delay: 0.15 + i * 0.1, ease: EASE }}>{w}</motion.span>
               </span>
             ))}
           </h1>
-          <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.7 }} className="mt-6 text-lg sm:text-xl text-navy-100 font-light">
+          <motion.p initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.65, duration: 0.7 }} className="mt-6 text-lg sm:text-xl text-slate-700">
             Expert coaching for <RotatingWord />
           </motion.p>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-4 max-w-xl text-navy-200 leading-relaxed">
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-4 max-w-xl text-slate-600 leading-relaxed">
             Founded by {s.founderName || 'Mr. Vishal Khandekar Sir'}. Small batches, experienced faculty, regular tests and a portal that keeps parents informed — all under one roof since {s.established}.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.95 }} className="mt-9 flex flex-wrap gap-3">
@@ -162,10 +162,10 @@ function Hero({ s }) {
               <span className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/40 to-transparent" />
               <span className="relative flex items-center gap-2">Book a free counselling <ArrowRight size={18} className="group-hover:translate-x-1 transition" /></span>
             </Link>
-            <Link to="/study-material" className="btn px-7 py-3.5 text-base border border-white/20 bg-white/5 text-white backdrop-blur hover:bg-white/10"><Download size={17} />Free study material</Link>
+            <Link to="/study-material" className="btn px-7 py-3.5 text-base border border-slate-300 bg-white text-navy-800 hover:border-red-300 hover:text-red-700"><Download size={17} />Free study material</Link>
           </motion.div>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm text-navy-200">
-            {['SSC & HSC State Board', 'MHT-CET · JEE · NEET', 'Parent updates on WhatsApp'].map((t) => <span key={t} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-gold-400" />{t}</span>)}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-medium text-slate-600">
+            {['SSC & HSC State Board', 'MHT-CET · JEE · NEET', 'Parent updates on WhatsApp'].map((t) => <span key={t} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-red-600" />{t}</span>)}
           </motion.div>
         </div>
         <HeroVisual />
@@ -179,9 +179,9 @@ function Hero({ s }) {
 const SUBJECTS = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Science 1 & 2', 'Algebra & Geometry', 'Accountancy', 'Economics', 'Secretarial Practice', 'Information Technology', 'Computer Science', 'Electronics', 'Arduino & 8051', 'History & Geography', 'English', 'Marathi', 'Hindi']
 function Marquee() {
   return (
-    <div className="relative bg-navy-800 border-y border-white/5 py-4 overflow-hidden mask-fade-x">
+    <div className="relative bg-red-600 py-4 overflow-hidden mask-fade-x">
       <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-        {[...SUBJECTS, ...SUBJECTS].map((t, i) => <span key={i} className="mx-6 flex items-center gap-6 text-sm font-medium text-navy-100 whitespace-nowrap">{t}<span className="h-1.5 w-1.5 rotate-45 bg-gold-500" /></span>)}
+        {[...SUBJECTS, ...SUBJECTS].map((t, i) => <span key={i} className="mx-6 flex items-center gap-6 text-sm font-medium text-white whitespace-nowrap">{t}<span className="h-1.5 w-1.5 rotate-45 bg-white/60" /></span>)}
       </div>
     </div>
   )
@@ -488,19 +488,19 @@ function CTA({ s }) {
   return (
     <section className="container-x pb-24">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#c81818,#fee2e2,#b91c1c,#c81818)] bg-[length:200%_100%] animate-shine">
-          <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] bg-navy-900 px-8 py-14 sm:px-14 text-white">
+        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#dc2626,#fecaca,#b91c1c,#dc2626)] bg-[length:200%_100%] animate-shine">
+          <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] bg-gradient-to-br from-red-600 to-red-700 px-8 py-14 sm:px-14 text-white">
             <div className="absolute inset-0 bg-grid opacity-40" />
-            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gold-500/20 blur-3xl animate-aurora" />
+            <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/15 blur-3xl animate-aurora" />
             <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
               <div className="max-w-2xl">
-                <Eyebrow light>Admissions 2026–27</Eyebrow>
+                <div className="inline-flex items-center gap-2 text-[11px] font-bold tracking-[0.22em] uppercase text-white/90"><span className="h-px w-8 bg-white/60" />Admissions 2026–27</div>
                 <h2 className="mt-3 font-serif text-3xl sm:text-4xl font-bold text-white">Give your child the right start.</h2>
-                <p className="mt-3 text-navy-100">Visit us at {s.location}, call, or send an enquiry. Our counsellor will help you choose the right batch.</p>
+                <p className="mt-3 text-red-50">Visit us at {s.location}, call, or send an enquiry. Our counsellor will help you choose the right batch.</p>
               </div>
               <div className="flex flex-wrap gap-3 shrink-0">
-                <Link to="/contact#enquiry" className="btn-gold px-7 py-3.5 text-base">Enquire now <ArrowRight size={17} /></Link>
-                <a href={`tel:${s.phone}`} className="btn px-7 py-3.5 text-base border border-white/25 text-white hover:bg-white/10"><Phone size={16} />Call us</a>
+                <Link to="/contact#enquiry" className="btn bg-white text-red-700 hover:bg-red-50 px-7 py-3.5 text-base shadow-lg">Enquire now <ArrowRight size={17} /></Link>
+                <a href={`tel:${s.phone}`} className="btn px-7 py-3.5 text-base border border-white/40 text-white hover:bg-white/10"><Phone size={16} />Call us</a>
               </div>
             </div>
           </div>
