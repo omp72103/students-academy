@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { School, Atom, Target, BarChart3, Monitor, Cpu } from 'lucide-react'
 import { ArrowRight, BookOpen, FileText, Download, CheckCircle2, Award, Users, Library, ClipboardCheck, Smartphone, MapPin, Phone, Mail, Clock, Send, Quote, Search, ExternalLink, Bell, Pin } from 'lucide-react'
 import { db, useTable } from '../lib/db'
-import { PROGRAMS, MENTOR } from '../data/site'
+import { PROGRAMS } from '../data/site'
 import { STANDARDS, MATERIAL_TYPES } from '../data/materials'
 import { useSettings } from './SiteLayout'
 import { cls, fmtDate } from '../lib/utils'
@@ -58,33 +58,45 @@ export function About() {
           <div className="lg:col-span-2 space-y-5 text-slate-700 leading-relaxed">
             <h2 className="font-serif text-2xl font-bold text-navy-900">Who we are</h2>
             <p>Students Academy is a coaching institute at Grant Road (West), Mumbai, offering focused coaching for Maharashtra State Board students from 9th to 12th across Science, Commerce, Information Technology, Computer Science and Electronics, along with preparation for MHT-CET, JEE Main and NEET-UG.</p>
-            <p>Our teaching is built around clear concepts, handcrafted study material and consistent practice. Every student has access to a digital library of chapterwise notes, formula sheets, workbooks and board papers, and takes regular tests through our online portal. Parents receive attendance, test and fee updates directly on SMS and WhatsApp.</p>
-            <p>Students Academy also manages the <strong>10th Sarav Pariksha</strong> practice examination series, an initiative of the Lodha Foundation, helping SSC students build exam temperament well before the board exams.</p>
+            <p>Our teaching is built around clear concepts, well-structured study material and consistent practice. Every student has access to a digital library of chapterwise notes, formula sheets, workbooks and board papers, and takes regular tests through our online portal. Parents receive attendance, test and fee updates directly on SMS and WhatsApp.</p>
+            <p>Students Academy was founded and is led by <strong>{s.founderName || 'Mr. Vishal Khandekar Sir'}</strong>, {(s.founderTitle || 'Founder & Director').toLowerCase()} of the academy, with one simple aim: give every student the clarity, discipline and personal attention they need to do their best in board and entrance examinations.</p>
             <div className="grid sm:grid-cols-3 gap-4 pt-4">
-              {[['Mission', 'Make every student exam-ready through concept clarity and disciplined practice.'], ['Approach', 'Small batches, handcrafted notes, weekly tests and transparent progress tracking.'], ['Values', 'Integrity, curiosity, hard work and respect for every learner.']].map(([t, d]) => (
+              {[['Mission', 'Make every student exam-ready through concept clarity and disciplined practice.'], ['Approach', 'Small batches, structured notes, weekly tests and transparent progress tracking.'], ['Values', 'Integrity, curiosity, hard work and respect for every learner.']].map(([t, d]) => (
                 <div key={t} className="card p-5"><div className="font-semibold text-navy-900">{t}</div><p className="text-sm text-slate-600 mt-2">{d}</p></div>
               ))}
             </div>
           </div>
-          <div className="card p-6 h-fit">
-            <div className="text-xs font-semibold uppercase tracking-wider text-gold-600">Head Master, School Section</div>
-            <h3 className="font-serif text-xl font-bold text-navy-900 mt-1">{MENTOR.name}</h3>
-            <p className="text-sm text-slate-500">{MENTOR.qualification}</p>
-            <p className="text-sm text-slate-600 mt-3">{MENTOR.bio}</p>
-            <ol className="mt-5 relative border-l-2 border-navy-100 ml-2 space-y-4">
-              {MENTOR.timeline.map((t) => (
-                <li key={t.years + t.org} className="pl-4 relative">
-                  <span className="absolute -left-[7px] top-1 h-3 w-3 rounded-full bg-gold-500 ring-4 ring-white" />
-                  <div className="text-xs font-semibold text-navy-700">{t.years}</div>
-                  <div className="text-sm font-medium">{t.role}</div>
-                  <div className="text-xs text-slate-500">{t.org}</div>
-                </li>
-              ))}
-            </ol>
-          </div>
+          <FounderCard s={s} />
         </div>
       </Section>
     </>
+  )
+}
+
+export function FounderCard({ s }) {
+  const name = s.founderName || 'Mr. Vishal Khandekar Sir'
+  const initials = name.replace(/^(mr|mrs|ms|dr)\.?\s+/i, '').replace(/\s+sir$/i, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('')
+  return (
+    <div className="card overflow-hidden h-fit">
+      <div className="relative bg-gradient-to-br from-red-600 to-red-800 p-6 text-white">
+        <div className="absolute inset-0 bg-grid opacity-40" />
+        <div className="relative flex items-center gap-4">
+          {s.founderPhoto
+            ? <img src={s.founderPhoto} alt={name} className="h-20 w-20 rounded-2xl object-cover ring-4 ring-white/30" />
+            : <div className="h-20 w-20 rounded-2xl bg-white text-red-700 grid place-items-center font-serif text-2xl font-bold ring-4 ring-white/30">{initials}</div>}
+          <div>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-red-100">{s.founderTitle || 'Founder & Director'}</div>
+            <h3 className="font-serif text-xl font-bold mt-0.5">{name}</h3>
+            <div className="text-xs text-red-100 mt-0.5">{s.name}, {s.location}</div>
+          </div>
+        </div>
+      </div>
+      <div className="p-6">
+        {s.founderMessage
+          ? <><Quote className="text-red-200" size={28} /><p className="text-sm text-slate-700 leading-relaxed mt-2 whitespace-pre-line">{s.founderMessage}</p></>
+          : <p className="text-sm text-slate-600 leading-relaxed">The founder and pioneer of {s.name}. Under his leadership the academy has grown into a complete learning centre at {s.location}, with experienced faculty, regular testing and a digital portal that keeps every parent informed.</p>}
+      </div>
+    </div>
   )
 }
 
@@ -97,7 +109,7 @@ export function Courses() {
         <div className="space-y-6">
           {PROGRAMS.map((p, idx) => (
             <motion.div key={p.slug} id={p.slug} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 scroll-mt-28 grid lg:grid-cols-3 gap-6 transition-shadow hover:shadow-[0_30px_60px_-25px_rgba(16,36,69,0.3)]">
+              className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 scroll-mt-28 grid lg:grid-cols-3 gap-6 transition-shadow hover:shadow-[0_30px_60px_-25px_rgba(76,10,15,0.3)]">
               <span className="pointer-events-none absolute -right-4 -top-8 font-serif text-[9rem] font-bold leading-none text-slate-50 group-hover:text-gold-50 transition-colors">0{idx + 1}</span>
               <div className="relative lg:col-span-2">
                 <div className="flex items-center gap-3">
@@ -137,7 +149,7 @@ export function StudyMaterial() {
   const stds = STANDARDS.filter((s) => pub.some((m) => m.standard === s))
   return (
     <>
-      <PageHero title="Study Material" subtitle="Handcrafted notes, formula sheets, workbooks and board papers by Sai Sir — free to download." />
+      <PageHero title="Study Material" subtitle="Notes, formula sheets, worksheets and question papers shared by Students Academy." />
       <div className="container-x py-10 grid lg:grid-cols-4 gap-8">
         <aside className="lg:col-span-1">
           <div className="card p-2 lg:sticky lg:top-24">
@@ -163,8 +175,8 @@ export function StudyMaterial() {
               {Object.entries(MATERIAL_TYPES).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
             </select>
           </div>
-          <h2 className="font-serif text-2xl font-bold text-navy-900 mb-1">{q ? `Search results for "${q}"` : std}</h2>
-          <p className="text-sm text-slate-500 mb-6">{list.length} resources</p>
+          {pub.length > 0 && <><h2 className="font-serif text-2xl font-bold text-navy-900 mb-1">{q ? `Search results for "${q}"` : std}</h2>
+          <p className="text-sm text-slate-500 mb-6">{list.length} resources</p></>}
           <div className="space-y-8">
             {Object.entries(bySubject).map(([subject, items]) => (
               <div key={subject}>
@@ -174,7 +186,9 @@ export function StudyMaterial() {
                 </div>
               </div>
             ))}
-            {!list.length && <p className="text-slate-500">No material found.</p>}
+            {!list.length && (pub.length
+              ? <p className="text-slate-500">No material found.</p>
+              : <div className="card p-10 text-center"><BookOpen className="mx-auto text-red-500" size={32} /><h3 className="mt-3 font-semibold text-navy-900">Study material is being added</h3><p className="mt-1 text-sm text-slate-500">Enrolled students can already find their notes, assignments and tests in the student portal.</p><Link to="/portal" className="btn-navy mt-5 inline-flex">Student portal <ArrowRight size={15} /></Link></div>)}
           </div>
           <p className="mt-10 text-xs text-slate-500">Enrolled students get additional batch-only notes, assignments and online tests in the <Link to="/portal" className="underline">student portal</Link>.</p>
         </div>
@@ -185,7 +199,7 @@ export function StudyMaterial() {
 
 export function MaterialCard({ m, showStd }) {
   return (
-    <a href={m.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200/80 bg-white p-4 flex gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-500/40 hover:shadow-[0_14px_30px_-14px_rgba(16,36,69,0.3)] group">
+    <a href={m.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200/80 bg-white p-4 flex gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-500/40 hover:shadow-[0_14px_30px_-14px_rgba(76,10,15,0.3)] group">
       <div className="h-11 w-11 shrink-0 rounded-xl bg-gradient-to-br from-rose-50 to-orange-50 text-rose-600 grid place-items-center ring-1 ring-rose-100 transition-transform group-hover:scale-110 group-hover:-rotate-6"><FileText size={20} /></div>
       <div className="min-w-0 flex-1">
         <div className="font-medium text-sm text-slate-900 leading-snug group-hover:text-navy-700">{m.title}</div>
@@ -195,35 +209,6 @@ export function MaterialCard({ m, showStd }) {
       </div>
       <Download size={17} className="text-slate-400 group-hover:text-navy-700 shrink-0 mt-1" />
     </a>
-  )
-}
-
-// ================= SARAV PARIKSHA =================
-export function SaravPariksha() {
-  const [materials] = useTable('materials')
-  const keys = materials.filter((m) => m.standard === '10th' && (m.subject === 'Sarav Pariksha' || m.type === 'answer-key'))
-  const papers = materials.filter((m) => m.subject === 'Board Papers' && m.standard === '10th')
-  return (
-    <>
-      <PageHero title="10th Sarav Pariksha 2026–27" subtitle="A practice examination series for SSC students — an initiative by the Lodha Foundation, managed by Students Academy." />
-      <Section>
-        <div className="grid lg:grid-cols-3 gap-6">
-          <div className="card p-6">
-            <ClipboardCheck className="text-gold-600" />
-            <h3 className="font-semibold text-lg mt-3 text-navy-900">Check your result</h3>
-            <p className="text-sm text-slate-600 mt-2">Results are looked up with your seat number.</p>
-            <a href="https://script.google.com/macros/s/AKfycbydLPUrLcCS0XW1Qgz-nqhK9L8te7HeAsFIjELGrE59QV3DkboJFU3xoa7Qs4Pcl9UQ9Q/exec" target="_blank" rel="noreferrer" className="btn-navy mt-5 w-full">Level 1 Result <ExternalLink size={15} /></a>
-          </div>
-          <div className="card p-6 lg:col-span-2">
-            <h3 className="font-semibold text-lg text-navy-900">Answer keys & study material</h3>
-            <div className="grid sm:grid-cols-2 gap-3 mt-4">{keys.map((m) => <MaterialCard key={m.id} m={m} />)}</div>
-            {!keys.length && <p className="text-sm text-slate-500 mt-3">Answer keys will be published after each level.</p>}
-          </div>
-        </div>
-        <h3 className="font-serif text-2xl font-bold text-navy-900 mt-14 mb-4">SSC Board Papers (2019 – 2026)</h3>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">{papers.map((m) => <MaterialCard key={m.id} m={m} />)}</div>
-      </Section>
-    </>
   )
 }
 
@@ -296,7 +281,7 @@ export function Contact() {
       <Section>
         <div className="grid lg:grid-cols-5 gap-8">
           <div className="lg:col-span-2 space-y-4">
-            {[[MapPin, 'Address', s.address], [Phone, 'Phone', s.phone], [Mail, 'Email', s.email], [Clock, 'Office hours', s.timings]].map(([I, l, v]) => (
+            {[[MapPin, 'Address', s.address], [Phone, 'Phone', s.phone], [Mail, 'Email', s.email], [Clock, 'Office hours', s.timings]].filter(([, , v]) => v).map(([I, l, v]) => (
               <div key={l} className="card p-5 flex gap-4">
                 <div className="h-11 w-11 rounded-lg bg-navy-800 text-gold-400 grid place-items-center shrink-0"><I size={19} /></div>
                 <div><div className="text-xs font-semibold uppercase text-slate-500">{l}</div><div className="text-sm text-slate-800 mt-1">{v}</div></div>

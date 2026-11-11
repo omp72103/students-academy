@@ -14,7 +14,7 @@ export function useSettings() {
 
 const NAV = [
   ['/', 'Home'], ['/about', 'About'], ['/courses', 'Courses'], ['/study-material', 'Study Material'],
-  ['/sarav-pariksha', 'Sarav Pariksha'], ['/results', 'Results'], ['/notices', 'Notices'], ['/contact', 'Contact'],
+  ['/results', 'Results'], ['/notices', 'Notices'], ['/contact', 'Contact'],
 ]
 
 export function Logo({ light }) {
@@ -45,12 +45,12 @@ export default function SiteLayout() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <motion.div style={{ scaleX: progress }} className="fixed top-0 inset-x-0 h-[3px] origin-left z-[60] bg-gradient-to-r from-gold-600 via-gold-400 to-amber-200" />
+      <motion.div style={{ scaleX: progress }} className="fixed top-0 inset-x-0 h-[3px] origin-left z-[60] bg-gradient-to-r from-gold-600 via-gold-400 to-red-200" />
       <div className="bg-navy-900 text-navy-100 text-xs border-b border-white/5">
         <div className="container-x flex items-center justify-between h-9 gap-4">
           <div className="flex items-center gap-5 overflow-hidden">
             <a href={`tel:${s.phone}`} className="flex items-center gap-1.5 hover:text-white"><Phone size={13} />{s.phone}</a>
-            <a href={`mailto:${s.email}`} className="hidden sm:flex items-center gap-1.5 hover:text-white"><Mail size={13} />{s.email}</a>
+            {s.email && <a href={`mailto:${s.email}`} className="hidden sm:flex items-center gap-1.5 hover:text-white"><Mail size={13} />{s.email}</a>}
             <span className="hidden md:flex items-center gap-1.5"><Clock size={13} />{s.timings}</span>
           </div>
           <Link to="/portal" className="flex items-center gap-1.5 text-gold-400 hover:text-gold-100 font-medium shrink-0"><LogIn size={13} />Student / Parent Login</Link>
@@ -58,7 +58,7 @@ export default function SiteLayout() {
       </div>
 
       <header className={cls('sticky top-0 z-40 h-[72px] transition-all duration-500',
-        light ? 'bg-transparent' : 'bg-white/85 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_10px_30px_-15px_rgba(16,36,69,0.25)]')}>
+        light ? 'bg-transparent' : 'bg-white/85 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_10px_30px_-15px_rgba(76,10,15,0.25)]')}>
         <div className="container-x flex items-center justify-between h-full">
           <Logo light={light} />
           <nav className="hidden lg:flex items-center gap-0.5">
@@ -109,7 +109,7 @@ export default function SiteLayout() {
           <div className="md:col-span-5">
             <Logo light />
             <p className="mt-5 text-sm text-navy-200 max-w-md leading-relaxed">
-              Coaching for SSC 9th & 10th, FYJC/SYJC Science, Commerce, IT, Computer Science and Electronics, and MHT-CET / JEE / NEET, with handcrafted notes and a structured learning portal.
+              Coaching for SSC 9th & 10th, FYJC/SYJC Science, Commerce, IT, Computer Science and Electronics, and MHT-CET / JEE / NEET, with experienced faculty and a structured learning portal.
             </p>
             <div className="mt-6 flex gap-2">
               <button onClick={() => openWhatsApp(s.whatsapp, 'Hello Students Academy, I would like to know more about admissions.')} className="btn btn-sm bg-[#25D366] text-white hover:brightness-110"><MessageCircle size={14} />WhatsApp</button>
@@ -125,7 +125,7 @@ export default function SiteLayout() {
             <ul className="space-y-3 text-sm">
               <li className="flex gap-3"><MapPin size={16} className="shrink-0 mt-0.5 text-gold-400" />{s.address}</li>
               <li className="flex gap-3"><Phone size={16} className="shrink-0 text-gold-400" />{s.phone}</li>
-              <li className="flex gap-3"><Mail size={16} className="shrink-0 text-gold-400" />{s.email}</li>
+              {s.email && <li className="flex gap-3"><Mail size={16} className="shrink-0 text-gold-400" />{s.email}</li>}
               <li className="flex gap-3"><Clock size={16} className="shrink-0 text-gold-400" />{s.timings}</li>
             </ul>
           </div>
@@ -133,7 +133,7 @@ export default function SiteLayout() {
         <div className="relative border-t border-white/10">
           <div className="container-x py-5 text-xs text-navy-200 flex flex-col sm:flex-row justify-between gap-2">
             <span>© {new Date().getFullYear()} {s.name}, {s.location}. All rights reserved.</span>
-            <span>Study material courtesy <a className="underline hover:text-gold-400" href="https://saiphy.com" target="_blank" rel="noreferrer">SaiPhy</a></span>
+            <span>Founded by {s.founderName || 'Mr. Vishal Khandekar Sir'}</span>
           </div>
         </div>
       </footer>

@@ -9,12 +9,17 @@ export const DEFAULT_SETTINGS = {
   address: 'Students Academy, Grant Road (West), Mumbai, Maharashtra 400007',
   phone: '+91 00000 00000',
   whatsapp: '910000000000',
-  email: 'saiphy.learning@gmail.com',
+  email: '',
   timings: 'Mon – Sat · 8:00 AM – 9:00 PM',
   mapQuery: 'Students Academy Grant Road West Mumbai',
   established: '2012',
   smsSignature: '- Students Academy, Grant Road',
   admissionsOpen: true,
+  // Founder & Director (editable in Portal → Settings → Institute profile)
+  founderName: 'Mr. Vishal Khandekar Sir',
+  founderTitle: 'Founder & Director',
+  founderMessage: '',
+  founderPhoto: '',
   admissionBanner: 'Admissions open for 2026–27: SSC 9th & 10th, FYJC/SYJC Science, Commerce & IT, MHT-CET / JEE / NEET.',
 }
 
@@ -22,9 +27,9 @@ export const PROGRAMS = [
   {
     slug: 'school', title: 'School Section — 9th & 10th (SSC)', icon: 'School',
     standards: ['9th', '10th'],
-    summary: 'Complete Maharashtra State Board coaching for Science 1 & 2, Maths 1 & 2, Social Science and languages, led by the School Section Head Master.',
+    summary: 'Complete Maharashtra State Board coaching for Science 1 & 2, Maths 1 & 2, Social Science and languages.',
     subjects: ['Science 1 (Physics & Chemistry)', 'Science 2 (Biology & Environment)', 'Maths 1 (Algebra)', 'Maths 2 (Geometry)', 'History & Political Science', 'Geography', 'English', 'Marathi / Hindi'],
-    highlights: ['Chapterwise handcrafted notes', 'Board PYQs from 2019–2026', 'Sarav Pariksha practice series', 'Weekly chapter tests'],
+    highlights: ['Chapterwise handcrafted notes', 'Board PYQs from 2019–2026', 'Board-pattern practice exams', 'Weekly chapter tests'],
   },
   {
     slug: 'science', title: 'FYJC & SYJC Science (11th–12th)', icon: 'Atom',
@@ -62,18 +67,3 @@ export const PROGRAMS = [
     highlights: ['DIY electronics projects', 'Guess papers', 'Lab-style learning'],
   },
 ]
-
-export const MENTOR = {
-  name: 'Sai Sir',
-  title: 'Head Master, School Section',
-  qualification: 'Post-graduate in Physics (specialisation: Electronics)',
-  bio: 'With over a decade in science education, Sai Sir makes physics practical and engaging through handcrafted study material, DIY electronics and programming guides. He began as a Science Guide at the Nehru Science Centre, Worli, and has since taught Physics, School Science, Electronics and Computer Science to thousands of students.',
-  quote: 'Every equation is a story of how the universe works. Learn wisely.',
-  timeline: [
-    { years: '2012 – Present', role: 'Head Master, School Section', org: 'Students Academy, Grant Road, Mumbai' },
-    { years: '2018 – 2021', role: 'Faculty — Physics, Science, Electronics & CS', org: 'Students Academy & Oracle Tutorials' },
-    { years: '2016 – 2017', role: 'Program Co-ordinator (ICT, Skill India)', org: 'Lodha Institute of Vocational Education' },
-    { years: '2012 – 2014', role: 'Physics Professor', org: 'Chate Coaching Institute' },
-    { years: '2009 – 2011', role: 'Science Guide', org: 'Nehru Science Centre, Worli' },
-  ],
-}

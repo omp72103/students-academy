@@ -16,7 +16,7 @@ export function buildSeed() {
   ]
 
   const users = [
-    { id: 'u-admin', role: 'admin', name: 'Academy Administrator', email: 'admin@studentsacademy.in', phone: '9000000001', password: 'admin123', designation: 'Director' },
+    { id: 'u-admin', role: 'admin', name: 'Vishal Khandekar Sir', email: 'admin@studentsacademy.in', phone: '9000000001', password: 'admin123', designation: 'Founder & Director' },
     { id: 'u-office', role: 'staff', name: 'Front Office', email: 'office@studentsacademy.in', phone: '9000000002', password: 'office123', designation: 'Office Executive', biometricId: '9002', privileges: ['biometric'] },
     { id: 'u-sai', role: 'faculty', name: 'Sai Sir', email: 'sai@studentsacademy.in', phone: '9000000010', password: 'faculty123', biometricId: '9010', designation: 'Head Master — School Section', subjects: ['Physics', 'Science 1', 'Science 2', 'Electronics', 'Computer Science'] },
     { id: 'u-hemant', role: 'faculty', name: 'Hemant Sir', email: 'hemant@studentsacademy.in', phone: '9000000011', password: 'faculty123', biometricId: '9011', designation: 'Faculty — Languages', subjects: ['Hindi', 'Marathi', 'English'] },
@@ -102,7 +102,7 @@ export function buildSeed() {
   })
 
   const notices = [
-    { id: 'n1', title: 'Sarav Pariksha 2026–27 — Level 1 results declared', body: 'Students can check their Level 1 result using their seat number. English EM answer key is available in Study Materials.', audience: 'all', publishOnWebsite: true, pinned: true, createdAt: iso(daysAgo(4)), createdBy: 'u-admin' },
+    { id: 'n1', title: 'Unit Test 2 results declared for 10th SSC', body: 'Results are available in the student and parent portal under Exam Marks. Parents also receive scores on SMS / WhatsApp.', audience: 'all', publishOnWebsite: true, pinned: true, createdAt: iso(daysAgo(4)), createdBy: 'u-admin' },
     { id: 'n2', title: 'Diwali vacation: classes resume Monday', body: 'The academy will remain closed during the Diwali break. Regular batches resume as per the timetable.', audience: 'all', publishOnWebsite: true, createdAt: iso(daysAgo(10)), createdBy: 'u-admin' },
     { id: 'n3', title: '10th Prelim Exam schedule', body: 'Prelim exams for 10th SSC batches begin in the first week of December. Detailed timetable will be shared in the portal.', audience: 'students', batchId: '', publishOnWebsite: false, createdAt: iso(daysAgo(2)), createdBy: 'u-sai' },
     { id: 'n4', title: 'Parent–Teacher Meeting', body: 'PTM for all 10th SSC parents on Saturday, 11:00 AM at the academy.', audience: 'parents', publishOnWebsite: false, createdAt: iso(daysAgo(1)), createdBy: 'u-admin' },
@@ -125,7 +125,7 @@ export function buildSeed() {
   })
 
   const assignments = [
-    { id: 'as1', title: 'Gravitation numericals — Set 1', batchId: 'b10A', subject: 'Science 1', description: 'Solve Q1–Q15 from the Gravitation Additional Problems PDF. Show all steps.', dueDate: ymd(daysAgo(-3)), attachmentUrl: SEED_MATERIALS.find((m) => m.title.includes('Additional'))?.url, createdBy: 'u-sai', createdAt: iso(daysAgo(2)), maxMarks: 20 },
+    { id: 'as1', title: 'Gravitation numericals — Set 1', batchId: 'b10A', subject: 'Science 1', description: 'Solve Q1–Q15 from the Gravitation worksheet given in class. Show all steps.', dueDate: ymd(daysAgo(-3)), attachmentUrl: '', createdBy: 'u-sai', createdAt: iso(daysAgo(2)), maxMarks: 20 },
     { id: 'as2', title: 'Electrostatics derivations', batchId: 'b12S', subject: 'Physics', description: 'Write derivations for capacitance of a parallel plate capacitor with and without dielectric.', dueDate: ymd(daysAgo(-5)), createdBy: 'u-sai', createdAt: iso(daysAgo(1)), maxMarks: 10 },
   ]
   const submissions = [

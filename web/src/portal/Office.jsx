@@ -9,6 +9,7 @@ import { useMyStudent, ChildSwitcher } from './Layout'
 import { openWhatsApp, sendSms, isAndroidApp, fill, TEMPLATES, dispatch, getSims, getSelectedSim, setSelectedSim } from '../lib/messaging'
 import { useSettings } from '../site/SiteLayout'
 import { DEFAULT_SETTINGS } from '../data/site'
+import { uploadFile } from './Learning'
 
 // ======================= FEES =======================
 export function Fees() {
@@ -95,8 +96,8 @@ function Receipt({ fee, student, fees, onClose, settings: s }) {
       <button className="btn-outline" onClick={() => sendSms(student.parentPhone, text)}><Send size={15} />SMS</button>
       <button className="btn-primary" onClick={() => { const w = window.open('', '_blank'); w.document.write(`<html><head><title>${fee.receiptNo}</title></head><body style="font-family:sans-serif;padding:32px">${document.getElementById('rcpt').innerHTML}</body></html>`); w.document.close(); w.print() }}><Printer size={15} />Print</button></>}>
       <div id="rcpt">
-        <div style={{ textAlign: 'center', borderBottom: '2px solid #102445', paddingBottom: 12 }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#102445' }}>{s.name}</div><div style={{ fontSize: 12, color: '#555' }}>{s.address} · {s.phone}</div>
+        <div style={{ textAlign: 'center', borderBottom: '2px solid #7f1d1d', paddingBottom: 12 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#7f1d1d' }}>{s.name}</div><div style={{ fontSize: 12, color: '#555' }}>{s.address} · {s.phone}</div>
           <div style={{ marginTop: 8, fontWeight: 600, letterSpacing: 2, fontSize: 12 }}>FEE RECEIPT</div>
         </div>
         <table style={{ width: '100%', fontSize: 14, marginTop: 16, borderCollapse: 'collapse' }}><tbody>
@@ -359,6 +360,18 @@ export function SettingsPage() {
           <Field label="Office timings"><input className="input" value={f.timings} onChange={set('timings')} /></Field>
           <Field label="Established (year)"><input className="input" value={f.established} onChange={set('established')} /></Field>
           <Field label="Google Maps search"><input className="input" value={f.mapQuery} onChange={set('mapQuery')} /></Field>
+        </div></Card>
+        <Card title="Founder (shown on the website)"><div className="grid sm:grid-cols-2 gap-4">
+          <Field label="Name"><input className="input" value={f.founderName ?? DEFAULT_SETTINGS.founderName} onChange={set('founderName')} /></Field>
+          <Field label="Title"><input className="input" value={f.founderTitle ?? DEFAULT_SETTINGS.founderTitle} onChange={set('founderTitle')} /></Field>
+          <Field label="Message from the founder (optional)" className="sm:col-span-2"><textarea rows={3} className="input" value={f.founderMessage || ''} onChange={set('founderMessage')} placeholder="A short message shown with his name on the home and About pages" /></Field>
+          <Field label="Photo (optional)" className="sm:col-span-2">
+            <div className="flex items-center gap-3">
+              {f.founderPhoto && <img src={f.founderPhoto} alt="" className="h-14 w-14 rounded-xl object-cover ring-1 ring-slate-200" />}
+              <input type="file" accept="image/*" className="text-sm" onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; try { const url = await uploadFile(file, 'site'); setF((x) => ({ ...x, founderPhoto: url })); toast('Photo uploaded — click Save') } catch (err) { toast(err.message, 'error') } }} />
+              {f.founderPhoto && <button type="button" className="btn-ghost text-xs" onClick={() => setF({ ...f, founderPhoto: '' })}>Remove</button>}
+            </div>
+          </Field>
         </div></Card>
         <div className="space-y-4">
           <Card title="Admissions banner"><div className="space-y-3">

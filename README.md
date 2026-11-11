@@ -1,5 +1,7 @@
 # Students Academy, Grant Road: Official Website + LMS/ERP + Android App
 
+Founded and led by **Mr. Vishal Khandekar Sir** (Founder & Director). Brand theme: white and red (colours remapped centrally in `web/tailwind.config.js`).
+
 **Live:** https://students-academy.vercel.app · **Portal:** https://students-academy.vercel.app/portal
 **Android app (latest):** https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk
 
@@ -23,7 +25,7 @@ One codebase that serves three things:
 
 | Part | Where | What it does |
 |---|---|---|
-| **Official website** | `/` | Home, About, Courses, Study Material (121 PDFs from saiphy.com), Sarav Pariksha, Results, Notices, Contact + enquiry form, WhatsApp button |
+| **Official website** | `/` | Home, About, Courses, Study Material (uploaded from the portal), Results, Notices, Contact + enquiry form, WhatsApp button |
 | **LMS / ERP portal** | `/portal` | Role-based portal for Management, Faculty, Students and Parents |
 | **Android app** | `android/` | WebView app that sends SMS through the academy SIM at no extra cost, opens WhatsApp chats, handles downloads/uploads, and has pull-to-refresh + an offline screen |
 
@@ -100,7 +102,7 @@ When Management creates a student, faculty member or parent, a Supabase Auth log
 ## Project layout
 
 ```
-web/src/data/materials.js   121 study materials from saiphy.com (class, subject, chapter, type, PDF link)
+web/src/data/materials.js   study-material catalogues (standards, material types)
 web/src/data/site.js        default institute profile, programs, Sai Sir's profile
 web/src/lib/db.js           data layer (demo localStorage ↔ Supabase)
 web/src/lib/auth.jsx        login + role permissions
@@ -113,6 +115,6 @@ android/                    WebView app
 
 ## Before launch: details to fill in
 
-- Address, phone, WhatsApp number and timings (Portal → Settings). saiphy.com does not list these, so placeholders are in place.
+- Address, phone, WhatsApp number and timings (Portal → Settings). Placeholders are in place until the academy confirms them.
 - Real toppers/results (Portal → Website Content). The current entries are labelled "Sample".
 - Final domain, used for `SITE_URL` in the Android app.

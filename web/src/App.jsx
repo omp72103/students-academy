@@ -5,7 +5,7 @@ import { AuthProvider, useAuth, can } from './lib/auth'
 import { ToastProvider, Empty } from './components/ui'
 import SiteLayout from './site/SiteLayout'
 import Home from './site/Home'
-import { About, Courses, StudyMaterial, SaravPariksha, Results as SiteResults, Notices as SiteNotices, Contact, NotFound } from './site/pages'
+import { About, Courses, StudyMaterial, Results as SiteResults, Notices as SiteNotices, Contact, NotFound } from './site/pages'
 import { lazy, Suspense } from 'react'
 const L = (f, name) => lazy(() => f().then((m) => ({ default: name ? m[name] : m.default })))
 const layout = () => import('./portal/Layout'), people = () => import('./portal/People'), acad = () => import('./portal/Academics')
@@ -45,7 +45,7 @@ export default function App() {
               <Route path="about" element={<About />} />
               <Route path="courses" element={<Courses />} />
               <Route path="study-material" element={<StudyMaterial />} />
-              <Route path="sarav-pariksha" element={<SaravPariksha />} />
+              <Route path="sarav-pariksha" element={<Navigate to="/notices" replace />} />
               <Route path="results" element={<SiteResults />} />
               <Route path="notices" element={<SiteNotices />} />
               <Route path="contact" element={<Contact />} />

@@ -7,7 +7,7 @@ import {
   School, Atom, Target, BarChart3, Monitor, Cpu, CalendarCheck, Bell, MessageCircle, TrendingUp, Star, Download, PlayCircle,
 } from 'lucide-react'
 import { useTable } from '../lib/db'
-import { PROGRAMS, MENTOR } from '../data/site'
+import { PROGRAMS } from '../data/site'
 import { useSettings } from './SiteLayout'
 import { cls, fmtDate } from '../lib/utils'
 
@@ -66,7 +66,7 @@ function RotatingWord() {
   )
 }
 
-function HeroVisual({ count }) {
+function HeroVisual() {
   const ref = useRef()
   const mx = useMotionValue(0), my = useMotionValue(0)
   const rx = useSpring(useTransform(my, [-0.5, 0.5], [8, -8]), { stiffness: 120, damping: 18 })
@@ -78,15 +78,15 @@ function HeroVisual({ count }) {
       <motion.div style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d' }} className="relative h-full w-full">
         {/* orbit ring */}
         <div className="absolute inset-8 rounded-full border border-gold-500/20 animate-spin-slow" style={{ transform: 'translateZ(-60px)' }}>
-          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-gold-400 shadow-[0_0_16px_rgba(217,173,79,0.9)]" />
+          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-gold-400 shadow-[0_0_16px_rgba(251,127,127,0.9)]" />
         </div>
         <div className="absolute inset-24 rounded-full border border-white/10" style={{ transform: 'translateZ(-40px)' }} />
 
         {/* main notes card */}
         <div className="absolute left-[12%] top-[14%] w-[62%] rounded-3xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-xl shadow-[0_30px_80px_rgba(0,0,0,0.45)]" style={{ transform: 'translateZ(60px)' }}>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-navy-900"><BookOpen size={19} /></div>
-            <div><div className="text-sm font-semibold text-white">Handcrafted Notes</div><div className="text-[11px] text-navy-200">by Sai Sir · {count}+ resources</div></div>
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-white"><BookOpen size={19} /></div>
+            <div><div className="text-sm font-semibold text-white">Study Material</div><div className="text-[11px] text-navy-200">Notes · worksheets · question papers</div></div>
           </div>
           <div className="mt-4 space-y-2.5">
             {[['10th Science 1 · Gravitation', 'Notes'], ['12th Physics · Formula Sheet', 'Formulas'], ['SSC Board Papers 2019–26', 'PYQ'], ['MHT-CET Fast Revision', 'Revision']].map(([t, b], i) => (
@@ -101,7 +101,7 @@ function HeroVisual({ count }) {
         <div className="absolute right-[2%] top-[6%] w-48 rounded-2xl border border-white/15 bg-navy-800/80 p-4 backdrop-blur-xl shadow-2xl animate-float-slow" style={{ transform: 'translateZ(120px)' }}>
           <div className="flex items-center justify-between text-[11px] text-navy-200"><span>Chapter test</span><TrendingUp size={14} className="text-emerald-400" /></div>
           <div className="mt-1 font-serif text-3xl font-bold text-white">92<span className="text-lg text-navy-200">%</span></div>
-          <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden"><motion.div className="h-full bg-gradient-to-r from-gold-500 to-amber-200" initial={{ width: 0 }} animate={{ width: '92%' }} transition={{ delay: 1.2, duration: 1.2, ease: EASE }} /></div>
+          <div className="mt-2 h-1.5 rounded-full bg-white/10 overflow-hidden"><motion.div className="h-full bg-gradient-to-r from-gold-500 to-red-200" initial={{ width: 0 }} animate={{ width: '92%' }} transition={{ delay: 1.2, duration: 1.2, ease: EASE }} /></div>
           <div className="mt-2 text-[10px] text-navy-200">Rank #2 of 38 · Gravitation</div>
         </div>
 
@@ -122,7 +122,7 @@ function HeroVisual({ count }) {
   )
 }
 
-function Hero({ s, count }) {
+function Hero({ s }) {
   const words = ['Clear', 'concepts.', 'Confident', 'results.']
   const ref = useRef()
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
@@ -155,7 +155,7 @@ function Hero({ s, count }) {
             Expert coaching for <RotatingWord />
           </motion.p>
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-4 max-w-xl text-navy-200 leading-relaxed">
-            Small batches, Sai Sir's handcrafted notes, regular online tests and a portal that keeps parents informed — all under one roof since {s.established}.
+            Founded by {s.founderName || 'Mr. Vishal Khandekar Sir'}. Small batches, experienced faculty, regular tests and a portal that keeps parents informed — all under one roof since {s.established}.
           </motion.p>
           <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.95 }} className="mt-9 flex flex-wrap gap-3">
             <Link to="/contact#enquiry" className="group relative btn-gold px-7 py-3.5 text-base overflow-hidden">
@@ -168,7 +168,7 @@ function Hero({ s, count }) {
             {['SSC & HSC State Board', 'MHT-CET · JEE · NEET', 'Parent updates on WhatsApp'].map((t) => <span key={t} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-gold-400" />{t}</span>)}
           </motion.div>
         </div>
-        <HeroVisual count={count} />
+        <HeroVisual />
       </motion.div>
       <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-b from-transparent to-navy-900/0" />
     </section>
@@ -188,13 +188,13 @@ function Marquee() {
 }
 
 // ---------------- STATS ----------------
-function Stats({ s, count }) {
+function Stats({ s }) {
   const years = new Date().getFullYear() - Number(s.established || 2012)
-  const items = [[years, '+', 'Years of teaching'], [count, '+', 'Free notes & papers'], [6, '', 'Streams & programs'], [5, '', 'Board & entrance exams']]
+  const items = [[years, '+', 'Years of teaching'], [4, '', 'Standards, 9th to 12th'], [6, '', 'Streams & programs'], [5, '', 'Board & entrance exams']]
   return (
     <section className="relative z-10 pt-16">
       <div className="container-x">
-        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgba(16,36,69,0.35)] ring-1 ring-slate-100 overflow-hidden">
+        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgba(76,10,15,0.35)] ring-1 ring-slate-100 overflow-hidden">
           {items.map(([n, suf, l], i) => (
             <Reveal key={l} i={i} className={cls('p-6 sm:p-8 text-center', i % 2 === 0 && 'border-r border-slate-100', i < 2 && 'border-b lg:border-b-0 border-slate-100', i === 1 && 'lg:border-r')}>
               <div className="font-serif text-4xl sm:text-5xl font-bold text-navy-900"><Counter to={n} suffix={suf} /></div>
@@ -214,8 +214,8 @@ function SpotCard({ p, i }) {
   return (
     <Reveal i={i % 3}>
       <Link to={`/courses#${p.slug}`} onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setPos({ x: e.clientX - r.left, y: e.clientY - r.top }) }} onMouseLeave={() => setPos({ x: -400, y: -400 })}
-        className="group relative block h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-500/40 hover:shadow-[0_30px_60px_-20px_rgba(16,36,69,0.3)]">
-        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `radial-gradient(380px circle at ${pos.x}px ${pos.y}px, rgba(200,150,46,0.12), transparent 60%)` }} />
+        className="group relative block h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-500/40 hover:shadow-[0_30px_60px_-20px_rgba(76,10,15,0.3)]">
+        <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `radial-gradient(380px circle at ${pos.x}px ${pos.y}px, rgba(225,29,29,0.12), transparent 60%)` }} />
         <div className="relative">
           <div className="flex items-start justify-between">
             <div className="h-14 w-14 rounded-2xl bg-navy-50 text-navy-700 grid place-items-center transition-all duration-500 group-hover:bg-navy-800 group-hover:text-gold-400 group-hover:rotate-[-6deg] group-hover:scale-110"><Icon size={24} /></div>
@@ -231,44 +231,47 @@ function SpotCard({ p, i }) {
   )
 }
 
-// ---------------- MENTOR ----------------
-function Mentor() {
-  const ref = useRef()
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 80%', 'end 60%'] })
-  const line = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+// ---------------- FOUNDER ----------------
+function Founder({ s }) {
+  const name = s.founderName || 'Mr. Vishal Khandekar Sir'
+  const title = s.founderTitle || 'Founder & Director'
+  const initials = name.replace(/^(mr|mrs|ms|dr)\.?\s+/i, '').replace(/\s+sir$/i, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('')
+  const pillars = [
+    [Users, 'Personal attention', 'Small batches so every student is known, guided and followed up.'],
+    [ClipboardCheck, 'Discipline & practice', 'Regular tests, marks analysis and revision until concepts are exam-ready.'],
+    [Smartphone, 'Parents as partners', 'Attendance, marks and fees shared with parents on SMS and WhatsApp.'],
+  ]
   return (
-    <section ref={ref} className="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white py-24">
+    <section className="relative overflow-hidden bg-gradient-to-b from-red-50/60 to-white py-24">
       <div className="container-x grid lg:grid-cols-[0.9fr_1.1fr] gap-14 items-center">
         <Reveal className="relative">
-          <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-gold-400/30 via-transparent to-navy-500/20 blur-2xl" />
-          <div className="relative aspect-[4/5] max-w-md overflow-hidden rounded-[2rem] bg-gradient-to-br from-navy-800 via-navy-900 to-[#081226] p-9 flex flex-col justify-between text-white shadow-2xl">
+          <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-red-400/30 via-transparent to-red-700/20 blur-2xl" />
+          <div className="relative aspect-[4/5] max-w-md overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-red-700 to-red-900 p-9 flex flex-col justify-between text-white shadow-2xl">
             <div className="absolute inset-0 bg-grid opacity-60" />
-            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold-500/20 blur-3xl" />
-            <div className="relative flex items-center justify-between"><Quote className="text-gold-500/50" size={56} /><span className="rounded-full border border-gold-500/30 bg-gold-500/10 px-3 py-1 text-xs text-gold-100">Since {MENTOR.timeline[0].years.split(' ')[0]}</span></div>
+            <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
+            <div className="relative flex items-center justify-between"><Quote className="text-white/40" size={56} /><span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs text-white">Since {s.established}</span></div>
             <div className="relative">
-              <p className="font-serif text-2xl leading-snug">“{MENTOR.quote}”</p>
-              <div className="mt-8 flex items-center gap-4 border-t border-white/15 pt-6">
-                <div className="h-14 w-14 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center font-serif text-xl font-bold text-navy-900">S</div>
-                <div><div className="font-semibold text-lg">{MENTOR.name}</div><div className="text-sm text-navy-200">{MENTOR.title}</div></div>
+              {s.founderMessage
+                ? <p className="font-serif text-2xl leading-snug">“{s.founderMessage}”</p>
+                : <p className="font-serif text-2xl leading-snug">{s.tagline || 'A Home for Learning'}</p>}
+              <div className="mt-8 flex items-center gap-4 border-t border-white/20 pt-6">
+                {s.founderPhoto
+                  ? <img src={s.founderPhoto} alt={name} className="h-14 w-14 rounded-full object-cover ring-2 ring-white/60" />
+                  : <div className="h-14 w-14 rounded-full bg-white grid place-items-center font-serif text-xl font-bold text-red-700">{initials}</div>}
+                <div><div className="font-semibold text-lg">{name}</div><div className="text-sm text-red-100">{title}, {s.name}</div></div>
               </div>
             </div>
           </div>
         </Reveal>
         <div>
-          <SectionTitle eyebrow="Meet your mentor" title={`Learn with ${MENTOR.name}`} subtitle={MENTOR.bio} />
-          <div className="relative pl-8">
-            <div className="absolute left-[7px] top-2 bottom-2 w-0.5 bg-slate-200 rounded-full" />
-            <motion.div style={{ height: line }} className="absolute left-[7px] top-2 w-0.5 bg-gradient-to-b from-gold-400 to-gold-600 rounded-full" />
-            <div className="space-y-6">
-              {MENTOR.timeline.map((t, i) => (
-                <Reveal key={t.org + t.years} i={i} className="relative">
-                  <span className="absolute -left-8 top-1 h-4 w-4 rounded-full border-4 border-white bg-gold-500 shadow-[0_0_0_3px_rgba(200,150,46,0.25)]" />
-                  <div className="text-xs font-bold tracking-wide text-gold-600">{t.years}</div>
-                  <div className="font-semibold text-navy-900">{t.role}</div>
-                  <div className="text-sm text-slate-500">{t.org}</div>
-                </Reveal>
-              ))}
-            </div>
+          <SectionTitle eyebrow="Our founder" title={`Founded and led by ${name}`} subtitle={`${name} is the founder and pioneer of ${s.name}. He built the academy at ${s.location} around one belief: with the right guidance, steady practice and parents kept in the loop, every student can do their best.`} />
+          <div className="space-y-4">
+            {pillars.map(([I, t, d], i) => (
+              <Reveal key={t} i={i} className="flex gap-4 rounded-2xl bg-white p-4 ring-1 ring-red-100 shadow-sm">
+                <div className="h-11 w-11 shrink-0 rounded-xl bg-red-600 text-white grid place-items-center"><I size={20} /></div>
+                <div><div className="font-semibold text-navy-900">{t}</div><div className="text-sm text-slate-500">{d}</div></div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </div>
@@ -280,7 +283,7 @@ function Mentor() {
 function Method() {
   const steps = [
     [Users, 'Small batches', 'Focused attention, doubt solving in every lecture and personal progress reviews.'],
-    [BookOpen, 'Handcrafted notes', 'Chapterwise notes, formula sheets, workbooks and board papers from 2019 onwards.'],
+    [BookOpen, 'Structured notes', 'Chapterwise notes, formula sheets, worksheets and board papers for every subject.'],
     [ClipboardCheck, 'Test, analyse, improve', 'Timed online tests with instant scores, rank and question-wise analysis.'],
     [Smartphone, 'Parents in the loop', 'Attendance, results and fee updates reach parents on SMS and WhatsApp.'],
   ]
@@ -295,8 +298,8 @@ function Method() {
             initial={{ scaleX: 0 }} whileInView={{ scaleX: 1 }} viewport={{ once: true }} transition={{ duration: 1.4, ease: EASE }} />
           {steps.map(([I, t, d], i) => (
             <Reveal key={t} i={i} className="relative text-center">
-              <motion.div whileHover={{ scale: 1.08, rotate: -4 }} className="relative mx-auto h-[72px] w-[72px] rounded-2xl bg-gradient-to-br from-navy-700 to-navy-800 border border-gold-500/30 grid place-items-center text-gold-400 shadow-[0_0_30px_rgba(200,150,46,0.15)]">
-                <I size={28} /><span className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gold-500 text-navy-900 text-xs font-bold grid place-items-center">{i + 1}</span>
+              <motion.div whileHover={{ scale: 1.08, rotate: -4 }} className="relative mx-auto h-[72px] w-[72px] rounded-2xl bg-gradient-to-br from-navy-700 to-navy-800 border border-gold-500/30 grid place-items-center text-gold-400 shadow-[0_0_30px_rgba(225,29,29,0.15)]">
+                <I size={28} /><span className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-gold-500 text-white text-xs font-bold grid place-items-center">{i + 1}</span>
               </motion.div>
               <h3 className="mt-6 font-semibold text-white text-lg">{t}</h3>
               <p className="mt-2 text-sm text-navy-200 leading-relaxed">{d}</p>
@@ -329,7 +332,7 @@ function PortalShowcase() {
         {/* mock dashboard */}
         <Reveal i={1}>
           <motion.div whileHover={{ rotateY: -4, rotateX: 3 }} style={{ perspective: 1000 }} transition={{ type: 'spring', stiffness: 120 }}
-            className="relative rounded-[28px] border border-white bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 shadow-[0_40px_90px_-30px_rgba(16,36,69,0.45)]">
+            className="relative rounded-[28px] border border-white bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 shadow-[0_40px_90px_-30px_rgba(76,10,15,0.45)]">
             <div className="flex items-center gap-1.5 mb-3 px-1"><span className="h-2.5 w-2.5 rounded-full bg-rose-400" /><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" /><span className="ml-3 text-[11px] text-slate-400">students-academy / portal</span></div>
             <div className="grid grid-cols-[110px_1fr] gap-3">
               <div className="rounded-2xl bg-white/80 p-2.5 space-y-1.5 shadow-sm">
@@ -368,7 +371,7 @@ function MaterialTeaser({ materials }) {
     <section className="py-24 bg-slate-50 border-y border-slate-100">
       <div className="container-x">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
-          <SectionTitle eyebrow="Free study material" title="Notes, formula sheets & board papers" subtitle="Handcrafted by Sai Sir and free for every student. Download, print and revise." />
+          <SectionTitle eyebrow="Free study material" title="Notes, formula sheets & board papers" subtitle="Shared by Students Academy for every student. Download, print and revise." />
           <Reveal className="mb-12"><Link to="/study-material" className="btn-navy px-6 py-3">Browse all {pub.length} resources <ArrowRight size={16} /></Link></Reveal>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -426,7 +429,7 @@ function NewsAndResults({ notices, toppers }) {
               <Reveal key={t.id} i={i}>
                 <motion.div whileHover={{ y: -6 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-800 to-navy-900 p-6 text-center text-white shadow-xl">
                   <div className="absolute -top-10 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-gold-500/25 blur-2xl" />
-                  <div className="relative mx-auto h-12 w-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-navy-900"><Award size={22} /></div>
+                  <div className="relative mx-auto h-12 w-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-white"><Award size={22} /></div>
                   <div className="relative mt-4 font-serif text-3xl font-bold gold-gradient">{t.score}</div>
                   <div className="relative mt-1 text-sm font-medium">{t.name}</div>
                   <div className="relative text-xs text-navy-200">{t.exam} · {t.year}</div>
@@ -445,9 +448,8 @@ function NewsAndResults({ notices, toppers }) {
 const FAQS = [
   ['Which classes and courses do you teach?', 'SSC 9th & 10th (all subjects), FYJC & SYJC Science and Commerce, Information Technology, Computer Science and Electronics, plus MHT-CET, JEE Main and NEET-UG preparation.'],
   ['Where is the academy and what are the timings?', 'We are at Grant Road (West), Mumbai. Batches run in the morning and evening; the office is open Monday to Saturday. See the Contact page for the exact address and hours.'],
-  ['Is the study material really free?', 'Yes. Over a hundred notes, formula sheets, workbooks and board papers by Sai Sir are free to download on this website. Enrolled students also get batch-only notes, assignments and online tests in the portal.'],
+  ['Do students get study material?', 'Yes. Enrolled students get chapterwise notes, worksheets, assignments and online tests in the student portal, and selected material is shared publicly on this website.'],
   ['How will I know how my child is doing?', 'Every parent gets a portal login to see attendance, test results, assignments and fees. The academy also sends attendance, result and fee updates on SMS and WhatsApp.'],
-  ['What is the 10th Sarav Pariksha?', 'A practice examination series for SSC students, an initiative of the Lodha Foundation managed by Students Academy. Results and answer keys are published on the Sarav Pariksha page.'],
   ['How do I take admission and what are the fees?', 'Send an enquiry, WhatsApp us or visit the academy. A counsellor will explain batches, timings and the current fee structure for your course.'],
 ]
 function FAQ() {
@@ -462,7 +464,7 @@ function FAQ() {
         <div className="space-y-3">
           {FAQS.map(([q, a], i) => (
             <Reveal key={q} i={i % 3}>
-              <div className={cls('rounded-2xl border bg-white transition-all duration-300', open === i ? 'border-gold-500/40 shadow-[0_18px_40px_-18px_rgba(16,36,69,0.3)]' : 'border-slate-200/80')}>
+              <div className={cls('rounded-2xl border bg-white transition-all duration-300', open === i ? 'border-gold-500/40 shadow-[0_18px_40px_-18px_rgba(76,10,15,0.3)]' : 'border-slate-200/80')}>
                 <button onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
                   <span className="font-semibold text-navy-900">{q}</span>
                   <motion.span animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.25 }} className={cls('grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg font-light', open === i ? 'bg-navy-800 text-gold-400' : 'bg-slate-100 text-navy-800')}>+</motion.span>
@@ -486,7 +488,7 @@ function CTA({ s }) {
   return (
     <section className="container-x pb-24">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#c8962e,#f8ecc9,#2f5597,#c8962e)] bg-[length:200%_100%] animate-shine">
+        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#c81818,#fee2e2,#b91c1c,#c81818)] bg-[length:200%_100%] animate-shine">
           <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] bg-navy-900 px-8 py-14 sm:px-14 text-white">
             <div className="absolute inset-0 bg-grid opacity-40" />
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-gold-500/20 blur-3xl animate-aurora" />
@@ -511,22 +513,21 @@ function CTA({ s }) {
 export default function Home() {
   const s = useSettings()
   const [materials] = useTable('materials'); const [notices] = useTable('notices'); const [toppers] = useTable('toppers')
-  const count = materials.filter((m) => m.visibility === 'public').length || 121
   return (
     <>
-      <Hero s={s} count={count} />
+      <Hero s={s} />
       <Marquee />
-      <div className="pt-0"><Stats s={s} count={count} /></div>
+      <div className="pt-0"><Stats s={s} /></div>
       <section className="py-24">
         <div className="container-x">
           <SectionTitle center eyebrow="Programs" title="Courses for every stream" subtitle="Board-focused teaching with an entrance-ready foundation, from 9th to 12th." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{PROGRAMS.map((p, i) => <SpotCard key={p.slug} p={p} i={i} />)}</div>
         </div>
       </section>
-      <Mentor />
+      <Founder s={s} />
       <Method />
       <PortalShowcase />
-      <MaterialTeaser materials={materials} />
+      {materials.some((m) => m.visibility === 'public') && <MaterialTeaser materials={materials} />}
       <NewsAndResults notices={notices} toppers={toppers} />
       <FAQ />
       <div className="pt-24"><CTA s={s} /></div>

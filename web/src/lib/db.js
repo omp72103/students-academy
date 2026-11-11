@@ -26,7 +26,7 @@ const emit = (table) => listeners.forEach((fn) => fn(table))
 export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn) }
 
 // ---------------- local adapter ----------------
-const KEY = 'students_academy_db_v2'
+const KEY = 'students_academy_db_v3'
 let mem = null
 function loadLocal() {
   if (mem) return mem
