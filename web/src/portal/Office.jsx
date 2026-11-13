@@ -325,7 +325,7 @@ function PhotoInput({ value, onChange }) {
   )
 }
 
-const T_STREAMS = ['SSC', 'Science', 'Commerce', 'IT / CS', 'Electronics', 'CET / JEE / NEET', 'Parent']
+const T_STREAMS = ['8th – 10th', 'Science', 'Commerce', 'B.Com / BAF', 'Parent']
 function TestimonialsAdmin() {
   const [items] = useTable('testimonials'); const [edit, setEdit] = useState(null); const toast = useToast()
   async function save() {
@@ -373,7 +373,7 @@ export function WebsiteContent() {
       {edit && <Modal open onClose={() => setEdit(null)} title="Achiever" footer={<>{edit.id && <button className="btn-outline text-rose-600 mr-auto" onClick={async () => { await db.remove('toppers', edit.id); setEdit(null) }}><Trash2 size={15} /></button>}<button className="btn-primary" onClick={save}>Save</button></>}>
         <div className="grid grid-cols-2 gap-4">
           <Field label="Student name" className="col-span-2"><input className="input" value={edit.name || ''} onChange={(e) => setEdit({ ...edit, name: e.target.value })} /></Field>
-          <Field label="Exam"><input className="input" value={edit.exam || ''} onChange={(e) => setEdit({ ...edit, exam: e.target.value })} placeholder="SSC Board / MHT-CET" /></Field>
+          <Field label="Exam"><input className="input" value={edit.exam || ''} onChange={(e) => setEdit({ ...edit, exam: e.target.value })} placeholder="SSC Board / HSC / TY B.Com" /></Field>
           <Field label="Year"><input className="input" value={edit.year || ''} onChange={(e) => setEdit({ ...edit, year: e.target.value })} /></Field>
           <Field label="Score"><input className="input" value={edit.score || ''} onChange={(e) => setEdit({ ...edit, score: e.target.value })} placeholder="95.4% / 99.2 %ile" /></Field>
           <Field label="Display order"><input type="number" className="input" value={edit.order || ''} onChange={(e) => setEdit({ ...edit, order: Number(e.target.value) })} /></Field>
@@ -407,6 +407,8 @@ export function SettingsPage() {
           <Field label="Email"><input className="input" value={f.email} onChange={set('email')} /></Field>
           <Field label="Office timings"><input className="input" value={f.timings} onChange={set('timings')} /></Field>
           <Field label="Established (year)"><input className="input" value={f.established} onChange={set('established')} /></Field>
+          <Field label="Google rating (e.g. 4.9)"><input className="input" value={f.googleRating ?? ''} onChange={set('googleRating')} /></Field>
+          <Field label="Number of Google reviews"><input className="input" inputMode="numeric" value={f.googleReviews ?? ''} onChange={set('googleReviews')} /></Field>
           <Field label="Google Maps search"><input className="input" value={f.mapQuery} onChange={set('mapQuery')} /></Field>
         </div></Card>
         <Card title="Social media (website header & footer)"><div className="grid sm:grid-cols-2 gap-4">

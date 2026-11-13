@@ -4,10 +4,10 @@ import { CheckCircle2, PhoneCall, Send } from 'lucide-react'
 import { db } from '../lib/db'
 import { cls } from '../lib/utils'
 
-export const STREAMS = ['SSC — 9th', 'SSC — 10th', 'HSC Science — 11th', 'HSC Science — 12th', 'HSC Commerce — 11th', 'HSC Commerce — 12th', 'IT / Computer Science', 'Electronics', 'MHT-CET / JEE / NEET']
+export const STREAMS = ['8th Standard', '9th Standard', '10th Standard (SSC)', 'FYJC Science', 'SYJC Science', 'FYJC Commerce', 'SYJC Commerce', 'FY B.Com', 'SY B.Com', 'TY B.Com', 'FY BAF', 'SY BAF', 'TY BAF']
 
 export function EnquiryForm({ compact = false }) {
-  const blank = { name: '', phone: '', email: '', standard: STREAMS[1], type: 'Admission', callback: true, message: '' }
+  const blank = { name: '', phone: '', email: '', standard: STREAMS[2], type: 'Admission', callback: true, message: '' }
   const [f, setF] = useState(blank)
   const [done, setDone] = useState(false)
   const [busy, setBusy] = useState(false)

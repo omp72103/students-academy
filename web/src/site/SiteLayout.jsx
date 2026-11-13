@@ -8,9 +8,21 @@ import { DEFAULT_SETTINGS, PROGRAMS } from '../data/site'
 import { openWhatsApp } from '../lib/messaging'
 import { cls } from '../lib/utils'
 
+// Values saved before the academy's real details were added. If the stored profile still holds one
+// of these, the real default is used instead (the next Save in Portal → Settings stores it properly).
+const OLD_PLACEHOLDERS = {
+  phone: ['+91 00000 00000', ''], whatsapp: ['910000000000', ''], email: ['', 'saiphy.learning@gmail.com'],
+  address: ['Students Academy, Grant Road (West), Mumbai, Maharashtra 400007'],
+  location: ['Grant Road (West), Mumbai'], timings: ['Mon – Sat · 8:00 AM – 9:00 PM'],
+  mapQuery: ['Students Academy Grant Road West Mumbai'], established: ['2012'], tagline: ['A Home for Learning — Since 2012'],
+}
+
 export function useSettings() {
   const [rows] = useTable('settings')
-  return { ...DEFAULT_SETTINGS, ...(rows.find((r) => r.id === 'institute') || {}) }
+  const saved = { ...(rows.find((r) => r.id === 'institute') || {}) }
+  for (const [k, olds] of Object.entries(OLD_PLACEHOLDERS)) if (k in saved && olds.includes(saved[k] ?? '')) delete saved[k]
+  if (/MHT-CET|IT, MHT|Electronics/.test(saved.admissionBanner || '')) delete saved.admissionBanner
+  return { ...DEFAULT_SETTINGS, ...saved }
 }
 
 const NAV = [
@@ -150,7 +162,7 @@ export default function SiteLayout() {
           <div className="md:col-span-5">
             <Logo light />
             <p className="mt-5 text-sm text-navy-200 max-w-md leading-relaxed">
-              Coaching for SSC 9th & 10th, FYJC/SYJC Science, Commerce, IT, Computer Science and Electronics, and MHT-CET / JEE / NEET, with experienced faculty and a structured learning portal.
+              Coaching for 8th, 9th & 10th (English medium), FYJC & SYJC Science and Commerce, and FY, SY & TY B.Com and BAF at Nana Chowk, Grant Road since 2005.
             </p>
             {socialLinks(s).length > 0 && <div className="mt-6 flex gap-2">
               {socialLinks(s).map(([k, label, url]) => <a key={k} href={url} target="_blank" rel="noreferrer" aria-label={label} className="h-9 w-9 rounded-full border border-white/15 grid place-items-center text-navy-100 hover:bg-red-600 hover:border-red-600 hover:text-white transition"><SocialIcon name={k} size={15} /></a>)}

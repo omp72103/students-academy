@@ -11,7 +11,7 @@ export function buildSeed() {
   const batches = [
     { id: 'b10A', name: '10th SSC — Batch A (Morning)', standard: '10th', stream: 'SSC', timing: '7:30 AM – 10:30 AM', startTime: '07:30', room: 'Room 1', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
     { id: 'b10B', name: '10th SSC — Batch B (Evening)', standard: '10th', stream: 'SSC', timing: '5:00 PM – 8:00 PM', startTime: '17:00', room: 'Room 2', facultyIds: ['u-sai', 'u-hemant'], fee: 32000 },
-    { id: 'b12S', name: '12th Science — PCM + CET', standard: '12th Science', stream: 'Science', timing: '3:00 PM – 6:00 PM', startTime: '15:00', room: 'Room 3', facultyIds: ['u-sai'], fee: 48000 },
+    { id: 'b12S', name: '12th Science — PCMB', standard: '12th Science', stream: 'Science', timing: '3:00 PM – 6:00 PM', startTime: '15:00', room: 'Room 3', facultyIds: ['u-sai'], fee: 48000 },
     { id: 'b12C', name: '12th Commerce + IT', standard: '12th Commerce', stream: 'Commerce', timing: '11:00 AM – 2:00 PM', startTime: '11:00', room: 'Room 2', facultyIds: ['u-priya'], fee: 28000 },
   ]
 
@@ -70,7 +70,7 @@ export function buildSeed() {
       ],
     },
     {
-      id: 't2', title: 'Electrostatics — MHT-CET Practice', batchIds: ['b12S'], subject: 'Physics', durationMin: 20, status: 'published',
+      id: 't2', title: 'Electrostatics — Practice Test', batchIds: ['b12S'], subject: 'Physics', durationMin: 20, status: 'published',
       createdBy: 'u-sai', startAt: iso(daysAgo(3)), negative: 0, shuffle: false,
       questions: [
         q('SI unit of electric charge is', ['Volt', 'Coulomb', 'Ampere', 'Farad'], 1),
@@ -110,7 +110,7 @@ export function buildSeed() {
 
   const enquiries = [
     { id: 'e1', name: 'Rahul Verma', phone: '9811122233', email: '', standard: '10th', message: 'Want details of evening batch fees.', status: 'new', source: 'Website', createdAt: iso(daysAgo(1)) },
-    { id: 'e2', name: 'Sneha Pawar', phone: '9822233344', email: 'sneha@example.com', standard: '12th Science', message: 'CET crash course availability?', status: 'contacted', source: 'WhatsApp', followUp: ymd(daysAgo(-2)), createdAt: iso(daysAgo(3)) },
+    { id: 'e2', name: 'Sneha Pawar', phone: '9822233344', email: 'sneha@example.com', standard: '12th Science', message: 'Batch timings for 12th Science?', status: 'contacted', source: 'WhatsApp', followUp: ymd(daysAgo(-2)), createdAt: iso(daysAgo(3)) },
     { id: 'e3', name: 'Imran Qureshi', phone: '9833344455', email: '', standard: '9th', message: 'Admission for son in 9th.', status: 'admitted', source: 'Walk-in', createdAt: iso(daysAgo(12)) },
   ]
 
@@ -142,7 +142,7 @@ export function buildSeed() {
   const toppers = [
     { id: 'tp1', name: 'Sample Topper', exam: 'SSC Board', year: '2026', score: '96.4%', note: 'Replace with real results from Portal → Website → Toppers', order: 1 },
     { id: 'tp2', name: 'Sample Topper', exam: 'HSC Science', year: '2026', score: '91.2%', note: '', order: 2 },
-    { id: 'tp3', name: 'Sample Topper', exam: 'MHT-CET', year: '2026', score: '99.1 %ile', note: '', order: 3 },
+    { id: 'tp3', name: 'Sample Topper', exam: 'TY B.Com', year: '2026', score: '88.5%', note: '', order: 3 },
   ]
 
   // ---- marks (offline exams) ----

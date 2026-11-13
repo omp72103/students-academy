@@ -11,16 +11,17 @@ import { useMyStudent, ChildSwitcher } from './Layout'
 import { dispatch, fill } from '../lib/messaging'
 import { useSettings } from '../site/SiteLayout'
 
-export const EXAM_TYPES = ['Unit Test', 'Weekly Test', 'Mid-term', 'Prelim', 'Term-end', 'Mock (CET/JEE/NEET)', 'Practical']
+export const EXAM_TYPES = ['Unit Test', 'Weekly Test', 'Mid-term', 'Prelim', 'Term-end', 'Practical']
 const PRESETS = {
+  '8th': ['English', 'Marathi / Hindi', 'Mathematics', 'Science', 'Social Science'],
   '9th': ['English', 'Marathi / Hindi', 'Maths 1', 'Maths 2', 'Science 1', 'Science 2', 'Social Science'],
   '10th': ['English', 'Marathi / Hindi', 'Maths 1', 'Maths 2', 'Science 1', 'Science 2', 'Social Science'],
   '11th Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
   '12th Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
   '12th Commerce': ['Book Keeping & Accountancy', 'Economics', 'OCM', 'Secretarial Practice', 'Maths & Statistics'],
-  '12th IT': ['Information Technology'], '11th IT': ['Information Technology'],
-  '12th Computer Science': ['Computer Science 1', 'Computer Science 2'], '12th Electronics': ['Electronics'],
-  'JEE / NEET / CET': ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
+  '11th Commerce': ['Book Keeping & Accountancy', 'Economics', 'OCM', 'Secretarial Practice', 'Maths & Statistics'],
+  'B.Com': ['Financial Accounting', 'Cost Accounting', 'Business Economics', 'Business Law', 'Taxation', 'Auditing'],
+  'BAF': ['Financial Accounting', 'Cost Accounting', 'Management Accounting', 'Taxation', 'Auditing', 'Business Law'],
 }
 export function grade(pct) {
   if (pct == null || Number.isNaN(pct)) return '—'

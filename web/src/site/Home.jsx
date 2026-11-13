@@ -14,7 +14,7 @@ import { useSettings } from './SiteLayout'
 import { cls, fmtDate } from '../lib/utils'
 
 const EASE = [0.16, 1, 0.3, 1]
-const ICONS = { School, Atom, Target, BarChart3, Monitor, Cpu }
+const ICONS = { GraduationCap, School, Atom, Target, BarChart3, Monitor, Cpu }
 const reveal = { hidden: { opacity: 0, y: 28 }, show: (i = 0) => ({ opacity: 1, y: 0, transition: { duration: 0.7, delay: i * 0.08, ease: EASE } }) }
 
 function Reveal({ children, i = 0, className, as = 'div' }) {
@@ -53,7 +53,7 @@ function SectionTitle({ eyebrow, title, subtitle, center, light }) {
 }
 
 // ---------------- HERO ----------------
-const ROTATE = ['SSC Boards', 'HSC Boards', 'MHT-CET', 'JEE Main', 'NEET-UG']
+const ROTATE = ['8th, 9th & 10th', 'HSC Science', 'HSC Commerce', 'B.Com & BAF']
 
 function RotatingWord() {
   const [i, setI] = useState(0)
@@ -91,7 +91,7 @@ function HeroVisual() {
             <div><div className="text-sm font-semibold text-navy-900">Study Material</div><div className="text-[11px] text-slate-500">Notes · worksheets · question papers</div></div>
           </div>
           <div className="mt-4 space-y-2.5">
-            {[['10th Science 1 · Gravitation', 'Notes'], ['12th Physics · Formula Sheet', 'Formulas'], ['SSC Board Papers 2019–26', 'PYQ'], ['MHT-CET Fast Revision', 'Revision']].map(([t, b], i) => (
+            {[['10th Science 1 · Gravitation', 'Notes'], ['12th Accountancy · Practice Set', 'Practice'], ['SSC Board Papers', 'PYQ'], ['TY B.Com · Taxation', 'Notes']].map(([t, b], i) => (
               <motion.div key={t} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.9 + i * 0.12 }} className="flex items-center gap-3 rounded-xl bg-slate-50 border border-slate-100 px-3 py-2.5">
                 <FileText size={15} className="text-red-500 shrink-0" /><span className="text-[13px] text-slate-700 flex-1 truncate">{t}</span><span className="text-[10px] font-semibold text-red-600">{b}</span>
               </motion.div>
@@ -144,8 +144,15 @@ function Hero({ s }) {
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
             className="inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-3.5 py-1.5 text-xs font-semibold text-red-700">
             <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-75" /><span className="relative inline-flex h-2 w-2 rounded-full bg-red-600" /></span>
-            Admissions open 2026–27 · Grant Road, Mumbai
+            Admissions open 2026–27 · Nana Chowk, Grant Road
           </motion.div>
+          {s.googleRating && (
+            <motion.a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.mapQuery || s.name)}`} target="_blank" rel="noreferrer"
+              initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.08 }}
+              className="ml-2 inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-navy-800 shadow-sm hover:border-amber-300">
+              <Star size={13} className="fill-amber-400 text-amber-400" />{s.googleRating} on Google{s.googleReviews ? ` · ${s.googleReviews}+ reviews` : ''}
+            </motion.a>
+          )}
           <h1 className="mt-7 font-serif text-[2.6rem] sm:text-6xl lg:text-[4.1rem] font-bold leading-[1.05] text-navy-900">
             {words.map((w, i) => (
               <span key={w} className="inline-block overflow-hidden align-bottom mr-[0.25em]">
@@ -167,7 +174,7 @@ function Hero({ s }) {
             <Link to="/study-material" className="btn px-7 py-3.5 text-base border border-slate-300 bg-white text-navy-800 hover:border-red-300 hover:text-red-700"><Download size={17} />Free study material</Link>
           </motion.div>
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.15 }} className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-medium text-slate-600">
-            {['SSC & HSC State Board', 'MHT-CET · JEE · NEET', 'Parent updates on WhatsApp'].map((t) => <span key={t} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-red-600" />{t}</span>)}
+            {['8th to 12th · English medium', 'B.Com & BAF', 'Parent updates on WhatsApp'].map((t) => <span key={t} className="flex items-center gap-2"><CheckCircle2 size={16} className="text-red-600" />{t}</span>)}
           </motion.div>
         </div>
         <HeroVisual />
@@ -178,7 +185,7 @@ function Hero({ s }) {
 }
 
 // ---------------- MARQUEE ----------------
-const SUBJECTS = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Science 1 & 2', 'Algebra & Geometry', 'Accountancy', 'Economics', 'Secretarial Practice', 'Information Technology', 'Computer Science', 'Electronics', 'Arduino & 8051', 'History & Geography', 'English', 'Marathi', 'Hindi']
+const SUBJECTS = ['Science 1 & 2', 'Algebra & Geometry', 'English', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Accountancy', 'Economics', 'OCM', 'Secretarial Practice', 'Maths & Statistics', 'Financial Accounting', 'Cost Accounting', 'Taxation', 'Business Law', 'Auditing']
 function Marquee() {
   return (
     <div className="relative bg-navy-900 py-4 overflow-hidden mask-fade-x">
@@ -191,8 +198,8 @@ function Marquee() {
 
 // ---------------- STATS ----------------
 function Stats({ s }) {
-  const years = new Date().getFullYear() - Number(s.established || 2012)
-  const items = [[years, '+', 'Years of teaching'], [4, '', 'Standards, 9th to 12th'], [6, '', 'Streams & programs'], [5, '', 'Board & entrance exams']]
+  const years = new Date().getFullYear() - Number(s.established || 2005)
+  const items = [[years, '+', 'Years of teaching'], [Number(s.googleReviews || 0), '+', 'Google reviews'], [5, '', 'Classes, 8th to 12th'], [3, '', 'Years of B.Com & BAF']]
   return (
     <section className="relative z-10 pt-16">
       <div className="container-x">
@@ -368,7 +375,7 @@ function PortalShowcase() {
 // ---------------- STUDY MATERIAL TEASER ----------------
 function MaterialTeaser({ materials }) {
   const pub = materials.filter((m) => m.visibility === 'public')
-  const cats = [['10th', '10th SSC'], ['9th', '9th Standard'], ['12th Science', '12th Science'], ['JEE / NEET / CET', 'JEE · NEET · CET'], ['12th Commerce', '12th Commerce'], ['12th IT', 'Information Technology'], ['12th Computer Science', 'Computer Science'], ['12th Electronics', 'Electronics']]
+  const cats = [['8th', '8th Standard'], ['9th', '9th Standard'], ['10th', '10th SSC'], ['11th Science', '11th Science'], ['12th Science', '12th Science'], ['11th Commerce', '11th Commerce'], ['12th Commerce', '12th Commerce'], ['B.Com', 'B.Com'], ['BAF', 'BAF']]
   return (
     <section className="py-24 bg-slate-50 border-y border-slate-100">
       <div className="container-x">
@@ -631,8 +638,8 @@ function Listening({ s }) {
 
 // ---------------- FAQ ----------------
 const FAQS = [
-  ['Which classes and courses do you teach?', 'SSC 9th & 10th (all subjects), FYJC & SYJC Science and Commerce, Information Technology, Computer Science and Electronics, plus MHT-CET, JEE Main and NEET-UG preparation.'],
-  ['Where is the academy and what are the timings?', 'We are at Grant Road (West), Mumbai. Batches run in the morning and evening; the office is open Monday to Saturday. See the Contact page for the exact address and hours.'],
+  ['Which classes and courses do you teach?', '8th, 9th and 10th (English medium), FYJC & SYJC Science and Commerce, and FY, SY & TY B.Com and BAF.'],
+  ['Where is the academy and what are the timings?', 'We are at Vidya Chamber, Nana Chowk, Grant Road (West), opposite Orbit Heights Tower. The academy is open every day from 8 AM to 8 PM; call +91 77180 88017 for batch timings.'],
   ['Do students get study material?', 'Yes. Enrolled students get chapterwise notes, worksheets, assignments and online tests in the student portal, and selected material is shared publicly on this website.'],
   ['How will I know how my child is doing?', 'Every parent gets a portal login to see attendance, test results, assignments and fees. The academy also sends attendance, result and fee updates on SMS and WhatsApp.'],
   ['How do I take admission and what are the fees?', 'Send an enquiry, WhatsApp us or visit the academy. A counsellor will explain batches, timings and the current fee structure for your course.'],
@@ -706,7 +713,7 @@ export default function Home() {
       <Achievers toppers={toppers} />
       <section className="py-24">
         <div className="container-x">
-          <SectionTitle center eyebrow="Programs" title="Courses for every stream" subtitle="Board-focused teaching with an entrance-ready foundation, from 9th to 12th." />
+          <SectionTitle center eyebrow="Programs" title="Courses for every stream" subtitle="From 8th standard to the final year of B.Com and BAF, under one roof at Nana Chowk." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{PROGRAMS.map((p, i) => <SpotCard key={p.slug} p={p} i={i} />)}</div>
         </div>
       </section>

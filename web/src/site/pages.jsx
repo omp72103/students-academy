@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useSearchParams } from 'react-router-dom'
-import { School, Atom, Target, BarChart3, Monitor, Cpu } from 'lucide-react'
+import { School, Atom, Target, BarChart3, Monitor, Cpu, GraduationCap } from 'lucide-react'
 import { ArrowRight, BookOpen, FileText, Download, CheckCircle2, Award, Users, Library, ClipboardCheck, Smartphone, MapPin, Phone, Mail, Clock, Send, Quote, Search, ExternalLink, Bell, Pin } from 'lucide-react'
 import { db, useTable } from '../lib/db'
 import { PROGRAMS } from '../data/site'
@@ -44,7 +44,7 @@ function PageHero({ title, subtitle, crumb }) {
   )
 }
 
-const ICONS = { School, Atom, Target, BarChart3, Monitor, Cpu }
+const ICONS = { School, Atom, Target, BarChart3, Monitor, Cpu, GraduationCap }
 const Ic = ({ name, ...p }) => { const C = ICONS[name] || BookOpen; return <C {...p} /> }
 
 // ================= ABOUT =================
@@ -57,7 +57,7 @@ export function About() {
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-5 text-slate-700 leading-relaxed">
             <h2 className="font-serif text-2xl font-bold text-navy-900">Who we are</h2>
-            <p>Students Academy is a coaching institute at Grant Road (West), Mumbai, offering focused coaching for Maharashtra State Board students from 9th to 12th across Science, Commerce, Information Technology, Computer Science and Electronics, along with preparation for MHT-CET, JEE Main and NEET-UG.</p>
+            <p>Students Academy is a coaching institute at Nana Chowk, Grant Road (West), Mumbai, teaching students since {s.established}. We coach 8th, 9th and 10th standard (English medium), FYJC and SYJC Science and Commerce, and FY, SY and TY B.Com and BAF.</p>
             <p>Our teaching is built around clear concepts, well-structured study material and consistent practice. Every student has access to a digital library of chapterwise notes, formula sheets, workbooks and board papers, and takes regular tests through our online portal. Parents receive attendance, test and fee updates directly on SMS and WhatsApp.</p>
             <p>Students Academy was founded and is led by <strong>{s.founderName || 'Mr. Vishal Khandekar Sir'}</strong>, {(s.founderTitle || 'Founder & Director').toLowerCase()} of the academy, with one simple aim: give every student the clarity, discipline and personal attention they need to do their best in board and entrance examinations.</p>
             <div className="grid sm:grid-cols-3 gap-4 pt-4">
