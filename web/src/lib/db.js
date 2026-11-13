@@ -15,7 +15,7 @@ export const supabase = MODE === 'supabase' ? createClient(SB_URL, SB_KEY, { aut
 const PREFIX = import.meta.env.VITE_TABLE_PREFIX || ''
 export const BUCKET = import.meta.env.VITE_STORAGE_BUCKET || 'files'
 
-export const TABLES = ['settings', 'users', 'batches', 'materials', 'attendance', 'tests', 'attempts', 'assignments',
+export const TABLES = ['testimonials', 'settings', 'users', 'batches', 'materials', 'attendance', 'tests', 'attempts', 'assignments',
   'submissions', 'fees', 'notices', 'enquiries', 'timetable', 'messages', 'toppers', 'exams', 'devices', 'punches', 'staff_attendance']
 
 export const uid = (p = '') => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 7)
@@ -26,7 +26,7 @@ const emit = (table) => listeners.forEach((fn) => fn(table))
 export const subscribe = (fn) => { listeners.add(fn); return () => listeners.delete(fn) }
 
 // ---------------- local adapter ----------------
-const KEY = 'students_academy_db_v3'
+const KEY = 'students_academy_db_v4'
 let mem = null
 function loadLocal() {
   if (mem) return mem

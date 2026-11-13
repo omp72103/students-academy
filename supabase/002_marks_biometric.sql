@@ -139,3 +139,11 @@ grant execute on function public.sa_biometric_ingest(text, text, jsonb) to anon,
 grant execute on function public.sa_biometric_heartbeat(text) to anon, authenticated;
 grant execute on function public.sa_has(text) to anon, authenticated;
 grant select, insert, update, delete on public.sa_exams, public.sa_devices, public.sa_punches, public.sa_staff_attendance to authenticated;
+
+-- 003: website testimonials (public read, managed by admin from Portal → Website Content)
+create table if not exists public.sa_testimonials (id text primary key, data jsonb not null default '{}'::jsonb, created_at timestamptz default now());
+alter table public.sa_testimonials enable row level security;
+create policy "sa admin all" on public.sa_testimonials for all using (sa_role() = 'admin') with check (sa_role() = 'admin');
+create policy "sa public testimonials" on public.sa_testimonials for select using (true);
+grant select on public.sa_testimonials to anon;
+grant select, insert, update, delete on public.sa_testimonials to authenticated;

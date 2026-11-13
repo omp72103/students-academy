@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion'
-import { Menu, X, Phone, Mail, MapPin, Clock, MessageCircle, LogIn, GraduationCap, ArrowRight, ArrowUp } from 'lucide-react'
+import { Menu, X, Phone, Mail, MapPin, Clock, MessageCircle, LogIn, GraduationCap, ArrowRight, ArrowUp, ChevronDown, ChevronRight } from 'lucide-react'
+import { SocialIcon, socialLinks } from '../components/Social'
 import { useTable } from '../lib/db'
-import { DEFAULT_SETTINGS } from '../data/site'
+import { DEFAULT_SETTINGS, PROGRAMS } from '../data/site'
 import { openWhatsApp } from '../lib/messaging'
 import { cls } from '../lib/utils'
 
@@ -31,6 +32,41 @@ export function Logo({ light }) {
   )
 }
 
+function CoursesMenu() {
+  const [open, setOpen] = useState(false)
+  const loc = useLocation()
+  useEffect(() => setOpen(false), [loc.pathname, loc.hash])
+  const active = loc.pathname.startsWith('/courses')
+  return (
+    <div className="relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)}>
+      <Link to="/courses" className={cls('relative flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors', active ? 'text-navy-900' : 'text-slate-600 hover:text-navy-800')}
+        aria-haspopup="true" aria-expanded={open} onFocus={() => setOpen(true)}>
+        Courses <ChevronDown size={14} className={cls('transition-transform', open && 'rotate-180')} />
+        {active && <motion.span layoutId="nav-underline" className="absolute left-3 right-3 -bottom-0.5 h-[2px] rounded-full bg-gold-500" />}
+      </Link>
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 6 }} transition={{ duration: 0.18 }}
+            className="absolute left-1/2 top-full -translate-x-1/2 pt-3 w-[20rem]">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_24px_60px_-20px_rgba(11,26,51,0.35)]">
+              <div className="h-1 bg-gradient-to-r from-navy-700 via-blue-600 to-red-500" />
+              <div className="p-2">
+                {PROGRAMS.map((p) => (
+                  <Link key={p.slug} to={`/courses#${p.slug}`} className="group flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 hover:bg-navy-50">
+                    <span className="min-w-0"><span className="block text-sm font-semibold text-navy-900">{p.short || p.title}</span><span className="block truncate text-xs text-slate-500">{p.title}</span></span>
+                    <ChevronRight size={15} className="shrink-0 text-slate-300 group-hover:text-red-500 transition" />
+                  </Link>
+                ))}
+              </div>
+              <Link to="/courses" className="block border-t border-slate-100 bg-slate-50 px-5 py-3 text-xs font-semibold text-red-600 hover:text-red-700">View all courses →</Link>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
+
 export default function SiteLayout() {
   const s = useSettings()
   const [open, setOpen] = useState(false)
@@ -53,7 +89,12 @@ export default function SiteLayout() {
             {s.email && <a href={`mailto:${s.email}`} className="hidden sm:flex items-center gap-1.5 hover:text-white"><Mail size={13} />{s.email}</a>}
             <span className="hidden md:flex items-center gap-1.5"><Clock size={13} />{s.timings}</span>
           </div>
-          <Link to="/portal" className="flex items-center gap-1.5 text-gold-400 hover:text-gold-100 font-medium shrink-0"><LogIn size={13} />Student / Parent Login</Link>
+          <div className="flex items-center gap-4 shrink-0">
+            {socialLinks(s).length > 0 && <div className="hidden sm:flex items-center gap-3 pr-4 border-r border-white/10">
+              {socialLinks(s).map(([k, label, url]) => <a key={k} href={url} target="_blank" rel="noreferrer" aria-label={label} className="text-navy-200 hover:text-white transition"><SocialIcon name={k} size={13} /></a>)}
+            </div>}
+            <Link to="/portal" className="flex items-center gap-1.5 text-gold-400 hover:text-gold-100 font-medium"><LogIn size={13} />Student / Parent Login</Link>
+          </div>
         </div>
       </div>
 
@@ -62,7 +103,7 @@ export default function SiteLayout() {
         <div className="container-x flex items-center justify-between h-full">
           <Logo light={light} />
           <nav className="hidden lg:flex items-center gap-0.5">
-            {NAV.map(([to, label]) => (
+            {NAV.map(([to, label]) => to === '/courses' ? <CoursesMenu key={to} /> : (
               <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => cls('relative px-3 py-2 text-sm font-medium rounded-lg transition-colors',
                 light ? (isActive ? 'text-white' : 'text-white/75 hover:text-white') : (isActive ? 'text-navy-900' : 'text-slate-600 hover:text-navy-800'))}>
                 {({ isActive }) => <>
@@ -111,16 +152,23 @@ export default function SiteLayout() {
             <p className="mt-5 text-sm text-navy-200 max-w-md leading-relaxed">
               Coaching for SSC 9th & 10th, FYJC/SYJC Science, Commerce, IT, Computer Science and Electronics, and MHT-CET / JEE / NEET, with experienced faculty and a structured learning portal.
             </p>
+            {socialLinks(s).length > 0 && <div className="mt-6 flex gap-2">
+              {socialLinks(s).map(([k, label, url]) => <a key={k} href={url} target="_blank" rel="noreferrer" aria-label={label} className="h-9 w-9 rounded-full border border-white/15 grid place-items-center text-navy-100 hover:bg-red-600 hover:border-red-600 hover:text-white transition"><SocialIcon name={k} size={15} /></a>)}
+            </div>}
             <div className="mt-6 flex gap-2">
               <button onClick={() => openWhatsApp(s.whatsapp, 'Hello Students Academy, I would like to know more about admissions.')} className="btn btn-sm bg-[#25D366] text-white hover:brightness-110"><MessageCircle size={14} />WhatsApp</button>
               <a href={`tel:${s.phone}`} className="btn btn-sm border border-white/15 text-white hover:bg-white/10"><Phone size={14} />Call</a>
             </div>
           </div>
-          <div className="md:col-span-3">
+          <div className="md:col-span-2">
             <h4 className="text-white font-semibold text-sm mb-4 tracking-wide">Quick Links</h4>
             <ul className="grid grid-cols-2 md:grid-cols-1 gap-2.5 text-sm">{NAV.slice(1).map(([to, l]) => <li key={to}><Link to={to} className="hover:text-gold-400 transition-colors">{l}</Link></li>)}<li><Link to="/portal" className="hover:text-gold-400">Portal Login</Link></li></ul>
           </div>
-          <div className="md:col-span-4">
+          <div className="md:col-span-2">
+            <h4 className="text-white font-semibold text-sm mb-4 tracking-wide">Courses</h4>
+            <ul className="space-y-2.5 text-sm">{PROGRAMS.map((p) => <li key={p.slug}><Link to={`/courses#${p.slug}`} className="hover:text-gold-400 transition-colors">{p.short || p.title.split(' (')[0].split(' —')[0]}</Link></li>)}</ul>
+          </div>
+          <div className="md:col-span-3">
             <h4 className="text-white font-semibold text-sm mb-4 tracking-wide">Reach Us</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex gap-3"><MapPin size={16} className="shrink-0 mt-0.5 text-gold-400" />{s.address}</li>

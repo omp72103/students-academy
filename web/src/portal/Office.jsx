@@ -313,15 +313,60 @@ function SimPicker() {
 }
 
 // ======================= WEBSITE CONTENT =======================
+function PhotoInput({ value, onChange }) {
+  const toast = useToast(); const [busy, setBusy] = useState(false)
+  return (
+    <div className="flex items-center gap-3">
+      {value && <img src={value} alt="" className="h-14 w-14 rounded-full object-cover ring-1 ring-slate-200" />}
+      <input type="file" accept="image/*" className="text-sm" disabled={busy} onChange={async (e) => { const file = e.target.files?.[0]; if (!file) return; setBusy(true); try { onChange(await uploadFile(file, 'site')) } catch (err) { toast(err.message, 'error') } finally { setBusy(false) } }} />
+      {busy && <span className="text-xs text-slate-500">Uploading…</span>}
+      {value && !busy && <button type="button" className="btn-ghost text-xs" onClick={() => onChange('')}>Remove</button>}
+    </div>
+  )
+}
+
+const T_STREAMS = ['SSC', 'Science', 'Commerce', 'IT / CS', 'Electronics', 'CET / JEE / NEET', 'Parent']
+function TestimonialsAdmin() {
+  const [items] = useTable('testimonials'); const [edit, setEdit] = useState(null); const toast = useToast()
+  async function save() {
+    if (!edit.name || !edit.text) return toast('Name and testimonial text are required', 'error')
+    edit.id ? await db.update('testimonials', edit.id, edit) : await db.insert('testimonials', { ...edit, order: Number(edit.order || items.length + 1) })
+    toast('Saved'); setEdit(null)
+  }
+  const set = (k) => (e) => setEdit({ ...edit, [k]: e.target.value })
+  return (
+    <>
+      <Card title="Testimonials" className="mt-5" actions={<button className="btn-primary btn-sm" onClick={() => setEdit({ stream: 'SSC' })}><Plus size={14} />Add testimonial</button>} bodyClass="p-0">
+        <Table rows={[...items].sort((a, b) => (a.order || 0) - (b.order || 0))} empty="No testimonials yet. The section stays hidden on the website until you add one." columns={[
+          { label: 'Order', key: 'order' }, { label: 'Name', render: (t) => <div><div className="font-semibold">{t.name}</div><div className="text-xs text-slate-500">{t.role}</div></div> },
+          { label: 'Stream', key: 'stream' }, { label: 'Video', render: (t) => (t.videoUrl ? 'Yes' : '—') }, { label: 'Text', render: (t) => <span className="line-clamp-1 max-w-xs">{t.text}</span> },
+          { label: '', render: (t) => <button className="btn-ghost p-1.5" onClick={() => setEdit(t)}><Pencil size={15} /></button> },
+        ]} />
+      </Card>
+      {edit && <Modal open onClose={() => setEdit(null)} title="Testimonial" footer={<>{edit.id && <button className="btn-outline text-rose-600 mr-auto" onClick={async () => { await db.remove('testimonials', edit.id); setEdit(null) }}><Trash2 size={15} /></button>}<button className="btn-primary" onClick={save}>Save</button></>}>
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Name *"><input className="input" value={edit.name || ''} onChange={set('name')} /></Field>
+          <Field label="Who they are"><input className="input" value={edit.role || ''} onChange={set('role')} placeholder="Parent of 10th student / HSC Science 2026" /></Field>
+          <Field label="Stream"><select className="input" value={edit.stream || ''} onChange={set('stream')}>{T_STREAMS.map((x) => <option key={x}>{x}</option>)}</select></Field>
+          <Field label="Display order"><input type="number" className="input" value={edit.order || ''} onChange={(e) => setEdit({ ...edit, order: Number(e.target.value) })} /></Field>
+          <Field label="Testimonial *" className="col-span-2"><textarea rows={4} className="input" value={edit.text || ''} onChange={set('text')} /></Field>
+          <Field label="YouTube video link (optional)" className="col-span-2"><input className="input" value={edit.videoUrl || ''} onChange={set('videoUrl')} placeholder="https://youtu.be/…" /></Field>
+          <Field label="Photo (optional)" className="col-span-2"><PhotoInput value={edit.photo} onChange={(photo) => setEdit({ ...edit, photo })} /></Field>
+        </div>
+      </Modal>}
+    </>
+  )
+}
+
 export function WebsiteContent() {
   const [toppers] = useTable('toppers'); const [edit, setEdit] = useState(null); const toast = useToast()
   async function save() { edit.id ? await db.update('toppers', edit.id, edit) : await db.insert('toppers', { ...edit, order: Number(edit.order || toppers.length + 1) }); toast('Saved'); setEdit(null) }
   return (
     <>
-      <PageHeader title="Website Content" subtitle="Manage what appears on the official website. Notices (tick 'Show on website') and public study material also flow to the site automatically." actions={<button className="btn-primary" onClick={() => setEdit({ year: String(new Date().getFullYear()) })}><Plus size={16} />Add achiever</button>} />
+      <PageHeader title="Website Content" subtitle="Manage achievers and testimonials on the official website. Notices (tick 'Show on website') and public study material also flow to the site automatically." actions={<button className="btn-primary whitespace-nowrap" onClick={() => setEdit({ year: String(new Date().getFullYear()) })}><Plus size={16} />Add achiever</button>} />
       <Card title="Results & achievers" bodyClass="p-0">
         <Table rows={[...toppers].sort((a, b) => (a.order || 0) - (b.order || 0))} columns={[
-          { label: 'Order', key: 'order' }, { label: 'Name', render: (t) => <div className="flex items-center gap-2"><Award size={16} className="text-amber-500" />{t.name}</div> }, { label: 'Exam', key: 'exam' }, { label: 'Year', key: 'year' }, { label: 'Score', render: (t) => <b>{t.score}</b> },
+          { label: 'Order', key: 'order' }, { label: 'Name', render: (t) => <div className="flex items-center gap-2">{t.photo ? <img src={t.photo} alt="" className="h-8 w-8 rounded-full object-cover" /> : <Award size={16} className="text-amber-500" />}{t.name}</div> }, { label: 'Exam', key: 'exam' }, { label: 'Year', key: 'year' }, { label: 'Score', render: (t) => <b>{t.score}</b> },
           { label: '', render: (t) => <button className="btn-ghost p-1.5" onClick={() => setEdit(t)}><Pencil size={15} /></button> },
         ]} />
       </Card>
@@ -332,9 +377,12 @@ export function WebsiteContent() {
           <Field label="Year"><input className="input" value={edit.year || ''} onChange={(e) => setEdit({ ...edit, year: e.target.value })} /></Field>
           <Field label="Score"><input className="input" value={edit.score || ''} onChange={(e) => setEdit({ ...edit, score: e.target.value })} placeholder="95.4% / 99.2 %ile" /></Field>
           <Field label="Display order"><input type="number" className="input" value={edit.order || ''} onChange={(e) => setEdit({ ...edit, order: Number(e.target.value) })} /></Field>
-          <Field label="Note" className="col-span-2"><input className="input" value={edit.note || ''} onChange={(e) => setEdit({ ...edit, note: e.target.value })} /></Field>
+          <Field label="Rank / highlight"><input className="input" value={edit.rank || ''} onChange={(e) => setEdit({ ...edit, rank: e.target.value })} placeholder="Academy topper / AIR 120" /></Field>
+          <Field label="Note"><input className="input" value={edit.note || ''} onChange={(e) => setEdit({ ...edit, note: e.target.value })} /></Field>
+          <Field label="Photo" className="col-span-2"><PhotoInput value={edit.photo} onChange={(photo) => setEdit({ ...edit, photo })} /></Field>
         </div>
       </Modal>}
+      <TestimonialsAdmin />
     </>
   )
 }
@@ -360,6 +408,12 @@ export function SettingsPage() {
           <Field label="Office timings"><input className="input" value={f.timings} onChange={set('timings')} /></Field>
           <Field label="Established (year)"><input className="input" value={f.established} onChange={set('established')} /></Field>
           <Field label="Google Maps search"><input className="input" value={f.mapQuery} onChange={set('mapQuery')} /></Field>
+        </div></Card>
+        <Card title="Social media (website header & footer)"><div className="grid sm:grid-cols-2 gap-4">
+          {[['facebook', 'Facebook page URL'], ['instagram', 'Instagram URL'], ['youtube', 'YouTube channel URL'], ['linkedin', 'LinkedIn URL']].map(([k, l]) => (
+            <Field key={k} label={l}><input className="input" type="url" placeholder="https://" value={f[k] || ''} onChange={set(k)} /></Field>
+          ))}
+          <p className="sm:col-span-2 text-xs text-slate-500">Only the links you fill in are shown. The WhatsApp icon uses the WhatsApp number above.</p>
         </div></Card>
         <Card title="Founder (shown on the website)"><div className="grid sm:grid-cols-2 gap-4">
           <Field label="Name"><input className="input" value={f.founderName ?? DEFAULT_SETTINGS.founderName} onChange={set('founderName')} /></Field>

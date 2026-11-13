@@ -5,6 +5,7 @@ import { School, Atom, Target, BarChart3, Monitor, Cpu } from 'lucide-react'
 import { ArrowRight, BookOpen, FileText, Download, CheckCircle2, Award, Users, Library, ClipboardCheck, Smartphone, MapPin, Phone, Mail, Clock, Send, Quote, Search, ExternalLink, Bell, Pin } from 'lucide-react'
 import { db, useTable } from '../lib/db'
 import { PROGRAMS } from '../data/site'
+import { EnquiryForm } from './EnquiryForm'
 import { STANDARDS, MATERIAL_TYPES } from '../data/materials'
 import { useSettings } from './SiteLayout'
 import { cls, fmtDate } from '../lib/utils'
@@ -266,14 +267,6 @@ export function Notices() {
 // ================= CONTACT =================
 export function Contact() {
   const s = useSettings()
-  const [f, setF] = useState({ name: '', phone: '', email: '', standard: '10th', message: '' })
-  const [done, setDone] = useState(false)
-  const [err, setErr] = useState('')
-  async function submit(e) {
-    e.preventDefault(); setErr('')
-    if (!/^\d{10}$/.test(f.phone.replace(/\D/g, '').slice(-10))) return setErr('Please enter a valid 10-digit mobile number.')
-    try { await db.insert('enquiries', { ...f, status: 'new', source: 'Website' }); setDone(true) } catch { setErr('Could not submit right now. Please call or WhatsApp us.') }
-  }
   return (
     <>
       <PageHero title="Contact Us" subtitle="Visit the academy, call us, or send an enquiry." />
@@ -291,23 +284,7 @@ export function Contact() {
           <div id="enquiry" className="lg:col-span-3 card p-6 sm:p-8 scroll-mt-24">
             <h2 className="font-serif text-2xl font-bold text-navy-900">Admission enquiry</h2>
             <p className="text-sm text-slate-500 mt-1">Our counsellor will call you within one working day.</p>
-            {done ? (
-              <div className="mt-8 rounded-xl bg-emerald-50 border border-emerald-200 p-6 text-emerald-800">
-                <CheckCircle2 className="mb-2" /> Thank you, {f.name}! Your enquiry has been received.
-              </div>
-            ) : (
-              <form onSubmit={submit} className="mt-6 grid sm:grid-cols-2 gap-4">
-                <label><span className="label">Student name *</span><input required className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></label>
-                <label><span className="label">Mobile number *</span><input required className="input" inputMode="tel" value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} /></label>
-                <label><span className="label">Email</span><input type="email" className="input" value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} /></label>
-                <label><span className="label">Class / Course *</span>
-                  <select className="input" value={f.standard} onChange={(e) => setF({ ...f, standard: e.target.value })}>{['9th', '10th', '11th Science', '12th Science', '11th Commerce', '12th Commerce', 'IT / Computer Science', 'Electronics', 'MHT-CET / JEE / NEET'].map((x) => <option key={x}>{x}</option>)}</select>
-                </label>
-                <label className="sm:col-span-2"><span className="label">Message</span><textarea rows={4} className="input" value={f.message} onChange={(e) => setF({ ...f, message: e.target.value })} /></label>
-                {err && <p className="sm:col-span-2 text-sm text-rose-600">{err}</p>}
-                <div className="sm:col-span-2"><button className="btn-navy px-6 py-3"><Send size={16} />Submit enquiry</button></div>
-              </form>
-            )}
+            <div className="mt-6"><EnquiryForm /></div>
           </div>
         </div>
       </Section>

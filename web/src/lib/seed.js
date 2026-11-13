@@ -132,6 +132,13 @@ export function buildSeed() {
     { id: 'sub1', assignmentId: 'as1', studentId: 'st1', text: 'Submitted in notebook, photo attached.', url: '', grade: 17, feedback: 'Good, check units in Q7.', submittedAt: iso(daysAgo(1)) },
   ]
 
+  // Demo-only samples so the section can be previewed; the live site starts empty and the academy adds real ones.
+  const testimonials = [
+    { id: 'ts1', name: 'Sample — Parent', role: 'Parent of a 10th SSC student', stream: 'SSC', text: 'Sample testimonial. Replace it from Portal → Website Content → Testimonials with a real message from a parent.', order: 1 },
+    { id: 'ts2', name: 'Sample — Student', role: 'HSC Science student', stream: 'Science', text: 'Sample testimonial. Add real student feedback, a photo and an optional YouTube video link from the portal.', order: 2 },
+    { id: 'ts3', name: 'Sample — Student', role: 'HSC Commerce student', stream: 'Commerce', text: 'Sample testimonial. Each testimonial can be tagged with a stream so visitors can filter them.', order: 3 },
+  ]
+
   const toppers = [
     { id: 'tp1', name: 'Sample Topper', exam: 'SSC Board', year: '2026', score: '96.4%', note: 'Replace with real results from Portal → Website → Toppers', order: 1 },
     { id: 'tp2', name: 'Sample Topper', exam: 'HSC Science', year: '2026', score: '91.2%', note: '', order: 2 },
@@ -179,6 +186,6 @@ export function buildSeed() {
   return {
     exams, devices, punches, staff_attendance: staffAttendance,
     settings: [DEFAULT_SETTINGS], users: [...users, ...students, ...parents], batches, materials: SEED_MATERIALS,
-    attendance, tests, attempts, assignments, submissions, fees, notices, enquiries, timetable, messages: [], toppers,
+    attendance, tests, attempts, assignments, submissions, fees, notices, enquiries, timetable, messages: [], toppers, testimonials,
   }
 }

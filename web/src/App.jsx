@@ -22,7 +22,13 @@ const Loader = () => <div className="min-h-[50vh] grid place-items-center"><div 
 
 function ScrollTop() {
   const { pathname, hash } = useLocation()
-  useEffect(() => { if (hash) document.getElementById(hash.slice(1))?.scrollIntoView(); else window.scrollTo(0, 0) }, [pathname, hash])
+  useEffect(() => {
+    if (!hash) { window.scrollTo(0, 0); return }
+    // The target may mount a moment later (page transition / lazy route), so retry briefly.
+    let n = 0
+    const t = setInterval(() => { const el = document.getElementById(hash.slice(1)); if (el || ++n > 20) { clearInterval(t); el?.scrollIntoView({ behavior: 'smooth', block: 'start' }) } }, 80)
+    return () => clearInterval(t)
+  }, [pathname, hash])
   return null
 }
 

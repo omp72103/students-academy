@@ -1,11 +1,13 @@
-// Landing page: navy + gold, motion-rich but restrained.
+// Landing page: navy blue + red on white, motion-rich but restrained.
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence, useInView, useMotionValue, useSpring, useTransform, useScroll } from 'framer-motion'
 import {
   ArrowRight, Award, BookOpen, CheckCircle2, ClipboardCheck, FileText, Library, Phone, Pin, Quote, Smartphone, Sparkles, Users,
   School, Atom, Target, BarChart3, Monitor, Cpu, CalendarCheck, Bell, MessageCircle, TrendingUp, Star, Download, PlayCircle,
+  GraduationCap, ShieldCheck, Building2, HeartHandshake, Play, X, MapPin,
 } from 'lucide-react'
+import { EnquiryForm } from './EnquiryForm'
 import { useTable } from '../lib/db'
 import { PROGRAMS } from '../data/site'
 import { useSettings } from './SiteLayout'
@@ -397,48 +399,231 @@ function MaterialTeaser({ materials }) {
 }
 
 // ---------------- NOTICES + ACHIEVERS ----------------
-function NewsAndResults({ notices, toppers }) {
-  const pub = notices.filter((n) => n.publishOnWebsite).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)).slice(0, 3)
+// ---------------- STREAM QUICK BAR ----------------
+function StreamBar() {
+  return (
+    <div className="relative z-10 -mt-10 sm:-mt-12">
+      <div className="container-x">
+        <Reveal className="rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_24px_60px_-28px_rgba(11,26,51,0.45)]">
+          <div className="flex items-stretch gap-2 overflow-x-auto no-scrollbar">
+            <div className="hidden 2xl:flex shrink-0 items-center gap-2 rounded-xl bg-navy-900 px-5 text-sm font-semibold text-white"><GraduationCap size={17} className="text-red-400" />Choose your stream</div>
+            {PROGRAMS.map((p) => {
+              const I = ICONS[p.icon] || BookOpen
+              return (
+                <Link key={p.slug} to={`/courses#${p.slug}`} className="group flex shrink-0 lg:flex-1 items-center gap-2.5 rounded-xl px-3 py-3 transition hover:bg-navy-50">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-red-50 text-red-600 transition group-hover:bg-red-600 group-hover:text-white"><I size={17} /></span>
+                  <span className="whitespace-nowrap text-[13px] font-semibold leading-tight text-navy-900">{p.short || p.title}</span>
+                </Link>
+              )
+            })}
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  )
+}
+
+// ---------------- ACHIEVERS ----------------
+function initialsOf(name = '') { return name.replace(/^sample\s*—?\s*/i, '').split(/\s+/).filter(Boolean).map((w) => w[0]).slice(0, 2).join('').toUpperCase() || 'SA' }
+
+function AchieverCard({ t }) {
+  return (
+    <div className="group w-[15.5rem] shrink-0 rounded-3xl border border-slate-200 bg-white p-6 text-center shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_28px_50px_-24px_rgba(11,26,51,0.4)]">
+      <div className="relative mx-auto h-32 w-32">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 via-red-600 to-navy-800 p-[5px] transition-transform duration-500 group-hover:rotate-12">
+          <div className="h-full w-full rounded-full bg-white p-[5px]">
+            {t.photo
+              ? <img src={t.photo} alt={t.name} loading="lazy" className="h-full w-full rounded-full object-cover" />
+              : <div className="grid h-full w-full place-items-center rounded-full bg-gradient-to-br from-navy-700 to-navy-900 font-serif text-3xl font-bold text-white">{initialsOf(t.name)}</div>}
+          </div>
+        </div>
+        {t.rank && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-red-600 px-3 py-1 text-[11px] font-bold text-white shadow-md">{t.rank}</span>}
+      </div>
+      <div className="mt-5 font-serif text-3xl font-bold text-red-600">{t.score}</div>
+      <div className="mt-1 font-semibold text-navy-900">{t.name}</div>
+      <div className="text-xs text-slate-500">{t.exam}{t.year ? ` · ${t.year}` : ''}</div>
+    </div>
+  )
+}
+
+function Achievers({ toppers }) {
+  const list = [...toppers].sort((a, b) => (a.order || 0) - (b.order || 0))
+  if (!list.length) return null
+  const scroll = list.length >= 5
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-b from-white via-navy-50/50 to-white py-24">
+      <div className="container-x">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <SectionTitle eyebrow="Results" title="Our achievers" subtitle="Students who turned steady preparation into outstanding board and entrance results." />
+          <Reveal className="mb-12"><Link to="/results" className="btn-navy">View all results <ArrowRight size={15} /></Link></Reveal>
+        </div>
+      </div>
+      {scroll ? (
+        <div className="mask-fade-x overflow-hidden">
+          <div className="flex w-max gap-6 px-6 animate-marquee [animation-duration:55s] hover:[animation-play-state:paused]">
+            {[...list, ...list].map((t, i) => <AchieverCard key={t.id + i} t={t} />)}
+          </div>
+        </div>
+      ) : (
+        <div className="container-x flex flex-wrap justify-center gap-6">{list.map((t, i) => <Reveal key={t.id} i={i}><AchieverCard t={t} /></Reveal>)}</div>
+      )}
+    </section>
+  )
+}
+
+// ---------------- WHY CHOOSE US ----------------
+function WhyUs({ s }) {
+  const items = [
+    [ShieldCheck, 'A name families trust', `Serving students and parents at ${s.location} since ${s.established}, with results that speak for themselves.`],
+    [GraduationCap, 'Experienced faculty', 'Subject specialists who know the board and entrance patterns inside out.'],
+    [Building2, 'Focused classrooms', 'Small, well-managed batches so every student gets attention.'],
+    [ClipboardCheck, 'Regular tests & doubt solving', 'Weekly tests, marks analysis and dedicated doubt-solving time.'],
+    [BookOpen, 'Comprehensive notes', 'Structured chapterwise notes, worksheets and past papers for every subject.'],
+    [HeartHandshake, 'Student-first approach', 'Personal follow-up and constant updates to parents on progress.'],
+  ]
   return (
     <section className="py-24">
-      <div className="container-x grid lg:grid-cols-2 gap-12">
-        <div>
+      <div className="container-x">
+        <SectionTitle center eyebrow="Why Students Academy" title={`Grant Road's trusted coaching academy since ${s.established}`} subtitle={`Founded by ${s.founderName || 'Mr. Vishal Khandekar Sir'}, built on clear teaching, discipline and care.`} />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {items.map(([I, title, d], i) => (
+            <Reveal key={title} i={i % 3}>
+              <div className="group relative h-full overflow-hidden rounded-3xl border border-slate-200 bg-white p-7 transition-all duration-300 hover:-translate-y-1 hover:border-transparent hover:shadow-[0_30px_60px_-28px_rgba(11,26,51,0.45)]">
+                <div className="absolute inset-0 bg-gradient-to-br from-navy-800 to-navy-950 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                <div className="relative">
+                  <div className="grid h-14 w-14 place-items-center rounded-2xl bg-red-50 text-red-600 ring-1 ring-red-100 transition group-hover:bg-red-600 group-hover:text-white group-hover:ring-red-500"><I size={24} /></div>
+                  <h3 className="mt-5 text-lg font-semibold text-navy-900 transition-colors group-hover:text-white">{title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600 transition-colors group-hover:text-navy-200">{d}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ---------------- TESTIMONIALS ----------------
+function ytId(url = '') { const m = url.match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/); return m ? m[1] : null }
+
+function Testimonials({ items }) {
+  const list = [...items].sort((a, b) => (a.order || 0) - (b.order || 0))
+  const streams = ['All', ...new Set(list.map((t) => t.stream).filter(Boolean))]
+  const [tab, setTab] = useState('All')
+  const [video, setVideo] = useState(null)
+  if (!list.length) return null
+  const shown = list.filter((t) => tab === 'All' || t.stream === tab)
+  const videos = list.filter((t) => ytId(t.videoUrl))
+  return (
+    <section className="relative overflow-hidden bg-navy-950 py-24 text-white">
+      <div className="absolute inset-0 bg-grid opacity-50 mask-fade-b" />
+      <div className="absolute -left-24 top-10 h-80 w-80 rounded-full bg-blue-600/20 blur-[110px]" />
+      <div className="absolute -right-24 bottom-0 h-80 w-80 rounded-full bg-red-600/20 blur-[110px]" />
+      <div className="container-x relative">
+        <SectionTitle light center eyebrow="Testimonials" title="What students & parents say" />
+        {videos.length > 0 && (
+          <div className="mb-12 flex gap-5 overflow-x-auto pb-2 no-scrollbar snap-x">
+            {videos.map((t) => (
+              <button key={t.id} onClick={() => setVideo(ytId(t.videoUrl))} className="group relative aspect-video w-72 shrink-0 snap-start overflow-hidden rounded-2xl ring-1 ring-white/10">
+                <img src={`https://i.ytimg.com/vi/${ytId(t.videoUrl)}/hqdefault.jpg`} alt={t.name} loading="lazy" className="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/90 via-navy-950/20 to-transparent" />
+                <span className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-red-600 shadow-lg transition group-hover:scale-110"><Play size={22} className="ml-0.5 fill-white" /></span>
+                <span className="absolute bottom-3 left-4 text-left text-sm font-semibold">{t.name}<span className="block text-[11px] font-normal text-navy-200">{t.role}</span></span>
+              </button>
+            ))}
+          </div>
+        )}
+        {streams.length > 2 && (
+          <div className="mb-8 flex flex-wrap justify-center gap-2">
+            {streams.map((x) => <button key={x} onClick={() => setTab(x)} className={cls('rounded-full px-4 py-2 text-sm font-semibold transition', tab === x ? 'bg-red-600 text-white' : 'bg-white/[0.07] text-navy-100 ring-1 ring-white/10 hover:bg-white/[0.12]')}>{x}</button>)}
+          </div>
+        )}
+        <motion.div layout className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          <AnimatePresence mode="popLayout">
+            {shown.map((t) => (
+              <motion.figure layout key={t.id} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.96 }} transition={{ duration: 0.3 }}
+                className="flex flex-col rounded-3xl bg-white/[0.06] p-7 ring-1 ring-white/10 backdrop-blur">
+                <Quote className="text-red-500" size={30} />
+                <blockquote className="mt-3 flex-1 text-[15px] leading-relaxed text-navy-100">{t.text}</blockquote>
+                <figcaption className="mt-6 flex items-center gap-3 border-t border-white/10 pt-5">
+                  {t.photo ? <img src={t.photo} alt="" className="h-11 w-11 rounded-full object-cover ring-2 ring-red-500/60" /> : <div className="grid h-11 w-11 place-items-center rounded-full bg-red-600 text-sm font-bold">{initialsOf(t.name)}</div>}
+                  <div><div className="font-semibold">{t.name}</div><div className="text-xs text-navy-300">{t.role}</div></div>
+                </figcaption>
+              </motion.figure>
+            ))}
+          </AnimatePresence>
+        </motion.div>
+      </div>
+      <AnimatePresence>
+        {video && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setVideo(null)} className="fixed inset-0 z-[70] grid place-items-center bg-black/80 p-4 backdrop-blur-sm">
+            <motion.div initial={{ scale: 0.92 }} animate={{ scale: 1 }} exit={{ scale: 0.92 }} onClick={(e) => e.stopPropagation()} className="relative w-full max-w-4xl">
+              <button onClick={() => setVideo(null)} className="absolute -top-11 right-0 grid h-9 w-9 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" aria-label="Close"><X size={18} /></button>
+              <div className="aspect-video overflow-hidden rounded-2xl bg-black shadow-2xl"><iframe title="Testimonial video" className="h-full w-full" src={`https://www.youtube-nocookie.com/embed/${video}?autoplay=1&rel=0`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen /></div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </section>
+  )
+}
+
+// ---------------- NOTICES ----------------
+function Notices({ notices }) {
+  const pub = notices.filter((n) => n.publishOnWebsite).sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0) || new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 3)
+  if (!pub.length) return null
+  return (
+    <section className="py-24">
+      <div className="container-x">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <SectionTitle eyebrow="Notice board" title="Latest from the academy" />
-          <div className="space-y-4">
-            {pub.map((n, i) => (
-              <Reveal key={n.id} i={i}>
-                <Link to="/notices" className="group flex gap-5 rounded-2xl border border-slate-200/80 bg-white p-5 transition-all hover:border-navy-200 hover:shadow-lg">
-                  <div className="text-center shrink-0 w-16 rounded-xl bg-navy-800 text-white py-2.5 transition-colors group-hover:bg-navy-900">
-                    <div className="text-2xl font-bold leading-none">{new Date(n.createdAt).getDate()}</div>
-                    <div className="text-[10px] uppercase mt-1 tracking-wider text-gold-400">{new Date(n.createdAt).toLocaleString('en', { month: 'short' })}</div>
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-semibold text-navy-900 flex items-center gap-1.5">{n.pinned && <Pin size={14} className="text-gold-600" />}{n.title}</div>
-                    <p className="text-sm text-slate-600 mt-1 line-clamp-2">{n.body}</p>
-                  </div>
-                </Link>
-              </Reveal>
-            ))}
-            {!pub.length && <p className="text-slate-500">No notices right now.</p>}
-          </div>
+          <Reveal className="mb-12"><Link to="/notices" className="text-sm font-semibold text-navy-700 inline-flex items-center gap-1.5 hover:gap-2.5 transition-all">All notices <ArrowRight size={15} /></Link></Reveal>
         </div>
+        <div className="grid gap-5 md:grid-cols-3">
+          {pub.map((n, i) => (
+            <Reveal key={n.id} i={i}>
+              <Link to="/notices" className="group flex h-full flex-col rounded-3xl border border-slate-200/80 bg-white p-6 transition-all hover:-translate-y-1 hover:border-navy-200 hover:shadow-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-14 shrink-0 rounded-xl bg-navy-800 py-2 text-center text-white transition-colors group-hover:bg-red-600">
+                    <div className="text-xl font-bold leading-none">{new Date(n.createdAt).getDate()}</div>
+                    <div className="mt-1 text-[10px] uppercase tracking-wider text-navy-200 group-hover:text-red-100">{new Date(n.createdAt).toLocaleString('en', { month: 'short' })}</div>
+                  </div>
+                  {n.pinned && <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2.5 py-1 text-[11px] font-semibold text-red-600"><Pin size={12} />Pinned</span>}
+                </div>
+                <div className="mt-4 font-semibold text-navy-900">{n.title}</div>
+                <p className="mt-1.5 text-sm text-slate-600 line-clamp-3">{n.body}</p>
+              </Link>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+// ---------------- WE'RE LISTENING ----------------
+function Listening({ s }) {
+  return (
+    <section id="enquire" className="relative overflow-hidden bg-gradient-to-b from-navy-50/70 to-white py-24 scroll-mt-24">
+      <div className="container-x grid items-start gap-12 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
-          <SectionTitle eyebrow="Results" title="Our achievers" />
-          <div className="grid sm:grid-cols-3 gap-4">
-            {[...toppers].sort((a, b) => (a.order || 0) - (b.order || 0)).slice(0, 3).map((t, i) => (
-              <Reveal key={t.id} i={i}>
-                <motion.div whileHover={{ y: -6 }} className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-navy-800 to-navy-900 p-6 text-center text-white shadow-xl">
-                  <div className="absolute -top-10 left-1/2 -translate-x-1/2 h-24 w-24 rounded-full bg-gold-500/25 blur-2xl" />
-                  <div className="relative mx-auto h-12 w-12 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-white"><Award size={22} /></div>
-                  <div className="relative mt-4 font-serif text-3xl font-bold gold-gradient">{t.score}</div>
-                  <div className="relative mt-1 text-sm font-medium">{t.name}</div>
-                  <div className="relative text-xs text-navy-200">{t.exam} · {t.year}</div>
-                </motion.div>
-              </Reveal>
+          <SectionTitle eyebrow="We're listening" title="Talk to our counsellor" subtitle="Tell us the class and stream, and we will call you back with batches, timings and fees." />
+          <div className="space-y-3">
+            {[[Phone, 'Call us', s.phone, `tel:${s.phone}`], [MessageCircle, 'WhatsApp', 'Chat with the office', `https://wa.me/${s.whatsapp}`], [MapPin, 'Visit us', s.address, '/contact']].map(([I, l, v, href]) => (
+              <a key={l} href={href} target={href.startsWith('http') ? '_blank' : undefined} rel="noreferrer" className="group flex items-center gap-4 rounded-2xl border border-slate-200 bg-white p-4 transition hover:border-navy-200 hover:shadow-md">
+                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-navy-800 text-white transition group-hover:bg-red-600"><I size={19} /></span>
+                <span className="min-w-0"><span className="block text-xs font-semibold uppercase tracking-wide text-slate-500">{l}</span><span className="block truncate text-sm font-medium text-navy-900">{v}</span></span>
+              </a>
             ))}
           </div>
-          <Reveal i={2} className="mt-6"><Link to="/results" className="text-sm font-semibold text-navy-700 inline-flex items-center gap-1.5 hover:gap-2.5 transition-all">View all results <ArrowRight size={15} /></Link></Reveal>
         </div>
+        <Reveal className="relative rounded-[2rem] border border-slate-200 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(11,26,51,0.5)] sm:p-9">
+          <div className="absolute inset-x-10 top-0 h-1 rounded-b-full bg-gradient-to-r from-navy-700 via-blue-600 to-red-500" />
+          <h3 className="font-serif text-2xl font-bold text-navy-900">Enquiry form</h3>
+          <p className="mb-6 mt-1 text-sm text-slate-500">Our counsellor will get back to you within one working day.</p>
+          <EnquiryForm />
+        </Reveal>
       </div>
     </section>
   )
@@ -512,25 +697,30 @@ function CTA({ s }) {
 
 export default function Home() {
   const s = useSettings()
-  const [materials] = useTable('materials'); const [notices] = useTable('notices'); const [toppers] = useTable('toppers')
+  const [materials] = useTable('materials'); const [notices] = useTable('notices'); const [toppers] = useTable('toppers'); const [testimonials] = useTable('testimonials')
   return (
     <>
       <Hero s={s} />
-      <Marquee />
-      <div className="pt-0"><Stats s={s} /></div>
+      <StreamBar />
+      <div className="pt-16"><Stats s={s} /></div>
+      <Achievers toppers={toppers} />
       <section className="py-24">
         <div className="container-x">
           <SectionTitle center eyebrow="Programs" title="Courses for every stream" subtitle="Board-focused teaching with an entrance-ready foundation, from 9th to 12th." />
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">{PROGRAMS.map((p, i) => <SpotCard key={p.slug} p={p} i={i} />)}</div>
         </div>
       </section>
+      <Marquee />
+      <WhyUs s={s} />
       <Founder s={s} />
       <Method />
       <PortalShowcase />
+      <Testimonials items={testimonials} />
       {materials.some((m) => m.visibility === 'public') && <MaterialTeaser materials={materials} />}
-      <NewsAndResults notices={notices} toppers={toppers} />
+      <Notices notices={notices} />
+      <Listening s={s} />
       <FAQ />
-      <div className="pt-24"><CTA s={s} /></div>
+      <div className="pt-8"><CTA s={s} /></div>
     </>
   )
 }
