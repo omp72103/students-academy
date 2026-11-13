@@ -1,6 +1,6 @@
 <resources>
-    <color name="navy">#B91C1C</color>
-    <color name="gold">#FFFFFF</color>
+    <color name="navy">#102445</color>
+    <color name="gold">#DC2626</color>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/navy</item>
         <item name="colorPrimaryDark">@color/navy</item>

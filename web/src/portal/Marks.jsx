@@ -366,10 +366,10 @@ export function printReportCard({ student, batch, settings: s, exams, classmates
   const esc = (t) => String(t ?? '').replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]))
   const html = `<html><head><title>Report card — ${esc(student.name)}</title><style>
     body{font-family:Inter,Arial,sans-serif;color:#0f172a;padding:32px;max-width:820px;margin:auto}
-    .hd{text-align:center;border-bottom:3px solid #7f1d1d;padding-bottom:12px} .hd h1{margin:0;color:#7f1d1d;font-size:24px} .hd p{margin:4px 0;color:#555;font-size:12px}
+    .hd{text-align:center;border-bottom:3px solid #102445;padding-bottom:12px} .hd h1{margin:0;color:#102445;font-size:24px} .hd p{margin:4px 0;color:#555;font-size:12px}
     .t{letter-spacing:3px;font-weight:700;margin-top:8px;color:#c81818} table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
-    th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:center} th{background:#fef2f2;color:#7f1d1d} .info td{border:none;text-align:left;padding:3px 0}
-    h3{margin:22px 0 4px;color:#7f1d1d;font-size:15px} .sig{display:flex;justify-content:space-between;margin-top:56px;font-size:12px;color:#555}
+    th,td{border:1px solid #cbd5e1;padding:6px 8px;text-align:center} th{background:#f1f5fb;color:#102445} .info td{border:none;text-align:left;padding:3px 0}
+    h3{margin:22px 0 4px;color:#102445;font-size:15px} .sig{display:flex;justify-content:space-between;margin-top:56px;font-size:12px;color:#555}
   </style></head><body>
   <div class="hd"><h1>${esc(s.name)}</h1><p>${esc(s.address)} · ${esc(s.phone)}</p><div class="t">PROGRESS REPORT</div></div>
   <table class="info"><tr><td><b>Student:</b> ${esc(student.name)}</td><td><b>Roll no.:</b> ${esc(student.rollNo)}</td></tr><tr><td><b>Batch:</b> ${esc(batch?.name)}</td><td><b>Date:</b> ${fmtDate(today())}</td></tr></table>

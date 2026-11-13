@@ -1,6 +1,6 @@
 # Students Academy, Grant Road: Official Website + LMS/ERP + Android App
 
-Founded and led by **Mr. Vishal Khandekar Sir** (Founder & Director). Brand theme: white and red (colours remapped centrally in `web/tailwind.config.js`).
+Founded and led by **Mr. Vishal Khandekar Sir** (Founder & Director). Brand theme: navy blue and red on white (colours remapped centrally in `web/tailwind.config.js`).
 
 **Live:** https://students-academy.vercel.app · **Portal:** https://students-academy.vercel.app/portal
 **Android app (latest):** https://github.com/omp72103/students-academy/releases/latest/download/StudentsAcademy.apk

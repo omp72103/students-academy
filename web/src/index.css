@@ -16,7 +16,7 @@
 @layer components {
   .container-x { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
   .btn { @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed; }
-  .btn-primary { @apply btn bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_8px_20px_rgba(225,29,46,0.28)] hover:shadow-[0_12px_28px_rgba(225,29,46,0.4)] hover:brightness-105; }
+  .btn-primary { @apply btn bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-[0_8px_20px_rgba(14,165,233,0.28)] hover:shadow-[0_12px_28px_rgba(14,165,233,0.4)] hover:brightness-105; }
   .btn-navy { @apply btn bg-navy-800 text-white hover:bg-navy-900 shadow-sm; }
   .btn-gold { @apply btn bg-gold-500 text-white hover:bg-gold-600 shadow-[0_10px_24px_rgba(225,29,29,0.3)]; }
   .btn-outline { @apply btn border border-slate-200/80 bg-white/80 text-slate-700 shadow-sm backdrop-blur hover:bg-white hover:shadow-md; }
@@ -35,13 +35,13 @@
 }
 
 /* Thin gradient scrollbars, as in AI Prep / MITK ERP */
-.nice-scroll { scrollbar-width: thin; scrollbar-color: rgba(248,113,113,.45) transparent; }
+.nice-scroll { scrollbar-width: thin; scrollbar-color: rgba(96,165,250,.45) transparent; }
 .nice-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-.nice-scroll::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#ef4444,#f87171); border-radius: 999px; }
+.nice-scroll::-webkit-scrollbar-thumb { background: linear-gradient(180deg,#3b82f6,#60a5fa); border-radius: 999px; }
 .nice-scroll::-webkit-scrollbar-track { background: transparent; }
 
 /* Landing: grain + grid backdrops */
-.bg-grid-dark { background-image: linear-gradient(rgba(24,24,27,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(24,24,27,.045) 1px, transparent 1px); background-size: 48px 48px; }
+.bg-grid-dark { background-image: linear-gradient(rgba(11,26,51,.045) 1px, transparent 1px), linear-gradient(90deg, rgba(11,26,51,.045) 1px, transparent 1px); background-size: 48px 48px; }
 .bg-grid { background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px); background-size: 48px 48px; }
 .mask-fade-b { -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent); mask-image: linear-gradient(to bottom, black 55%, transparent); }
 .mask-fade-x { -webkit-mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent); mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent); }

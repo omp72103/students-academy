@@ -20,7 +20,7 @@ const NAV = [
 export function Logo({ light }) {
   return (
     <Link to="/" className="group flex items-center gap-2.5">
-      <div className="relative h-10 w-10 rounded-xl bg-red-600 grid place-items-center shadow-md shadow-red-600/25 transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-105">
+      <div className="relative h-10 w-10 rounded-xl bg-navy-800 grid place-items-center shadow-md shadow-navy-800/25 ring-2 ring-red-500/70 transition-transform duration-500 group-hover:rotate-[-8deg] group-hover:scale-105">
         <GraduationCap className="text-white" size={22} />
       </div>
       <div className="leading-tight">
@@ -58,13 +58,13 @@ export default function SiteLayout() {
       </div>
 
       <header className={cls('sticky top-0 z-40 h-[72px] transition-all duration-500',
-        light ? 'bg-transparent' : 'bg-white/85 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_10px_30px_-15px_rgba(76,10,15,0.25)]')}>
+        light ? 'bg-transparent' : 'bg-white/85 backdrop-blur-xl border-b border-slate-200/70 shadow-[0_10px_30px_-15px_rgba(16,36,69,0.25)]')}>
         <div className="container-x flex items-center justify-between h-full">
           <Logo light={light} />
           <nav className="hidden lg:flex items-center gap-0.5">
             {NAV.map(([to, label]) => (
               <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => cls('relative px-3 py-2 text-sm font-medium rounded-lg transition-colors',
-                light ? (isActive ? 'text-white' : 'text-white/75 hover:text-white') : (isActive ? 'text-red-600' : 'text-slate-600 hover:text-red-600'))}>
+                light ? (isActive ? 'text-white' : 'text-white/75 hover:text-white') : (isActive ? 'text-navy-900' : 'text-slate-600 hover:text-navy-800'))}>
                 {({ isActive }) => <>
                   {label}
                   {isActive && <motion.span layoutId="nav-underline" className="absolute left-3 right-3 -bottom-0.5 h-[2px] rounded-full bg-gold-500" transition={{ type: 'spring', stiffness: 380, damping: 30 }} />}
@@ -81,7 +81,7 @@ export default function SiteLayout() {
               <div className="container-x py-3 flex flex-col">
                 {NAV.map(([to, label], i) => (
                   <motion.div key={to} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}>
-                    <NavLink to={to} end={to === '/'} className={({ isActive }) => cls('block px-3 py-3 rounded-lg text-[15px] font-medium', isActive ? 'bg-red-50 text-red-700' : 'text-slate-700')}>{label}</NavLink>
+                    <NavLink to={to} end={to === '/'} className={({ isActive }) => cls('block px-3 py-3 rounded-lg text-[15px] font-medium', isActive ? 'bg-navy-50 text-navy-800' : 'text-slate-700')}>{label}</NavLink>
                   </motion.div>
                 ))}
                 <div className="grid grid-cols-2 gap-2 my-3">

@@ -77,13 +77,13 @@ function HeroVisual() {
       initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1, delay: 0.3, ease: EASE }}>
       <motion.div style={{ rotateX: rx, rotateY: ry, transformStyle: 'preserve-3d' }} className="relative h-full w-full">
         {/* orbit ring */}
-        <div className="absolute inset-8 rounded-full border border-red-200 animate-spin-slow" style={{ transform: 'translateZ(-60px)' }}>
-          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_16px_rgba(239,68,68,0.7)]" />
+        <div className="absolute inset-8 rounded-full border border-blue-200 animate-spin-slow" style={{ transform: 'translateZ(-60px)' }}>
+          <span className="absolute -top-1.5 left-1/2 h-3 w-3 rounded-full bg-red-500 shadow-[0_0_16px_rgba(59,130,246,0.7)]" />
         </div>
         <div className="absolute inset-24 rounded-full border border-slate-200" style={{ transform: 'translateZ(-40px)' }} />
 
         {/* main notes card */}
-        <div className="absolute z-10 left-[4%] top-[16%] w-[62%] rounded-3xl border border-slate-200 bg-white/95 p-5 backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(24,24,27,0.25)]" style={{ transform: 'translateZ(60px)' }}>
+        <div className="absolute z-10 left-[4%] top-[16%] w-[62%] rounded-3xl border border-slate-200 bg-white/95 p-5 backdrop-blur-xl shadow-[0_30px_80px_-20px_rgba(11,26,51,0.25)]" style={{ transform: 'translateZ(60px)' }}>
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-400 to-gold-600 grid place-items-center text-white"><BookOpen size={19} /></div>
             <div><div className="text-sm font-semibold text-navy-900">Study Material</div><div className="text-[11px] text-slate-500">Notes · worksheets · question papers</div></div>
@@ -98,7 +98,7 @@ function HeroVisual() {
         </div>
 
         {/* score card */}
-        <div className="absolute z-20 right-[0%] top-[4%] w-48 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_50px_-18px_rgba(24,24,27,0.3)] animate-float-slow" style={{ transform: 'translateZ(120px)' }}>
+        <div className="absolute z-20 right-[0%] top-[4%] w-48 rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_24px_50px_-18px_rgba(11,26,51,0.3)] animate-float-slow" style={{ transform: 'translateZ(120px)' }}>
           <div className="flex items-center justify-between text-[11px] text-slate-500"><span>Chapter test</span><TrendingUp size={14} className="text-emerald-400" /></div>
           <div className="mt-1 font-serif text-3xl font-bold text-navy-900">92<span className="text-lg text-slate-400">%</span></div>
           <div className="mt-2 h-1.5 rounded-full bg-slate-100 overflow-hidden"><motion.div className="h-full bg-gradient-to-r from-gold-500 to-red-200" initial={{ width: 0 }} animate={{ width: '92%' }} transition={{ delay: 1.2, duration: 1.2, ease: EASE }} /></div>
@@ -106,7 +106,7 @@ function HeroVisual() {
         </div>
 
         {/* attendance alert */}
-        <div className="absolute right-[6%] bottom-[16%] w-60 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-[0_24px_50px_-18px_rgba(24,24,27,0.3)] animate-float-slow [animation-delay:-3s]" style={{ transform: 'translateZ(90px)' }}>
+        <div className="absolute right-[6%] bottom-[16%] w-60 rounded-2xl border border-slate-200 bg-white p-3.5 shadow-[0_24px_50px_-18px_rgba(11,26,51,0.3)] animate-float-slow [animation-delay:-3s]" style={{ transform: 'translateZ(90px)' }}>
           <div className="flex items-center gap-2.5">
             <div className="h-9 w-9 rounded-full bg-[#25D366] grid place-items-center text-white"><MessageCircle size={17} /></div>
             <div className="min-w-0"><div className="text-xs font-bold text-navy-900">Parent update sent</div><div className="text-[11px] text-slate-500 truncate">Attendance · test score · fees</div></div>
@@ -114,7 +114,7 @@ function HeroVisual() {
         </div>
 
         {/* attendance chip */}
-        <div className="absolute left-[2%] bottom-[10%] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_20px_40px_-18px_rgba(24,24,27,0.3)] animate-float-slow [animation-delay:-1.5s]" style={{ transform: 'translateZ(100px)' }}>
+        <div className="absolute left-[2%] bottom-[10%] rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-[0_20px_40px_-18px_rgba(11,26,51,0.3)] animate-float-slow [animation-delay:-1.5s]" style={{ transform: 'translateZ(100px)' }}>
           <div className="flex items-center gap-3"><CalendarCheck className="text-emerald-400" size={20} /><div><div className="text-[11px] text-slate-500">Attendance this month</div><div className="text-lg font-bold text-navy-900">96%</div></div></div>
         </div>
       </motion.div>
@@ -132,9 +132,9 @@ function Hero({ s }) {
     <section ref={ref} className="relative overflow-hidden bg-white text-navy-900 -mt-[72px] pt-[72px]">
       {/* aurora */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 -left-32 h-[34rem] w-[34rem] rounded-full bg-red-100/70 blur-[120px] animate-aurora" />
+        <div className="absolute -top-40 -left-32 h-[34rem] w-[34rem] rounded-full bg-blue-100/70 blur-[120px] animate-aurora" />
         <div className="absolute top-20 right-[-10rem] h-[30rem] w-[30rem] rounded-full bg-red-200/50 blur-[120px] animate-aurora [animation-delay:-6s]" />
-        <div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-rose-100/60 blur-[120px] animate-aurora [animation-delay:-11s]" />
+        <div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-sky-100/60 blur-[120px] animate-aurora [animation-delay:-11s]" />
         <div className="absolute inset-0 bg-grid-dark mask-fade-b" />
       </div>
       <motion.div style={{ y, opacity: fade }} className="container-x relative grid lg:grid-cols-[1.1fr_1fr] gap-10 items-center py-20 sm:py-28 lg:py-32">
@@ -179,9 +179,9 @@ function Hero({ s }) {
 const SUBJECTS = ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Science 1 & 2', 'Algebra & Geometry', 'Accountancy', 'Economics', 'Secretarial Practice', 'Information Technology', 'Computer Science', 'Electronics', 'Arduino & 8051', 'History & Geography', 'English', 'Marathi', 'Hindi']
 function Marquee() {
   return (
-    <div className="relative bg-red-600 py-4 overflow-hidden mask-fade-x">
+    <div className="relative bg-navy-900 py-4 overflow-hidden mask-fade-x">
       <div className="flex w-max animate-marquee hover:[animation-play-state:paused]">
-        {[...SUBJECTS, ...SUBJECTS].map((t, i) => <span key={i} className="mx-6 flex items-center gap-6 text-sm font-medium text-white whitespace-nowrap">{t}<span className="h-1.5 w-1.5 rotate-45 bg-white/60" /></span>)}
+        {[...SUBJECTS, ...SUBJECTS].map((t, i) => <span key={i} className="mx-6 flex items-center gap-6 text-sm font-medium text-white whitespace-nowrap">{t}<span className="h-1.5 w-1.5 rotate-45 bg-red-500" /></span>)}
       </div>
     </div>
   )
@@ -194,7 +194,7 @@ function Stats({ s }) {
   return (
     <section className="relative z-10 pt-16">
       <div className="container-x">
-        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgba(76,10,15,0.35)] ring-1 ring-slate-100 overflow-hidden">
+        <div className="grid grid-cols-2 lg:grid-cols-4 rounded-3xl bg-white shadow-[0_30px_80px_-20px_rgba(16,36,69,0.35)] ring-1 ring-slate-100 overflow-hidden">
           {items.map(([n, suf, l], i) => (
             <Reveal key={l} i={i} className={cls('p-6 sm:p-8 text-center', i % 2 === 0 && 'border-r border-slate-100', i < 2 && 'border-b lg:border-b-0 border-slate-100', i === 1 && 'lg:border-r')}>
               <div className="font-serif text-4xl sm:text-5xl font-bold text-navy-900"><Counter to={n} suffix={suf} /></div>
@@ -214,7 +214,7 @@ function SpotCard({ p, i }) {
   return (
     <Reveal i={i % 3}>
       <Link to={`/courses#${p.slug}`} onMouseMove={(e) => { const r = e.currentTarget.getBoundingClientRect(); setPos({ x: e.clientX - r.left, y: e.clientY - r.top }) }} onMouseLeave={() => setPos({ x: -400, y: -400 })}
-        className="group relative block h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-500/40 hover:shadow-[0_30px_60px_-20px_rgba(76,10,15,0.3)]">
+        className="group relative block h-full overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-7 transition-all duration-500 hover:-translate-y-1.5 hover:border-gold-500/40 hover:shadow-[0_30px_60px_-20px_rgba(16,36,69,0.3)]">
         <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100" style={{ background: `radial-gradient(380px circle at ${pos.x}px ${pos.y}px, rgba(225,29,29,0.12), transparent 60%)` }} />
         <div className="relative">
           <div className="flex items-start justify-between">
@@ -242,14 +242,14 @@ function Founder({ s }) {
     [Smartphone, 'Parents as partners', 'Attendance, marks and fees shared with parents on SMS and WhatsApp.'],
   ]
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-red-50/60 to-white py-24">
+    <section className="relative overflow-hidden bg-gradient-to-b from-navy-50/70 to-white py-24">
       <div className="container-x grid lg:grid-cols-[0.9fr_1.1fr] gap-14 items-center">
         <Reveal className="relative">
-          <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-red-400/30 via-transparent to-red-700/20 blur-2xl" />
-          <div className="relative aspect-[4/5] max-w-md overflow-hidden rounded-[2rem] bg-gradient-to-br from-red-600 via-red-700 to-red-900 p-9 flex flex-col justify-between text-white shadow-2xl">
+          <div className="absolute -inset-4 rounded-[2.5rem] bg-gradient-to-br from-blue-400/30 via-transparent to-red-500/20 blur-2xl" />
+          <div className="relative aspect-[4/5] max-w-md overflow-hidden rounded-[2rem] bg-gradient-to-br from-navy-700 via-navy-800 to-navy-900 p-9 flex flex-col justify-between text-white shadow-2xl">
             <div className="absolute inset-0 bg-grid opacity-60" />
             <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full bg-white/15 blur-3xl" />
-            <div className="relative flex items-center justify-between"><Quote className="text-white/40" size={56} /><span className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs text-white">Since {s.established}</span></div>
+            <div className="relative flex items-center justify-between"><Quote className="text-white/40" size={56} /><span className="rounded-full border border-red-400/50 bg-red-500/20 px-3 py-1 text-xs text-white">Since {s.established}</span></div>
             <div className="relative">
               {s.founderMessage
                 ? <p className="font-serif text-2xl leading-snug">“{s.founderMessage}”</p>
@@ -257,8 +257,8 @@ function Founder({ s }) {
               <div className="mt-8 flex items-center gap-4 border-t border-white/20 pt-6">
                 {s.founderPhoto
                   ? <img src={s.founderPhoto} alt={name} className="h-14 w-14 rounded-full object-cover ring-2 ring-white/60" />
-                  : <div className="h-14 w-14 rounded-full bg-white grid place-items-center font-serif text-xl font-bold text-red-700">{initials}</div>}
-                <div><div className="font-semibold text-lg">{name}</div><div className="text-sm text-red-100">{title}, {s.name}</div></div>
+                  : <div className="h-14 w-14 rounded-full bg-red-600 grid place-items-center font-serif text-xl font-bold text-white ring-2 ring-white/40">{initials}</div>}
+                <div><div className="font-semibold text-lg">{name}</div><div className="text-sm text-navy-200">{title}, {s.name}</div></div>
               </div>
             </div>
           </div>
@@ -267,7 +267,7 @@ function Founder({ s }) {
           <SectionTitle eyebrow="Our founder" title={`Founded and led by ${name}`} subtitle={`${name} is the founder and pioneer of ${s.name}. He built the academy at ${s.location} around one belief: with the right guidance, steady practice and parents kept in the loop, every student can do their best.`} />
           <div className="space-y-4">
             {pillars.map(([I, t, d], i) => (
-              <Reveal key={t} i={i} className="flex gap-4 rounded-2xl bg-white p-4 ring-1 ring-red-100 shadow-sm">
+              <Reveal key={t} i={i} className="flex gap-4 rounded-2xl bg-white p-4 ring-1 ring-navy-100 shadow-sm">
                 <div className="h-11 w-11 shrink-0 rounded-xl bg-red-600 text-white grid place-items-center"><I size={20} /></div>
                 <div><div className="font-semibold text-navy-900">{t}</div><div className="text-sm text-slate-500">{d}</div></div>
               </Reveal>
@@ -332,7 +332,7 @@ function PortalShowcase() {
         {/* mock dashboard */}
         <Reveal i={1}>
           <motion.div whileHover={{ rotateY: -4, rotateX: 3 }} style={{ perspective: 1000 }} transition={{ type: 'spring', stiffness: 120 }}
-            className="relative rounded-[28px] border border-white bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 shadow-[0_40px_90px_-30px_rgba(76,10,15,0.45)]">
+            className="relative rounded-[28px] border border-white bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 p-4 shadow-[0_40px_90px_-30px_rgba(16,36,69,0.45)]">
             <div className="flex items-center gap-1.5 mb-3 px-1"><span className="h-2.5 w-2.5 rounded-full bg-rose-400" /><span className="h-2.5 w-2.5 rounded-full bg-amber-400" /><span className="h-2.5 w-2.5 rounded-full bg-emerald-400" /><span className="ml-3 text-[11px] text-slate-400">students-academy / portal</span></div>
             <div className="grid grid-cols-[110px_1fr] gap-3">
               <div className="rounded-2xl bg-white/80 p-2.5 space-y-1.5 shadow-sm">
@@ -464,7 +464,7 @@ function FAQ() {
         <div className="space-y-3">
           {FAQS.map(([q, a], i) => (
             <Reveal key={q} i={i % 3}>
-              <div className={cls('rounded-2xl border bg-white transition-all duration-300', open === i ? 'border-gold-500/40 shadow-[0_18px_40px_-18px_rgba(76,10,15,0.3)]' : 'border-slate-200/80')}>
+              <div className={cls('rounded-2xl border bg-white transition-all duration-300', open === i ? 'border-gold-500/40 shadow-[0_18px_40px_-18px_rgba(16,36,69,0.3)]' : 'border-slate-200/80')}>
                 <button onClick={() => setOpen(open === i ? -1 : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
                   <span className="font-semibold text-navy-900">{q}</span>
                   <motion.span animate={{ rotate: open === i ? 45 : 0 }} transition={{ duration: 0.25 }} className={cls('grid h-8 w-8 shrink-0 place-items-center rounded-full text-lg font-light', open === i ? 'bg-navy-800 text-gold-400' : 'bg-slate-100 text-navy-800')}>+</motion.span>
@@ -488,7 +488,7 @@ function CTA({ s }) {
   return (
     <section className="container-x pb-24">
       <Reveal>
-        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#dc2626,#fecaca,#b91c1c,#dc2626)] bg-[length:200%_100%] animate-shine">
+        <div className="relative overflow-hidden rounded-[2rem] p-[1.5px] bg-[linear-gradient(110deg,#dc2626,#fecaca,#2f5597,#dc2626)] bg-[length:200%_100%] animate-shine">
           <div className="relative overflow-hidden rounded-[calc(2rem-1.5px)] bg-gradient-to-br from-red-600 to-red-700 px-8 py-14 sm:px-14 text-white">
             <div className="absolute inset-0 bg-grid opacity-40" />
             <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/15 blur-3xl animate-aurora" />

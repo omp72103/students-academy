@@ -96,8 +96,8 @@ function Receipt({ fee, student, fees, onClose, settings: s }) {
       <button className="btn-outline" onClick={() => sendSms(student.parentPhone, text)}><Send size={15} />SMS</button>
       <button className="btn-primary" onClick={() => { const w = window.open('', '_blank'); w.document.write(`<html><head><title>${fee.receiptNo}</title></head><body style="font-family:sans-serif;padding:32px">${document.getElementById('rcpt').innerHTML}</body></html>`); w.document.close(); w.print() }}><Printer size={15} />Print</button></>}>
       <div id="rcpt">
-        <div style={{ textAlign: 'center', borderBottom: '2px solid #7f1d1d', paddingBottom: 12 }}>
-          <div style={{ fontSize: 20, fontWeight: 700, color: '#7f1d1d' }}>{s.name}</div><div style={{ fontSize: 12, color: '#555' }}>{s.address} · {s.phone}</div>
+        <div style={{ textAlign: 'center', borderBottom: '2px solid #102445', paddingBottom: 12 }}>
+          <div style={{ fontSize: 20, fontWeight: 700, color: '#102445' }}>{s.name}</div><div style={{ fontSize: 12, color: '#555' }}>{s.address} · {s.phone}</div>
           <div style={{ marginTop: 8, fontWeight: 600, letterSpacing: 2, fontSize: 12 }}>FEE RECEIPT</div>
         </div>
         <table style={{ width: '100%', fontSize: 14, marginTop: 16, borderCollapse: 'collapse' }}><tbody>

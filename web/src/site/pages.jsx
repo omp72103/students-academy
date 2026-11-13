@@ -28,9 +28,9 @@ function Section({ eyebrow, title, subtitle, children, className, center }) {
 
 function PageHero({ title, subtitle, crumb }) {
   return (
-    <div className="relative overflow-hidden bg-gradient-to-b from-red-50/70 to-white border-b border-red-100/70">
+    <div className="relative overflow-hidden bg-gradient-to-b from-navy-50 to-white border-b border-navy-100">
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -right-20 h-80 w-80 rounded-full bg-red-200/40 blur-[100px] animate-aurora" />
+        <div className="absolute -top-24 -right-20 h-80 w-80 rounded-full bg-blue-200/40 blur-[100px] animate-aurora" />
         <div className="absolute inset-0 bg-grid-dark mask-fade-b" />
       </div>
       <div className="container-x py-14 sm:py-16 relative">
@@ -77,16 +77,16 @@ export function FounderCard({ s }) {
   const initials = name.replace(/^(mr|mrs|ms|dr)\.?\s+/i, '').replace(/\s+sir$/i, '').split(/\s+/).map((w) => w[0]).slice(0, 2).join('')
   return (
     <div className="card overflow-hidden h-fit">
-      <div className="relative bg-gradient-to-br from-red-600 to-red-800 p-6 text-white">
+      <div className="relative bg-gradient-to-br from-navy-700 to-navy-900 p-6 text-white">
         <div className="absolute inset-0 bg-grid opacity-40" />
         <div className="relative flex items-center gap-4">
           {s.founderPhoto
             ? <img src={s.founderPhoto} alt={name} className="h-20 w-20 rounded-2xl object-cover ring-4 ring-white/30" />
-            : <div className="h-20 w-20 rounded-2xl bg-white text-red-700 grid place-items-center font-serif text-2xl font-bold ring-4 ring-white/30">{initials}</div>}
+            : <div className="h-20 w-20 rounded-2xl bg-red-600 text-white grid place-items-center font-serif text-2xl font-bold ring-4 ring-white/20">{initials}</div>}
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-red-100">{s.founderTitle || 'Founder & Director'}</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-red-300">{s.founderTitle || 'Founder & Director'}</div>
             <h3 className="font-serif text-xl font-bold mt-0.5">{name}</h3>
-            <div className="text-xs text-red-100 mt-0.5">{s.name}, {s.location}</div>
+            <div className="text-xs text-navy-200 mt-0.5">{s.name}, {s.location}</div>
           </div>
         </div>
       </div>
@@ -108,11 +108,11 @@ export function Courses() {
         <div className="space-y-6">
           {PROGRAMS.map((p, idx) => (
             <motion.div key={p.slug} id={p.slug} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: '-60px' }} transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 scroll-mt-28 grid lg:grid-cols-3 gap-6 transition-shadow hover:shadow-[0_30px_60px_-25px_rgba(76,10,15,0.3)]">
+              className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 scroll-mt-28 grid lg:grid-cols-3 gap-6 transition-shadow hover:shadow-[0_30px_60px_-25px_rgba(16,36,69,0.3)]">
               <span className="pointer-events-none absolute -right-4 -top-8 font-serif text-[9rem] font-bold leading-none text-slate-50 group-hover:text-gold-50 transition-colors">0{idx + 1}</span>
               <div className="relative lg:col-span-2">
                 <div className="flex items-center gap-3">
-                  <div className="h-11 w-11 rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center"><Ic name={p.icon} size={20} /></div>
+                  <div className="h-11 w-11 rounded-xl bg-navy-50 text-navy-700 ring-1 ring-navy-100 grid place-items-center"><Ic name={p.icon} size={20} /></div>
                   <h2 className="font-serif text-xl sm:text-2xl font-bold text-navy-900">{p.title}</h2>
                 </div>
                 <p className="mt-4 text-slate-600 leading-relaxed">{p.summary}</p>
@@ -156,7 +156,7 @@ export function StudyMaterial() {
             <div className="flex lg:flex-col gap-1 overflow-x-auto">
               {stds.map((s) => (
                 <button key={s} onClick={() => { setParams({ std: s }); setQ('') }}
-                  className={cls('text-left px-3 py-2 rounded-lg text-sm whitespace-nowrap flex justify-between gap-3', std === s && !q ? 'bg-red-600 text-white' : 'text-slate-700 hover:bg-slate-100')}>
+                  className={cls('text-left px-3 py-2 rounded-lg text-sm whitespace-nowrap flex justify-between gap-3', std === s && !q ? 'bg-navy-800 text-white' : 'text-slate-700 hover:bg-slate-100')}>
                   {s}<span className="opacity-60">{pub.filter((m) => m.standard === s).length}</span>
                 </button>
               ))}
@@ -198,7 +198,7 @@ export function StudyMaterial() {
 
 export function MaterialCard({ m, showStd }) {
   return (
-    <a href={m.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200/80 bg-white p-4 flex gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-500/40 hover:shadow-[0_14px_30px_-14px_rgba(76,10,15,0.3)] group">
+    <a href={m.url} target="_blank" rel="noreferrer" className="rounded-2xl border border-slate-200/80 bg-white p-4 flex gap-3 transition-all duration-300 hover:-translate-y-0.5 hover:border-gold-500/40 hover:shadow-[0_14px_30px_-14px_rgba(16,36,69,0.3)] group">
       <div className="h-11 w-11 shrink-0 rounded-xl bg-gradient-to-br from-rose-50 to-orange-50 text-rose-600 grid place-items-center ring-1 ring-rose-100 transition-transform group-hover:scale-110 group-hover:-rotate-6"><FileText size={20} /></div>
       <div className="min-w-0 flex-1">
         <div className="font-medium text-sm text-slate-900 leading-snug group-hover:text-navy-700">{m.title}</div>
@@ -225,7 +225,7 @@ export function Results() {
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {items.map((t) => (
                 <div key={t.id} className="card p-6 text-center">
-                  <div className="mx-auto h-16 w-16 rounded-full bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center text-xl font-bold">{t.name.split(' ').map((x) => x[0]).join('').slice(0, 2)}</div>
+                  <div className="mx-auto h-16 w-16 rounded-full bg-navy-50 text-navy-700 ring-1 ring-navy-100 grid place-items-center text-xl font-bold">{t.name.split(' ').map((x) => x[0]).join('').slice(0, 2)}</div>
                   <div className="mt-3 font-semibold">{t.name}</div>
                   <div className="text-2xl font-bold text-navy-800 mt-1">{t.score}</div>
                   {t.note && <div className="text-xs text-slate-500 mt-1">{t.note}</div>}
@@ -282,7 +282,7 @@ export function Contact() {
           <div className="lg:col-span-2 space-y-4">
             {[[MapPin, 'Address', s.address], [Phone, 'Phone', s.phone], [Mail, 'Email', s.email], [Clock, 'Office hours', s.timings]].filter(([, , v]) => v).map(([I, l, v]) => (
               <div key={l} className="card p-5 flex gap-4">
-                <div className="h-11 w-11 rounded-lg bg-red-50 text-red-600 ring-1 ring-red-100 grid place-items-center shrink-0"><I size={19} /></div>
+                <div className="h-11 w-11 rounded-lg bg-navy-50 text-navy-700 ring-1 ring-navy-100 grid place-items-center shrink-0"><I size={19} /></div>
                 <div><div className="text-xs font-semibold uppercase text-slate-500">{l}</div><div className="text-sm text-slate-800 mt-1">{v}</div></div>
               </div>
             ))}

@@ -20,7 +20,7 @@ export function PageHeader({ title, subtitle, actions, icon, eyebrow }) {
       className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
       <div className="flex items-center gap-4 min-w-0">
         {Icon && (
-          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-red-500 to-red-700 shadow-lg shadow-red-500/20">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-600 to-navy-800 shadow-lg shadow-blue-500/20">
             <Icon className="h-7 w-7 text-white" strokeWidth={2.3} />
           </div>
         )}
@@ -66,12 +66,12 @@ export function CountUp({ value, duration = 0.9, delay = 0 }) {
 }
 
 const ACCENTS = {
-  indigo: 'from-red-500 via-red-600 to-red-700',
-  sky: 'from-zinc-600 via-zinc-700 to-zinc-800',
+  indigo: 'from-blue-500 via-blue-600 to-blue-700',
+  sky: 'from-navy-600 via-navy-700 to-navy-900',
   emerald: 'from-emerald-500 via-emerald-600 to-teal-700',
   amber: 'from-amber-500 via-amber-600 to-orange-600',
-  rose: 'from-rose-500 via-rose-600 to-pink-700',
-  violet: 'from-orange-500 via-orange-600 to-red-600',
+  rose: 'from-rose-500 via-red-600 to-red-700',
+  violet: 'from-red-500 via-red-600 to-red-700',
   slate: 'from-slate-600/90 via-slate-700/85 to-slate-800/80',
 }
 
@@ -120,10 +120,10 @@ export function Card({ title, actions, children, className, bodyClass = 'p-5', g
         <div className={cls('flex items-center justify-between gap-2 px-5 border-b border-slate-100', gradient ? 'py-3.5' : 'py-3')}>
           <p className="flex items-center gap-2.5 text-[15px] font-bold text-slate-800 font-heading">
             {gradient && <span className="h-5 w-1 rounded-full bg-red-600" />}
-            {Icon && <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-red-50 text-red-600 ring-1 ring-red-100"><Icon className="h-4 w-4" /></span>}
+            {Icon && <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 ring-1 ring-blue-100"><Icon className="h-4 w-4" /></span>}
             {title}
           </p>
-          <div className="flex gap-2 [&_a]:text-red-600 [&_a]:font-semibold [&_a]:text-sm">{actions}</div>
+          <div className="flex gap-2 [&_a]:text-blue-600 [&_a]:font-semibold [&_a]:text-sm">{actions}</div>
         </div>
       )}
       <div className={bodyClass}>{children}</div>

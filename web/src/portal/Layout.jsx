@@ -77,7 +77,7 @@ function Sidebar({ groups, user, collapsed, setCollapsed, mobile, onClose, onLog
   return (
     <aside className={cls('relative flex h-full flex-col rounded-[30px] border border-white/80 bg-white/70 backdrop-blur-2xl shadow-glass transition-[width] duration-300 ease-in-out',
       collapsed && !mobile ? 'w-[78px]' : 'w-[272px]')}>
-      <div className={cls('pointer-events-none absolute top-0 z-30 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(248,113,113,0.95),0_0_32px_rgba(239,68,68,0.55)]', collapsed && !mobile ? 'inset-x-3' : 'inset-x-8')} />
+      <div className={cls('pointer-events-none absolute top-0 z-30 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(96,165,250,0.95),0_0_32px_rgba(59,130,246,0.55)]', collapsed && !mobile ? 'inset-x-3' : 'inset-x-8')} />
       <div className={cls('border-b border-slate-200/60 pt-6 pb-4', collapsed && !mobile ? 'px-2' : 'px-5')}>
         <div className={cls('flex items-center gap-3', collapsed && !mobile && 'flex-col')}>
           <BrandMark />
@@ -105,10 +105,10 @@ function Sidebar({ groups, user, collapsed, setCollapsed, mobile, onClose, onLog
                     isActive ? 'border-transparent text-white'
                       : 'border-transparent text-slate-700 hover:border-white/80 hover:bg-white/65 hover:text-slate-900 hover:shadow-[0_8px_18px_rgba(15,23,42,0.08)]')}>
                   {({ isActive }) => <>
-                    {isActive && <motion.span layoutId={mobile ? 'nav-pill-m' : 'nav-pill'} className="absolute inset-0 rounded-xl border border-white/70 bg-gradient-to-r from-blue-600/95 to-cyan-400/90 shadow-[0_8px_24px_rgba(225,29,46,0.38),inset_0_1px_0_rgba(255,255,255,0.5)]" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+                    {isActive && <motion.span layoutId={mobile ? 'nav-pill-m' : 'nav-pill'} className="absolute inset-0 rounded-xl border border-white/70 bg-gradient-to-r from-blue-600/95 to-cyan-400/90 shadow-[0_8px_24px_rgba(14,165,233,0.38),inset_0_1px_0_rgba(255,255,255,0.5)]" transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
                     <Icon size={18} className="relative shrink-0" />
                     {(!collapsed || mobile) && <span className="relative truncate">{label}</span>}
-                    {isActive && collapsed && !mobile && <span className="absolute z-10 -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(248,113,113,0.9)] animate-pulse" />}
+                    {isActive && collapsed && !mobile && <span className="absolute z-10 -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_8px_rgba(96,165,250,0.9)] animate-pulse" />}
                   </>}
                 </NavLink>
               ))}
@@ -350,7 +350,7 @@ export function Login() {
       <div className="flex items-center justify-center p-5 sm:p-8">
         <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full max-w-md rounded-[30px] border border-white/80 bg-white/75 backdrop-blur-2xl shadow-glass p-7 sm:p-9">
-          <div className="pointer-events-none absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(248,113,113,0.9)]" />
+          <div className="pointer-events-none absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(96,165,250,0.9)]" />
           <div className="lg:hidden flex items-center gap-3 mb-6"><BrandMark /><div className="font-heading font-extrabold text-gradient">Students Academy</div></div>
           <h2 className="font-heading text-2xl font-extrabold text-slate-800">{forgot ? 'Reset password' : 'Welcome back 👋'}</h2>
           <p className="text-sm font-medium text-slate-500 mt-1">{forgot ? 'We will email you a link to set a new password.' : `Sign in with Google or your email${MODE === 'demo' ? ', mobile number or roll no.' : ''} and password.`}</p>

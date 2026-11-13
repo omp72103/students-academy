@@ -31,7 +31,7 @@ function Bars({ data, suffix = '' }) {
         <div key={d.label + i} className="flex-1 h-full flex flex-col items-center gap-1.5 min-w-0">
           <div className="flex-1 w-full flex flex-col justify-end items-center gap-1">
             <div className="text-[10px] font-bold text-slate-600">{d.display ?? d.value + suffix}</div>
-            <motion.div className="w-full max-w-[44px] rounded-t-xl bg-gradient-to-t from-blue-600 via-sky-500 to-cyan-400 shadow-[0_8px_20px_rgba(225,29,46,0.25)]"
+            <motion.div className="w-full max-w-[44px] rounded-t-xl bg-gradient-to-t from-blue-600 via-sky-500 to-cyan-400 shadow-[0_8px_20px_rgba(14,165,233,0.25)]"
               initial={{ height: 0 }} animate={{ height: `${Math.max(3, (d.value / max) * 85)}%` }} transition={{ duration: 0.8, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }} />
           </div>
           <div className="text-[10px] font-semibold text-slate-500 truncate w-full text-center">{d.label}</div>
@@ -48,7 +48,7 @@ function QuickActions({ items }) {
       <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((a, i) => (
           <motion.div key={a.title} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 + i * 0.05 }} whileHover={{ y: -4 }}>
-            <Link to={a.url} onClick={(e) => { if (a.url === '#view-as') { e.preventDefault(); window.dispatchEvent(new Event('sa-view-as')) } }} className="group flex items-center gap-4 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-clay backdrop-blur-xl transition-shadow hover:shadow-[0_14px_36px_rgba(220,38,38,0.14)]">
+            <Link to={a.url} onClick={(e) => { if (a.url === '#view-as') { e.preventDefault(); window.dispatchEvent(new Event('sa-view-as')) } }} className="group flex items-center gap-4 rounded-2xl border border-white/70 bg-white/70 p-4 shadow-clay backdrop-blur-xl transition-shadow hover:shadow-[0_14px_36px_rgba(37,99,235,0.14)]">
               <span className={cls('flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-white shadow-md', a.grad)}><a.icon className="h-6 w-6" /></span>
               <span className="min-w-0 flex-1"><span className="block font-bold text-slate-800">{a.title}</span><span className="block truncate text-xs font-medium text-slate-500">{a.desc}</span></span>
               <ArrowUpRight className="h-4 w-4 text-slate-400 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
