@@ -341,7 +341,7 @@ function PortalShowcase() {
               </div>
               <div className="space-y-3">
                 <div className="grid grid-cols-3 gap-2">
-                  {[['Attendance', '94%', 'from-emerald-500 to-teal-500'], ['Avg score', '81%', 'from-sky-500 to-indigo-600'], ['Pending', '2', 'from-violet-500 to-indigo-600']].map(([l, v, g], i) => (
+                  {[['Attendance', '94%', 'from-navy-700 to-navy-900'], ['Avg score', '81%', 'from-blue-500 to-blue-700'], ['Pending', '2', 'from-red-500 to-red-700']].map(([l, v, g], i) => (
                     <motion.div key={l} initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 + i * 0.1 }} className={cls('rounded-xl bg-gradient-to-br p-2.5 text-white shadow-md', g)}>
                       <div className="text-[9px] font-bold uppercase opacity-80">{l}</div><div className="text-lg font-extrabold">{v}</div>
                     </motion.div>

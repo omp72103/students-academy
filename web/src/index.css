@@ -30,7 +30,7 @@
   .badge { @apply inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-bold; }
   .th { @apply px-4 py-3 text-left text-[11px] font-bold uppercase tracking-wider text-slate-500 bg-slate-50/70; }
   .td { @apply px-4 py-3 text-sm text-slate-700 border-t border-slate-100/80; }
-  .text-gradient { @apply bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 bg-clip-text text-transparent; }
+  .text-gradient { @apply bg-gradient-to-r from-navy-800 via-blue-700 to-blue-600 bg-clip-text text-transparent; }
   .gold-gradient { @apply bg-gradient-to-r from-red-600 via-red-500 to-rose-500 bg-clip-text text-transparent; }
 }
 

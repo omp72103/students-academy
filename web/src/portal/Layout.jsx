@@ -5,6 +5,7 @@ import {
   LayoutDashboard, UserRound, GraduationCap, Layers, CalendarDays, CalendarCheck, Library, ClipboardList, BarChart3,
   NotebookPen, Wallet, Megaphone, MessageSquare, Globe, Settings, LogOut, X, PhoneCall, UserCog, Bell, ShieldCheck, Smartphone,
   ChevronLeft, Search, Home, PanelLeft, User, Sparkles, Eye, EyeOff, ArrowRight, Moon, Sun, Command, Award, Fingerprint, MonitorSmartphone, Repeat, XCircle,
+  Building2, BookOpen, Users,
 } from 'lucide-react'
 import { useAuth, ROLES, googleEnabled, can } from '../lib/auth'
 import { supabase } from '../lib/db'
@@ -66,7 +67,7 @@ export function AmbientBlobs() {
 }
 
 function BrandMark({ size = 'h-10 w-10' }) {
-  return <div className={cls(size, 'rounded-2xl bg-gradient-to-br from-blue-600 to-cyan-400 grid place-items-center shadow-md shadow-blue-500/30 shrink-0')}><GraduationCap size={20} className="text-white" /></div>
+  return <div className={cls(size, 'rounded-2xl bg-gradient-to-br from-navy-700 to-navy-900 ring-2 ring-red-500/70 grid place-items-center shadow-md shadow-navy-900/30 shrink-0')}><GraduationCap size={20} className="text-white" /></div>
 }
 
 function useOutside(ref, cb) {
@@ -324,35 +325,46 @@ export function Login() {
     try { await login(id, pw); nav('/portal/dashboard') } catch (e) { setErr(e.message) } finally { setBusy(false) }
   }
   const demo = [['Management', 'admin@studentsacademy.in', 'admin123'], ['Office Staff', 'office@studentsacademy.in', 'office123'], ['Faculty', 'sai@studentsacademy.in', 'faculty123'], ['Student', 'aarav@student.sa', 'student123'], ['Parent', 'aarav.parent@sa.in', 'parent123']]
-  const roles = [['Management', 'Admissions, fees, staff & reports', 'from-blue-600 to-cyan-400'], ['Faculty', 'Attendance, tests & content', 'from-emerald-500 to-teal-400'], ['Students', 'Notes, online tests & results', 'from-violet-500 to-indigo-500'], ['Parents', 'Progress, fees & notices', 'from-amber-500 to-orange-400']]
+  const roles = [['Management', 'Admissions, fees, staff & reports', Building2], ['Faculty', 'Attendance, marks & tests', GraduationCap], ['Students', 'Notes, online tests & results', BookOpen], ['Parents', 'Attendance, marks & fees', Users]]
   return (
     <div className={cls('portal relative min-h-screen grid lg:grid-cols-[1.05fr_1fr]', APP_BG)}>
       <AmbientBlobs />
-      <div className="hidden lg:flex flex-col justify-between p-10 xl:p-14 relative">
-        <Link to="/" className="flex items-center gap-3"><BrandMark /><div><div className="font-heading font-extrabold text-gradient text-lg leading-tight">Students Academy</div><div className="text-xs font-bold text-blue-600">Grant Road · Mumbai</div></div></Link>
-        <div>
-          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-white bg-white/70 px-3 py-1 text-xs font-bold text-blue-700 shadow-sm backdrop-blur"><Sparkles size={13} />Learning & ERP Portal</motion.p>
-          <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="font-heading mt-5 text-5xl font-extrabold leading-[1.08] text-slate-800">
-            One portal for<br /><span className="text-gradient">learning, tests</span><br />and the office.
+      <div className="hidden lg:flex relative flex-col justify-between overflow-hidden bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 p-10 xl:p-14 text-white">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-blue-600/30 blur-[110px]" />
+          <div className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-red-600/25 blur-[110px]" />
+          <div className="absolute inset-0 opacity-60 [background-image:linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:44px_44px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
+        </div>
+        <Link to="/" className="relative flex items-center gap-3">
+          <div className="h-11 w-11 rounded-2xl bg-white/10 ring-2 ring-red-500/80 grid place-items-center backdrop-blur"><GraduationCap size={21} className="text-white" /></div>
+          <div><div className="font-serif text-xl font-bold leading-tight">Students Academy</div><div className="text-[11px] font-semibold uppercase tracking-[0.2em] text-navy-200">Grant Road · Mumbai</div></div>
+        </Link>
+        <div className="relative">
+          <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="inline-flex items-center gap-2 rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1 text-xs font-bold text-red-100"><span className="h-1.5 w-1.5 rounded-full bg-red-400" />Learning & ERP Portal</motion.p>
+          <motion.h1 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }} className="font-serif mt-5 text-[3.2rem] font-bold leading-[1.08] text-white">
+            One portal for<br /><span className="text-red-400">learning, tests</span><br />and the office.
           </motion.h1>
-          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 max-w-md text-slate-500 font-medium">Study material, online tests, attendance, assignments, fees and parent updates, in one place.</motion.p>
+          <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mt-4 max-w-md text-navy-200">Study material, online tests, attendance, marks, fees and parent updates, in one place.</motion.p>
           <div className="grid grid-cols-2 gap-3 mt-10 max-w-lg">
-            {roles.map(([t, d, g], i) => (
-              <motion.div key={t} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + i * 0.07 }} whileHover={{ y: -4 }} className="card p-4">
-                <div className={cls('h-9 w-9 rounded-xl bg-gradient-to-br grid place-items-center text-white shadow-md', g)}><ShieldCheck size={17} /></div>
-                <div className="font-heading font-bold text-sm mt-3 text-slate-800">{t}</div><div className="text-xs text-slate-500 font-medium">{d}</div>
+            {roles.map(([t, d, I], i) => (
+              <motion.div key={t} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 + i * 0.07 }} whileHover={{ y: -4 }} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur transition hover:border-red-400/40 hover:bg-white/[0.09]">
+                <div className={cls('h-9 w-9 rounded-xl grid place-items-center text-white shadow-md', i % 2 ? 'bg-red-600' : 'bg-blue-600')}><I size={17} /></div>
+                <div className="font-heading font-bold text-sm mt-3">{t}</div><div className="text-xs text-navy-200">{d}</div>
               </motion.div>
             ))}
           </div>
         </div>
-        <div className="text-xs font-semibold text-slate-400">© {new Date().getFullYear()} Students Academy, Grant Road</div>
+        <div className="relative flex items-center justify-between text-xs text-navy-300">
+          <span>© {new Date().getFullYear()} Students Academy, Grant Road</span>
+          <span>Founded by Mr. Vishal Khandekar Sir</span>
+        </div>
       </div>
       <div className="flex items-center justify-center p-5 sm:p-8">
         <motion.div initial={{ opacity: 0, y: 24, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="relative w-full max-w-md rounded-[30px] border border-white/80 bg-white/75 backdrop-blur-2xl shadow-glass p-7 sm:p-9">
-          <div className="pointer-events-none absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-blue-500 via-cyan-300 to-violet-500 shadow-[0_0_18px_rgba(96,165,250,0.9)]" />
-          <div className="lg:hidden flex items-center gap-3 mb-6"><BrandMark /><div className="font-heading font-extrabold text-gradient">Students Academy</div></div>
-          <h2 className="font-heading text-2xl font-extrabold text-slate-800">{forgot ? 'Reset password' : 'Welcome back 👋'}</h2>
+          <div className="pointer-events-none absolute inset-x-10 top-0 h-1 rounded-full bg-gradient-to-r from-navy-700 via-blue-600 to-red-500" />
+          <div className="lg:hidden flex items-center gap-3 mb-6"><BrandMark /><div><div className="font-serif text-lg font-bold text-navy-900 leading-tight">Students Academy</div><div className="text-[10px] font-semibold uppercase tracking-[0.18em] text-slate-500">Grant Road · Mumbai</div></div></div>
+          <h2 className="font-heading text-2xl font-extrabold text-navy-900">{forgot ? 'Reset password' : 'Welcome back'}</h2>
           <p className="text-sm font-medium text-slate-500 mt-1">{forgot ? 'We will email you a link to set a new password.' : `Sign in with Google or your email${MODE === 'demo' ? ', mobile number or roll no.' : ''} and password.`}</p>
           {forgot ? (
             sent ? <div className="mt-6 rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm font-semibold text-emerald-800">Check {id} for the reset link.</div> : (
@@ -375,7 +387,7 @@ export function Login() {
                 <button type="button" onClick={() => setShow(!show)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Show password">{show ? <EyeOff size={16} /> : <Eye size={16} />}</button></div>
             </label>
             <AnimatePresence>{err && <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0 }} className="rounded-xl bg-rose-50 border border-rose-100 px-3 py-2 text-sm font-semibold text-rose-700">{err}</motion.p>}</AnimatePresence>
-            <button disabled={busy} className="btn-primary w-full py-3 text-[15px]">{busy ? 'Signing in…' : <>Sign in <ArrowRight size={17} /></>}</button>
+            <button disabled={busy} className="btn w-full py-3 text-[15px] bg-red-600 text-white shadow-lg shadow-red-600/25 hover:bg-red-700">{busy ? 'Signing in…' : <>Sign in <ArrowRight size={17} /></>}</button>
           </form>
           </>}
           {forgot && <button onClick={() => { setForgot(false); setSent(false); setErr('') }} className="mt-4 text-sm font-bold text-blue-600 hover:underline">← Back to sign in</button>}
@@ -385,8 +397,8 @@ export function Login() {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">{demo.map(([r, e, p]) => <button key={r} onClick={() => { setId(e); setPw(p) }} className="btn-outline btn-sm justify-start"><User size={13} />{r}</button>)}</div>
             </div>
           )}
-          {!isAndroidApp() && <a href={APK_URL} className="mt-7 flex items-center gap-3 rounded-2xl border border-white bg-gradient-to-r from-emerald-50 to-teal-50 p-3 transition hover:shadow-md">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-400 text-white grid place-items-center shadow"><Smartphone size={19} /></div>
+          {!isAndroidApp() && <a href={APK_URL} className="mt-7 flex items-center gap-3 rounded-2xl border border-navy-100 bg-navy-50/70 p-3 transition hover:shadow-md">
+            <div className="h-10 w-10 rounded-xl bg-navy-800 text-white grid place-items-center shadow"><Smartphone size={19} /></div>
             <div className="text-sm"><div className="font-bold text-slate-800">Download the Android app</div><div className="text-xs text-slate-500 font-medium">Free SMS & WhatsApp alerts from the academy phone</div></div>
           </a>}
           <Link to="/" className="block text-center text-sm font-semibold text-slate-500 mt-6 hover:text-blue-700">← Back to website</Link>

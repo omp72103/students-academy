@@ -36,14 +36,14 @@ export const PROGRAMS = [
     standards: ['11th Science', '12th Science'],
     summary: 'HSC Physics, Chemistry, Mathematics and Biology with a strong board + entrance foundation.',
     subjects: ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
-    highlights: ['Handwritten Physics notes', 'Full question bank solutions', 'Chapterwise formula sheets', 'HSC board papers 2019–2024'],
+    highlights: ['Chapterwise notes for every subject', 'Full question bank solutions', 'Chapterwise formula sheets', 'HSC board papers 2019–2024'],
   },
   {
     slug: 'entrance', title: 'MHT-CET / JEE Main / NEET-UG', icon: 'Target',
     standards: ['JEE / NEET / CET'],
     summary: 'Entrance-oriented problem solving, fast revision notes and flash cards for competitive exams.',
     subjects: ['Physics', 'Chemistry', 'Mathematics', 'Biology'],
-    highlights: ['Physics fast-revision notes', 'Flash cards', 'Timed online mock tests', 'Performance analytics'],
+    highlights: ['Fast-revision notes', 'Flash cards', 'Timed online mock tests', 'Performance analytics'],
   },
   {
     slug: 'commerce', title: 'FYJC & SYJC Commerce', icon: 'BarChart3',
